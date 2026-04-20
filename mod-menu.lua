@@ -54,13 +54,14 @@ local function renderModMenu()
     end
 
     -- Mod logo
-    local modLogoText = "Kaisen64"
-    local scale = 3
-    local modLogoWidth = djui_hud_measure_text(modLogoText) * scale
-    local modLogoX = backgroundX + padding + (backgroundWidth - modLogoWidth) / 2
-    local modLogoY = backgroundY + padding
+    local modLogo = get_texture_info("k64-logo")
+    local scale = 0.2
+    local modLogoWidth = modLogo.width * scale
+    local modLogoHeight = modLogo.height * scale
+    local modLogoX = backgroundX + padding + (backgroundWidth - modLogoWidth * scale) / 2
+    local modLogoY = backgroundY + padding - modLogoHeight/4
     djui_hud_set_color(255, 255, 255, 255)
-    djui_hud_print_text(modLogoText, modLogoX, modLogoY, scale)
+    djui_hud_render_texture(modLogo, modLogoX, modLogoY, scale, scale)
 
     -- Section select buttons
     local sectionBarWidth = 0

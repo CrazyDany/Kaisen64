@@ -51,9 +51,9 @@ hook_event(HOOK_ALLOW_PVP_ATTACK, function(a, v, i)
 end)
 
 RegisterAbility(ABILITY_ID_SWITCHSWAP, {
-    name = "Switch Swap",
+    name = "SwitchSwap",
     shortName = "SwSw",
-    description = "",
+    description = "Clap your hands and switch places with your last hitted player.",
     iconTextureName = "swsw",
 
     cost = 32,

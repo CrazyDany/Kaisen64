@@ -29,7 +29,7 @@ local function onUseDryTry()
     end
 
     n1, n2, n3 = math.random(min, max), math.random(min, max), math.random(min, max)
-    local n = 100 * n1 + 10 * n2 + n3
+    local n = 777
 
     if n % 111 == 0 then
         -- Hitting a Jackpot
@@ -107,7 +107,9 @@ hook_event(HOOK_UPDATE,
             gPlayerSyncTable[0].Kaisen64.currentEnergy = gPlayerSyncTable[0].Kaisen64.maxEnergy
             gMarioStates[0].health = 2176
 
-
+            if (AbilitiesData[ABILITY_ID_DRYTRY].jackpotTimer % 8) == 0 then
+                set_mario_particle_flags(gMarioStates[0], PARTICLE_SPARKLES, 0)
+            end
 
             -- End jackpot
             if AbilitiesData[ABILITY_ID_DRYTRY].jackpotTimer == 0 then
@@ -123,10 +125,33 @@ hook_event(HOOK_UPDATE,
     end
 )
 
+hook_event(HOOK_MARIO_UPDATE, function(m)
+    if (gPlayerSyncTable[0].Kaisen64 == nil) or (m.playerIndex ~= 0) then return end
+
+    if AbilitiesData[ABILITY_ID_DRYTRY].jackpotTimer > 0 then
+        if (AbilitiesData[ABILITY_ID_DRYTRY].jackpotTimer % 8) == 0 then
+            set_mario_particle_flags(m, PARTICLE_SPARKLES, 0)
+        end
+        if m.action == ACT_WALKING then
+            mario_set_forward_vel(m, m.forwardVel + 10)
+        end
+    end
+end)
+
+hook_event(HOOK_ON_SET_MARIO_ACTION, function(m)
+    if (gPlayerSyncTable[0].Kaisen64 == nil) or (m.playerIndex ~= 0) then return end
+
+    if AbilitiesData[ABILITY_ID_DRYTRY].jackpotTimer > 0 then
+        if m.action == ACT_JUMP then
+            set_mario_action(m, ACT_DOUBLE_JUMP, 0)
+        end
+    end
+end)
+
 RegisterAbility(ABILITY_ID_DRYTRY, {
-    name = "Dry Try",
+    name = "DryTry",
     shortName = "DrTr",
-    description = "",
+    description = "Try your luck! It can give you a god power or punish you very hard.",
     iconTextureName = "rgtc",
 
     cost = 32,
