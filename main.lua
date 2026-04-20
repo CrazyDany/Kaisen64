@@ -9,6 +9,9 @@ hook_event(HOOK_UPDATE, function()
         gPlayerSyncTable[0].Kaisen64.maxEnergy = K64_DEFAULT_MAX_ENERGY
         gPlayerSyncTable[0].Kaisen64.regenEnergy = K64_DEFAULT_REGEN_ENERGY
         gPlayerSyncTable[0].Kaisen64.regenEnergyTick = K64_DEFAULT_REGEN_ENERGY_TICK
+        gPlayerSyncTable[0].Kaisen64.RCTStateTimer = 0
+        gPlayerSyncTable[0].Kaisen64.RCTStateEnergyRegen = K64_DEFAULT_RCT_STATE_ENERGY_REGEN
+        gPlayerSyncTable[0].Kaisen64.RCTStateTick = K64_DEFAULT_RCT_STATE_TICK
 
         gPlayerSyncTable[0].Kaisen64.abilitiesSlots = {}
 

@@ -11,13 +11,8 @@ hook_event(HOOK_ON_PACKET_RECEIVE, function(dataTable)
         gMarioStates[0].pos.z = dataTable.k64_changePos_z
     end
 
-    if dataTable.k64_playSample ~= nil then
-        local playPos = {
-            x = dataTable.k64_playSample_playPos_x or gMarioStates[0].pos.x,
-            y = dataTable.k64_ or gMarioStates[0].pos.y,
-            z = dataTable.k64_playSample_playPos_z or gMarioStates[0].pos.z
-        }
-        local playVolume = dataTable.k64_playSample_playVolume or 1
-        audio_sample_play(AudioNames[dataTable.k64_playSample], playPos, playVolume)
+    if dataTable.k64_playStream ~= nil then
+        local playVolume = dataTable.k64_playStream_playVolume or 1
+        PlaySound(AudioNames[dataTable.k64_playStream], playVolume)
     end
 end)

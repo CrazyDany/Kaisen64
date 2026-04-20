@@ -1,8 +1,127 @@
 ABILITY_ID_DRYTRY = 1
 
 local function onUseDryTry()
+    AbilitiesData[ABILITY_ID_DRYTRY].attempts = (AbilitiesData[ABILITY_ID_DRYTRY].attempts or 0) + 1
+    local attempts = AbilitiesData[ABILITY_ID_DRYTRY].attempts
+    local losesInRow = AbilitiesData[ABILITY_ID_DRYTRY].losesInRow or 0
+    local winsInRow = AbilitiesData[ABILITY_ID_DRYTRY].winsInRow or 0
+
+
+    local pseudoChance = math.floor(attempts) + (4 * losesInRow) + math.floor(winsInRow * 2)
+    if AbilitiesData[ABILITY_ID_DRYTRY].jackpotTimer > 0 then
+        pseudoChance = 1
+    end
+
+    AbilitiesData[ABILITY_ID_DRYTRY].stage = AbilitiesData[ABILITY_ID_DRYTRY].stage or 0
+
+    local n1, n2, n3 = -1, -2, -3
+    local min, max = 1, 9
+    if AbilitiesData[ABILITY_ID_DRYTRY].stage == 0 then
+        min, max = 1, 9
+    elseif AbilitiesData[ABILITY_ID_DRYTRY].stage == 1 then
+        min, max = 2, 9
+    elseif AbilitiesData[ABILITY_ID_DRYTRY].stage == 2 then
+        min, max = 4, 9
+    elseif AbilitiesData[ABILITY_ID_DRYTRY].stage == 3 then
+        min, max = 7, 9
+    elseif AbilitiesData[ABILITY_ID_DRYTRY].stage == 4 then
+        min, max = 7, 7
+    end
+
+    n1, n2, n3 = math.random(min, max), math.random(min, max), math.random(min, max)
+    local n = 100 * n1 + 10 * n2 + n3
+
+    if n % 111 == 0 then
+        -- Hitting a Jackpot
+
+        -- Hitting without a Jackpot
+        if AbilitiesData[ABILITY_ID_DRYTRY].jackpotTimer <= 0 then
+            AbilitiesData[ABILITY_ID_DRYTRY].healthBeforeJackpot = gMarioStates[0].health
+        end
+
+        -- Hitting in another Jackpot
+        if AbilitiesData[ABILITY_ID_DRYTRY].jackpotTimer > 0 then
+            PlaySound("SwindlerLaugh", 2)
+        end
+
+        -- Every hitting
+        PlaySound("Jackpot", 0.5)
+        gPlayerSyncTable[0].Kaisen64.playingTheme = "JackpotMusic"
+        AbilitiesData[ABILITY_ID_DRYTRY].jackpotTimer = (2 * 60 + 5) * 30
+    elseif (n1 == n2) or (n1 == n3) or (n2 == n3) then
+        -- Hitting a Pseudo Win
+        AbilitiesData[ABILITY_ID_DRYTRY].losesInRow = 0
+        AbilitiesData[ABILITY_ID_DRYTRY].winsInRow = (AbilitiesData[ABILITY_ID_DRYTRY].winsInRow or 0) + 1
+        AddEnergy(0, gPlayerSyncTable[0].Kaisen64.currentEnergy / 4)
+        AddRCTStateTimer(0,
+            math.abs(gPlayerSyncTable[0].Kaisen64.maxEnergy - gPlayerSyncTable[0].Kaisen64.currentEnergy) / 4)
+
+        if random_float() <= 0.125 then
+            gMarioStates[0].health = gMarioStates[0].health + 256
+        end
+    else
+        -- Losing
+        AbilitiesData[ABILITY_ID_DRYTRY].winsInRow = 0
+        AbilitiesData[ABILITY_ID_DRYTRY].losesInRow = (AbilitiesData[ABILITY_ID_DRYTRY].losesInRow or 0) + 1
+        AddEnergy(0, -gPlayerSyncTable[0].Kaisen64.currentEnergy / 8)
+        AddRCTStateTimer(0,
+            -math.abs(gPlayerSyncTable[0].Kaisen64.maxEnergy - gPlayerSyncTable[0].Kaisen64.currentEnergy) / 6)
+        if random_float() <= 0.125 then
+            gMarioStates[0].health = gMarioStates[0].health - 256
+        end
+
+        if random_float() <= 0.1875 then
+            set_mario_action(gMarioStates[0], ACT_SHOCKED, 0)
+        end
+    end
+
+    AbilitiesData[ABILITY_ID_DRYTRY].lastResult = n
+
+    if n % 111 ~= 0 then
+        if pseudoChance > 0 and pseudoChance < 10 then
+            AbilitiesData[ABILITY_ID_DRYTRY].stage = 0
+        elseif pseudoChance >= 10 and pseudoChance < 20 then
+            AbilitiesData[ABILITY_ID_DRYTRY].stage = 1
+        elseif pseudoChance >= 20 and pseudoChance < 30 then
+            AbilitiesData[ABILITY_ID_DRYTRY].stage = 2
+        elseif pseudoChance >= 30 and pseudoChance < 50 then
+            AbilitiesData[ABILITY_ID_DRYTRY].stage = 3
+        elseif pseudoChance >= 50 then
+            AbilitiesData[ABILITY_ID_DRYTRY].stage = 4
+        end
+    else
+        AbilitiesData[ABILITY_ID_DRYTRY].stage = 0
+    end
+
     return true
 end
+
+--  Ticking jackpot :D
+hook_event(HOOK_UPDATE,
+    function()
+        if gPlayerSyncTable[0].Kaisen64 == nil then return end
+
+        if AbilitiesData[ABILITY_ID_DRYTRY].jackpotTimer > 0 then
+            -- djui_chat_message_create("Jackpot timer: " .. AbilitiesData[ABILITY_ID_DRYTRY].jackpotTimer)
+            AbilitiesData[ABILITY_ID_DRYTRY].jackpotTimer = AbilitiesData[ABILITY_ID_DRYTRY].jackpotTimer - 1
+            gPlayerSyncTable[0].Kaisen64.currentEnergy = gPlayerSyncTable[0].Kaisen64.maxEnergy
+            gMarioStates[0].health = 2176
+
+
+
+            -- End jackpot
+            if AbilitiesData[ABILITY_ID_DRYTRY].jackpotTimer == 0 then
+                gMarioStates[0].health = AbilitiesData[ABILITY_ID_DRYTRY].healthBeforeJackpot
+                gPlayerSyncTable[0].Kaisen64.playingTheme = nil
+                AbilitiesData[ABILITY_ID_DRYTRY].healthBeforeJackpot = 0
+                AbilitiesData[ABILITY_ID_DRYTRY].jackpotTimer = 0
+                AbilitiesData[ABILITY_ID_DRYTRY].attempts = 0
+                AbilitiesData[ABILITY_ID_DRYTRY].losesInRow = 0
+                AbilitiesData[ABILITY_ID_DRYTRY].winsInRow = 0
+            end
+        end
+    end
+)
 
 RegisterAbility(ABILITY_ID_DRYTRY, {
     name = "Dry Try",
@@ -16,9 +135,45 @@ RegisterAbility(ABILITY_ID_DRYTRY, {
 
     onTryUseFunction = onUseDryTry,
     getExtraInfo = function()
-        return { " - " }
-    end
+        if AbilitiesData[ABILITY_ID_DRYTRY] == nil then return { " - " } end
+
+        if AbilitiesData[ABILITY_ID_DRYTRY].stage == 0 then
+            return {
+                "Result: " .. AbilitiesData[ABILITY_ID_DRYTRY].lastResult,
+                "Jackpot chance: 9/729",
+                "Win chance: 216/729"
+            }
+        elseif AbilitiesData[ABILITY_ID_DRYTRY].stage == 1 then
+            return {
+                "Result: " .. AbilitiesData[ABILITY_ID_DRYTRY].lastResult,
+                "Jackpot chance: 8/512",
+                "Win chance: 168/512",
+            }
+        elseif AbilitiesData[ABILITY_ID_DRYTRY].stage == 2 then
+            return {
+                "Result: " .. AbilitiesData[ABILITY_ID_DRYTRY].lastResult,
+                "Jackpot chance: 6/216",
+                "Win chance: 90/216",
+            }
+        elseif AbilitiesData[ABILITY_ID_DRYTRY].stage == 3 then
+            return {
+                "Result: " .. AbilitiesData[ABILITY_ID_DRYTRY].lastResult,
+                "Jackpot chance: 3/27",
+                "Win chance: 18/27",
+            }
+        elseif AbilitiesData[ABILITY_ID_DRYTRY].stage == 4 then
+            return {
+                "Guaranteed Jackpot"
+            }
+        end
+    end,
 
     -- кастомные поля
-
+    attempts = 0,
+    losesInRow = 0,
+    pseudoWinsInRow = 0,
+    stage = 0,
+    lastResult = 0,
+    jackpotTimer = 0,
+    healthBeforeJackpot = 0
 })

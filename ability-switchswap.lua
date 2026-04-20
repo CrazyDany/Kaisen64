@@ -11,14 +11,11 @@ local function onUseSwitchSwap()
     if targetType == "player" then
         if target.playerIndex == 0 then return false end
 
-        audio_sample_play(SFX_CLAP, m.pos, 1)
+        PlaySound("Clap", 1)
 
-        network_send_to(target.playerIndex, true,
+        network_send(true,
             {
-                k64_playSample = "clap",
-                k64_playSample_playPos_x = m.pos.x,
-                k64_playSample_playPos_y = m.pos.y,
-                k64_playSample_playPos_z = m.pos.z,
+                k64_playSample = "Clap",
                 k64_playSample_playVolume = 1
             })
 
