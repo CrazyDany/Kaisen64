@@ -74,6 +74,20 @@ local function renderEnergyBar()
     djui_hud_render_rect(barX + barPadding, barY + barPadding, barWidth * energyProportion - (2 * barPadding),
         barHeight - (2 * barPadding))
 
+    -- рендер цены способности на баре
+    local abilityId = gPlayerSyncTable[0].Kaisen64.abilitiesSlots[gPlayerSyncTable[0].Kaisen64.currentAbilitySlot]
+    local ability = AbilitiesData[abilityId]
+    if ability.curCooldown <= 0 and gPlayerSyncTable[0].Kaisen64.currentEnergy >= ability.cost then
+        local abilityCost = AbilitiesData[abilityId].cost or 0
+        local abilityCostProportion = abilityCost / maxEnergy
+        local abilityCostBarWidth = barWidth * abilityCostProportion
+        djui_hud_set_color(255, 0, 0, 255)
+        djui_hud_render_rect(barX + barPadding + barWidth * energyProportion - (2 * barPadding) - abilityCostBarWidth,
+            barY + barPadding,
+            abilityCostBarWidth,
+            barHeight - (2 * barPadding))
+    end
+
     djui_hud_set_color(255, 255, 255, 255)
     djui_hud_print_text(text, barX + barWidth / 2 - textWidth / 2, barY + barHeight / 2 - 32, textScale)
 end
