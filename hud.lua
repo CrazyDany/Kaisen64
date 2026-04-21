@@ -1,3 +1,5 @@
+K64_HUD_DEFAULT_ENERGY_COLOR = { r = 171, g = 205, b = 239 }
+
 local function renderAbilitiesSlots()
     SlotSize = 80
     local slotPadding = 8
@@ -50,6 +52,15 @@ local function renderAbilitiesSlots()
     end
 end
 
+local customEnergyColor = nil
+function SetCustomEnergyColor(r, g, b)
+    customEnergyColor = {
+        r = r or K64_HUD_DEFAULT_ENERGY_COLOR.r,
+        g = g or K64_HUD_DEFAULT_ENERGY_COLOR.g,
+        b = b or K64_HUD_DEFAULT_ENERGY_COLOR.b
+    }
+end
+
 local function renderEnergyBar()
     local barWidth = 512
     local barHeight = 24
@@ -70,7 +81,10 @@ local function renderEnergyBar()
 
     djui_hud_set_color(31, 31, 31, 255)
     djui_hud_render_rect(barX, barY, barWidth, barHeight)
-    djui_hud_set_color(127, 127, 255, 255)
+    djui_hud_set_color(171, 205, 239, 255)
+    if customEnergyColor ~= nil then
+        djui_hud_set_color(customEnergyColor.r, customEnergyColor.g, customEnergyColor.b, 255)
+    end
     djui_hud_render_rect(barX + barPadding, barY + barPadding, barWidth * energyProportion - (2 * barPadding),
         barHeight - (2 * barPadding))
 

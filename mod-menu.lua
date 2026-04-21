@@ -1,8 +1,26 @@
 local modMenuOpened = false
 
+local customEnergyBarColor = {
+    r = 255,
+    g = 255,
+    b = 255
+}
+
 function OpenModMenu()
     game_pause()
     set_pause_menu_hidden(true)
+
+    -- Загрузка сохраненных штук
+    customEnergyBarColor.r = mod_storage_load_number("customenergycolor.r")
+    customEnergyBarColor.g = mod_storage_load_number("customenergycolor.g")
+    customEnergyBarColor.b = mod_storage_load_number("customenergycolor.b")
+
+    if customEnergyBarColor.r == 0 and customEnergyBarColor.g == 0 and customEnergyBarColor.b == 0 then
+        customEnergyBarColor.r = 255
+        customEnergyBarColor.g = 255
+        customEnergyBarColor.b = 255
+    end
+
     modMenuOpened = true
 end
 
@@ -59,7 +77,7 @@ local function renderModMenu()
     local modLogoWidth = modLogo.width * scale
     local modLogoHeight = modLogo.height * scale
     local modLogoX = backgroundX + padding + (backgroundWidth - modLogoWidth * scale) / 2
-    local modLogoY = backgroundY + padding - modLogoHeight/4
+    local modLogoY = backgroundY + padding - modLogoHeight / 4
     djui_hud_set_color(255, 255, 255, 255)
     djui_hud_render_texture(modLogo, modLogoX, modLogoY, scale, scale)
 
@@ -194,7 +212,71 @@ local function renderModMenu()
             end
         end
     elseif selectedSection == MODEMNU_SECTION_CUSTOMIZATION then
+        -- Ренедрим выбранный цвет
 
+        local previewRectWidth = 128
+        local previewRectHeight = 128
+        local previewRectX = backgroundX + backgroundWidth - padding * 2 - previewRectWidth - 768
+        local previewRectY = backgroundY + padding + 128
+
+        djui_hud_set_color(
+            customEnergyBarColor.r or 255,
+            customEnergyBarColor.g or 255,
+            customEnergyBarColor.b or 255,
+            255
+        )
+        djui_hud_render_rect(previewRectX, previewRectY, previewRectWidth, previewRectHeight)
+
+        -- Кнопочки слайдеров и логика установки цвета
+        local sliderWidth = 255
+        local sliderHeight = 32
+        local slidersX = previewRectX + previewRectWidth + padding
+        local slidersY = backgroundY + padding + 128
+
+        djui_hud_set_color(31, 31, 31, 255)
+        djui_hud_render_rect(slidersX, slidersY, sliderWidth, sliderHeight * 3 + padding * 2)
+        local sliderRButton = K64Button(slidersX, slidersY, sliderWidth, sliderHeight)
+        local sliderGButton = K64Button(slidersX, slidersY + sliderHeight + padding, sliderWidth, sliderHeight)
+        local sliderBButton = K64Button(slidersX, slidersY + (sliderHeight + padding) * 2, sliderWidth, sliderHeight)
+
+        if sliderRButton == K64_BUTTON_LEFT_CLICK then
+            customEnergyBarColor.r = math.floor((djui_hud_get_mouse_x() - slidersX) / sliderWidth * 255)
+        elseif sliderGButton == K64_BUTTON_LEFT_CLICK then
+            customEnergyBarColor.g = math.floor((djui_hud_get_mouse_x() - slidersX) / sliderWidth * 255)
+        elseif sliderBButton == K64_BUTTON_LEFT_CLICK then
+            customEnergyBarColor.b = math.floor((djui_hud_get_mouse_x() - slidersX) / sliderWidth * 255)
+        end
+
+        -- Хотя бы что-то нажато
+        if sliderRButton == K64_BUTTON_LEFT_CLICK or sliderGButton == K64_BUTTON_LEFT_CLICK or
+            sliderBButton == K64_BUTTON_LEFT_CLICK then
+            -- local modFs = mod_fs_get() or mod_fs_create()
+            -- local energyColorFile = modFs:get_file("energybarcolor.txt") or
+            --     modFs:create_file("energybarcolor.txt", true)
+            -- energyColorFile:erase(energyColorFile.size)
+            -- energyColorFile:write_string(
+            --     customEnergyBarColor.r .. " " ..
+            --     customEnergyBarColor.g .. " " ..
+            --     customEnergyBarColor.b
+            -- )
+            -- modFs:save()
+            SetCustomEnergyColor(customEnergyBarColor.r, customEnergyBarColor.g, customEnergyBarColor.b)
+            mod_storage_save_number("customenergycolor.r", customEnergyBarColor.r)
+            mod_storage_save_number("customenergycolor.g", customEnergyBarColor.g)
+            mod_storage_save_number("customenergycolor.b", customEnergyBarColor.b)
+        end
+
+        -- Рендерим сами визуальные слайдеры
+        djui_hud_set_color(255, 0, 0, 255)
+        djui_hud_render_rect(slidersX, slidersY, sliderWidth * ((customEnergyBarColor.r or 255) / 255), sliderHeight)
+
+        djui_hud_set_color(0, 255, 0, 255)
+        djui_hud_render_rect(slidersX, slidersY + sliderHeight + padding,
+            sliderWidth * ((customEnergyBarColor.g or 255) / 255), sliderHeight)
+
+        djui_hud_set_color(0, 0, 255, 255)
+        djui_hud_render_rect(slidersX, slidersY + (sliderHeight + padding) * 2,
+            sliderWidth * ((customEnergyBarColor.b or 255) / 255), sliderHeight)
     end
 end
 

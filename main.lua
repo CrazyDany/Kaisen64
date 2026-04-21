@@ -24,6 +24,22 @@ hook_event(HOOK_UPDATE, function()
 
         gPlayerSyncTable[0].Kaisen64.playingTheme = nil
 
+        -- Загрузка сохранененых штук
+        -- local modFs = mod_fs_get() or mod_fs_create()
+        -- local energyColorFile = modFs:get_file("energybarcolor.txt") or modFs:create_file("energybarcolor.txt", true)
+        -- local energyColorString = energyColorFile:read_string()
+        -- djui_chat_message_create("energybarcolor.txt: " .. energyColorString)
+        local loadedEnergyColorR = mod_storage_load_number("customenergycolor.r")
+        local loadedEnergyColorG = mod_storage_load_number("customenergycolor.g")
+        local loadedEnergyColorB = mod_storage_load_number("customenergycolor.b")
+
+        SetCustomEnergyColor(K64_HUD_DEFAULT_ENERGY_COLOR.r, K64_HUD_DEFAULT_ENERGY_COLOR.g,
+            K64_HUD_DEFAULT_ENERGY_COLOR.b)
+
+        if loadedEnergyColorR ~= 0 or loadedEnergyColorG ~= 0 or loadedEnergyColorB ~= 0 then
+            SetCustomEnergyColor(loadedEnergyColorR, loadedEnergyColorG, loadedEnergyColorB)
+        end
+
         djui_chat_message_create("Система Kaisen64 успешно добавлена!")
     end
 end)

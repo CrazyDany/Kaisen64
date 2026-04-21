@@ -83,17 +83,17 @@ local function onUseDryTry()
     if n % 111 ~= 0 then
         if pseudoChance > 0 and pseudoChance < 10 then
             AbilitiesData[ABILITY_ID_DRYTRY].stage = 0
-        elseif pseudoChance >= 10 and pseudoChance < 20 then
+        elseif pseudoChance >= 10 and pseudoChance < 25 then
             AbilitiesData[ABILITY_ID_DRYTRY].stage = 1
-        elseif pseudoChance >= 20 and pseudoChance < 30 then
+        elseif pseudoChance >= 25 and pseudoChance < 45 then
             AbilitiesData[ABILITY_ID_DRYTRY].stage = 2
-        elseif pseudoChance >= 30 and pseudoChance < 50 then
+        elseif pseudoChance >= 45 and pseudoChance < 70 then
             AbilitiesData[ABILITY_ID_DRYTRY].stage = 3
-        elseif pseudoChance >= 50 then
+        elseif pseudoChance >= 90 then
             AbilitiesData[ABILITY_ID_DRYTRY].stage = 4
         end
     else
-        AbilitiesData[ABILITY_ID_DRYTRY].stage = 0
+        AbilitiesData[ABILITY_ID_DRYTRY].stage = 3
     end
 
     return true
@@ -159,7 +159,7 @@ RegisterAbility(ABILITY_ID_DRYTRY, {
     iconTextureName = "rgtc",
 
     cost = 32,
-    cooldown = 64,
+    cooldown = 128,
     curCooldown = 0,
 
     onTryUseFunction = onUseDryTry,
