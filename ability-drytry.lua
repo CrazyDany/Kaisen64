@@ -37,6 +37,7 @@ local function onUseDryTry()
         -- Hitting without a Jackpot
         if AbilitiesData[ABILITY_ID_DRYTRY].jackpotTimer <= 0 then
             AbilitiesData[ABILITY_ID_DRYTRY].healthBeforeJackpot = gMarioStates[0].health
+            MultipleCooldownSpeed(0, 0.5)
         end
 
         -- Hitting in another Jackpot
@@ -47,7 +48,8 @@ local function onUseDryTry()
         -- Every hitting
         PlaySound("Jackpot", 0.5)
         gPlayerSyncTable[0].Kaisen64.playingTheme = "JackpotMusic"
-        AbilitiesData[ABILITY_ID_DRYTRY].jackpotTimer = (2 * 60 + 5) * 30
+        AbilitiesData[ABILITY_ID_DRYTRY].jackpotTimer = (AbilitiesData[ABILITY_ID_DRYTRY].jackpotTimer or 0) +
+        (2 * 60 + 5) * 30
     elseif (n1 == n2) or (n1 == n3) or (n2 == n3) then
         -- Hitting a Pseudo Win
         AbilitiesData[ABILITY_ID_DRYTRY].losesInRow = 0
@@ -113,6 +115,7 @@ hook_event(HOOK_UPDATE,
 
             -- End jackpot
             if AbilitiesData[ABILITY_ID_DRYTRY].jackpotTimer == 0 then
+                MultipleCooldownSpeed(0, 2)
                 gMarioStates[0].health = AbilitiesData[ABILITY_ID_DRYTRY].healthBeforeJackpot
                 gPlayerSyncTable[0].Kaisen64.playingTheme = nil
                 AbilitiesData[ABILITY_ID_DRYTRY].healthBeforeJackpot = 0
