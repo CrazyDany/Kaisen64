@@ -26,7 +26,7 @@ hook_event(HOOK_MARIO_UPDATE,
             return math.clamp(1 - (d / 7500), 0, 1)
         end
 
-        local volume = f(distance)
+        local volume = f(distance) * (gPlayerSyncTable[m.playerIndex].Kaisen64.playingThemeVolume or 1)
         -- djui_chat_message_create("Volume: " .. volume)
 
         audio_stream_play(AudioNames[themeName], false, volume)

@@ -42,14 +42,15 @@ local function onUseDryTry()
 
         -- Hitting in another Jackpot
         if AbilitiesData[ABILITY_ID_DRYTRY].jackpotTimer > 0 then
-            PlaySound("SwindlerLaugh", 2)
+            PlaySound("SwindlerLaugh", 1.5)
         end
 
         -- Every hitting
         PlaySound("Jackpot", 0.5)
         gPlayerSyncTable[0].Kaisen64.playingTheme = "JackpotMusic"
+        gPlayerSyncTable[0].Kaisen64.playingThemeVolume = 0.5
         AbilitiesData[ABILITY_ID_DRYTRY].jackpotTimer = (AbilitiesData[ABILITY_ID_DRYTRY].jackpotTimer or 0) +
-        (2 * 60 + 5) * 30
+            (2 * 60 + 5) * 30
     elseif (n1 == n2) or (n1 == n3) or (n2 == n3) then
         -- Hitting a Pseudo Win
         AbilitiesData[ABILITY_ID_DRYTRY].losesInRow = 0
