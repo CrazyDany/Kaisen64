@@ -29,7 +29,7 @@ local function onUseDryTry()
     end
 
     n1, n2, n3 = math.random(min, max), math.random(min, max), math.random(min, max)
-    local n = 777
+    local n = n1 * 100 + n2 * 10 + n3
 
     if n % 111 == 0 then
         -- Hitting a Jackpot
