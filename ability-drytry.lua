@@ -55,9 +55,8 @@ local function onUseDryTry()
         -- Hitting a Pseudo Win
         AbilitiesData[ABILITY_ID_DRYTRY].losesInRow = 0
         AbilitiesData[ABILITY_ID_DRYTRY].winsInRow = (AbilitiesData[ABILITY_ID_DRYTRY].winsInRow or 0) + 1
-        AddEnergy(0, gPlayerSyncTable[0].Kaisen64.currentEnergy / 4)
-        AddRCTStateTimer(0,
-            math.abs(gPlayerSyncTable[0].Kaisen64.maxEnergy - gPlayerSyncTable[0].Kaisen64.currentEnergy) / 4)
+        -- AddEnergy(0, (n / 6 * (gPlayerSyncTable[0].Kaisen64.maxEnergy / 1024)))
+        AddRCTStateTimer(0, (n / 8) * (gPlayerSyncTable[0].Kaisen64.maxEnergy / 1024))
 
         if random_float() <= 0.125 then
             gMarioStates[0].health = gMarioStates[0].health + 256
@@ -66,14 +65,13 @@ local function onUseDryTry()
         -- Losing
         AbilitiesData[ABILITY_ID_DRYTRY].winsInRow = 0
         AbilitiesData[ABILITY_ID_DRYTRY].losesInRow = (AbilitiesData[ABILITY_ID_DRYTRY].losesInRow or 0) + 1
-        AddEnergy(0, -gPlayerSyncTable[0].Kaisen64.currentEnergy / 8)
-        AddRCTStateTimer(0,
-            -math.abs(gPlayerSyncTable[0].Kaisen64.maxEnergy - gPlayerSyncTable[0].Kaisen64.currentEnergy) / 6)
-        if random_float() <= 0.125 then
+        -- AddEnergy(0, (-n / 8) * (gPlayerSyncTable[0].Kaisen64.maxEnergy / 1024))
+        AddRCTStateTimer(0, (-n / 6) * (gPlayerSyncTable[0].Kaisen64.maxEnergy / 1024))
+        if random_float() <= (1 / 12) then
             gMarioStates[0].health = gMarioStates[0].health - 256
         end
 
-        if random_float() <= 0.1875 then
+        if random_float() <= (1 / 10) then
             set_mario_action(gMarioStates[0], ACT_SHOCKED, 0)
         end
     end
