@@ -25,7 +25,7 @@ local MenuConfig = {
             normal = { 31, 31, 31, 200 },
             hover = { 63, 63, 63, 255 },
         },
-        icon_scale = 3,
+        icon_scale = 2,
         lock_texture = "lock",
         drag_icon_scale = 2.5,
     },
@@ -102,7 +102,7 @@ local function renderAbilitiesSection(x, y, w, h)
             UIButton(cellX, cellY, cellW, cellW, cfgGrid.colors, nil, nil)
 
             local texName = ability.iconTextureName or cfgGrid.lock_texture
-            UITexture(texName, cellX, cellY, cfgGrid.icon_scale)
+            UITexture(texName, cellX + (cellW - 32 * cfgGrid.icon_scale)/2, cellY + (cellW - 32 * cfgGrid.icon_scale)/2, cfgGrid.icon_scale)
 
             -- Начало перетаскивания, только если нет активного драга
             if not UIIsDragging() then

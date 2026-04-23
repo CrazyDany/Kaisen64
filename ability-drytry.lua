@@ -79,21 +79,21 @@ local function onUseDryTry()
     AbilitiesData[ABILITY_ID_DRYTRY].lastResult = n
 
     if n % 111 ~= 0 then
-        if pseudoChance > 0 and pseudoChance < 10 then
+        if pseudoChance > 0 and pseudoChance < 5 then
             AbilitiesData[ABILITY_ID_DRYTRY].stage = 0
-        elseif pseudoChance >= 10 and pseudoChance < 25 then
+        elseif pseudoChance >= 5 and pseudoChance < 15 then
             AbilitiesData[ABILITY_ID_DRYTRY].stage = 1
-        elseif pseudoChance >= 25 and pseudoChance < 45 then
+        elseif pseudoChance >= 15 and pseudoChance < 30 then
             AbilitiesData[ABILITY_ID_DRYTRY].stage = 2
-        elseif pseudoChance >= 45 and pseudoChance < 70 then
+        elseif pseudoChance >= 30 and pseudoChance < 50 then
             AbilitiesData[ABILITY_ID_DRYTRY].stage = 3
-        elseif pseudoChance >= 90 then
+        elseif pseudoChance >= 75 then
             AbilitiesData[ABILITY_ID_DRYTRY].stage = 4
         end
     else
         AbilitiesData[ABILITY_ID_DRYTRY].stage = 3
     end
-
+    djui_chat_message_create(tostring(pseudoChance))
     return true
 end
 
@@ -154,7 +154,7 @@ RegisterAbility(ABILITY_ID_DRYTRY, {
     name = "DryTry",
     shortName = "DrTr",
     description = "Try your luck! It can give you a god power or punish you very hard.",
-    iconTextureName = "rgtc",
+    iconTextureName = "drtr",
 
     cost = 64,
     cooldown = 128,

@@ -52,5 +52,15 @@ local function onCommandKaien64(msg)
     return true
 end
 
+-- local scale = 0.1
+
+-- hook_event(HOOK_MARIO_UPDATE, function(m)
+--     if network_global_index_from_local(m.playerIndex) ~= 0 then return end
+
+--     obj_set_hitbox_radius_and_height(m.marioObj, 37 * scale, 160 * scale)
+--     obj_scale(m.marioObj, scale)
+--     djui_chat_message_create(tostring(m.marioObj.hitboxRadius) .. " " .. tostring(m.marioObj.hitboxHeight))
+-- end)
+
 hook_chat_command("kaisen64", "Начало работы с Kaisen64", onCommandKaien64)
 hook_chat_command("k64", "Начало работы с Kaisen64", onCommandKaien64)
