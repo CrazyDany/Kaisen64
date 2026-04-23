@@ -26,8 +26,9 @@ hook_event(HOOK_UPDATE, function(...)
 
     if ability ~= nil then
         if m.controller.buttonPressed == L_TRIG then
-            if (ability.onTryUseFunction ~= nil) and (ability.curCooldown <= 0) and (gPlayerSyncTable[0].Kaisen64.currentEnergy >= ability.cost) then
-                if ability.onTryUseFunction() == true then
+            if (ability.onUseFunction ~= nil) and (ability.curCooldown <= 0) and (gPlayerSyncTable[0].Kaisen64.currentEnergy >= ability.cost) then
+                if ability.getPermissibilityToUse() then
+                    ability.onUseFunction()
                     AddEnergy(0, -ability.cost or 0)
                     ability.curCooldown = (ability.cooldown * GetCooldownSpeed(0)) or 0
                 end

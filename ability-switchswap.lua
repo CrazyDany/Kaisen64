@@ -4,8 +4,6 @@ local function onUseSwitchSwap()
     local target = AbilitiesData[ABILITY_ID_SWITCHSWAP].target
     local targetType = AbilitiesData[ABILITY_ID_SWITCHSWAP].targetType
 
-    if target == nil or targetType == nil then return false end
-
     local m = gMarioStates[0]
 
     if targetType == "player" then
@@ -32,11 +30,7 @@ local function onUseSwitchSwap()
 
         AbilitiesData[ABILITY_ID_SWITCHSWAP].target = nil
         AbilitiesData[ABILITY_ID_SWITCHSWAP].targetType = nil
-
-        return true
     end
-
-    return false
 end
 
 hook_event(HOOK_ALLOW_PVP_ATTACK, function(a, v, i)
@@ -60,7 +54,14 @@ RegisterAbility(ABILITY_ID_SWITCHSWAP, {
     cooldown = 32,
     curCooldown = 0,
 
-    onTryUseFunction = onUseSwitchSwap,
+    onUseFunction = onUseSwitchSwap,
+    getPermissibilityToUse = function()
+        if AbilitiesData[ABILITY_ID_SWITCHSWAP].target == nil or AbilitiesData[ABILITY_ID_SWITCHSWAP].targetType == nil then
+            return false
+        end
+
+        return true
+    end,
     getExtraInfo = function()
         local ability = AbilitiesData[ABILITY_ID_SWITCHSWAP]
 

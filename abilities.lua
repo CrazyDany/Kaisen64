@@ -11,7 +11,8 @@ AbilitiesData = {
         cooldown = 32,
         curCooldown = 0,
 
-        onTryUseFunction = function() return true end,
+        onUseFunction = function() return true end,
+        getPermissibilityToUse = function() return true end,
         getExtraInfo = function()
             return { " - " }
         end

@@ -156,11 +156,14 @@ RegisterAbility(ABILITY_ID_DRYTRY, {
     description = "Try your luck! It can give you a god power or punish you very hard.",
     iconTextureName = "rgtc",
 
-    cost = 32,
+    cost = 64,
     cooldown = 128,
     curCooldown = 0,
 
-    onTryUseFunction = onUseDryTry,
+    onUseFunction = onUseDryTry,
+    getPermissibilityToUse = function()
+        return (AbilitiesData[ABILITY_ID_DRYTRY].jackpotTimer or 0) <= 0
+    end,
     getExtraInfo = function()
         if AbilitiesData[ABILITY_ID_DRYTRY] == nil then return { " - " } end
 

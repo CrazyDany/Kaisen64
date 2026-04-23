@@ -91,7 +91,7 @@ local function renderEnergyBar()
     -- рендер цены способности на баре
     local abilityId = gPlayerSyncTable[0].Kaisen64.abilitiesSlots[gPlayerSyncTable[0].Kaisen64.currentAbilitySlot]
     local ability = AbilitiesData[abilityId]
-    if ability.curCooldown <= 0 and gPlayerSyncTable[0].Kaisen64.currentEnergy >= ability.cost then
+    if (ability.curCooldown <= 0) and (gPlayerSyncTable[0].Kaisen64.currentEnergy >= ability.cost) and (ability.getPermissibilityToUse()) then
         local abilityCost = AbilitiesData[abilityId].cost or 0
         local abilityCostProportion = abilityCost / maxEnergy
         local abilityCostBarWidth = barWidth * abilityCostProportion
