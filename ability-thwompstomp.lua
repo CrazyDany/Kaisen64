@@ -61,9 +61,9 @@ end
 RegisterAbility(ABILTY_ID_THWOMPSTOMP,
     {
         name = "ThwompStomp",
-        shortName = "ThSt",
-        description = "Ability placeholder for modders",
-        iconTextureName = "ability-icon-locked",
+        shortName = "TwSt",
+        description = "Fall fast and create a shocking wave by landing.",
+        iconTextureName = "twst",
 
         cost = 128,
         cooldown = 128,
