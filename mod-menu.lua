@@ -16,7 +16,7 @@ local MenuConfig = {
             active = { 63, 63, 63, 255 },
             text = { 255, 255, 255, 255 },
         },
-        text_scale = 1.6,
+        text_scale = 1,
     },
     abilities_grid = {
         cell_size = 96,
