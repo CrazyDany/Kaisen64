@@ -16,7 +16,7 @@ local MenuConfig = {
             active = { 63, 63, 63, 255 },
             text = { 255, 255, 255, 255 },
         },
-        text_scale = 1,
+        text_scale = 1.6,
     },
     abilities_grid = {
         cell_size = 96,
@@ -24,10 +24,10 @@ local MenuConfig = {
         colors = {
             normal = { 31, 31, 31, 200 },
             hover = { 63, 63, 63, 255 },
-            selected = { 80, 80, 80, 200 },
         },
         icon_scale = 3,
         lock_texture = "lock",
+        drag_icon_scale = 2.5,
     },
     ability_slots = {
         size = 64,
@@ -51,13 +51,14 @@ local MenuConfig = {
 
 local modMenuOpened = false
 local selectedSection = 0
-local selectedForEditSlot = -1
 local customEnergyBarColor = { r = 255, g = 255, b = 255 }
 
 local Sections = {
     [0] = { name = "Abilities", id = 0 },
     [1] = { name = "Customization", id = 1 },
 }
+
+local currentSlotRects = {}
 
 local function loadSettings()
     local r = mod_storage_load_number("customenergycolor.r")
@@ -89,42 +90,45 @@ local function renderAbilitiesSection(x, y, w, h)
     local columns = math.max(1, math.floor(w / (cellW + cellPad)))
     local rows = math.floor(gridAreaH / (cellW + cellPad))
 
+    -- Отрисовка сетки способностей
     for idx = 1, columns * rows do
         local ability = AbilitiesData[idx - 1]
-        local row = math.floor((idx - 1) / columns)
-        local col = (idx - 1) % columns
-        local cellX = x + col * (cellW + cellPad)
-        local cellY = y + row * (cellW + cellPad)
+        if ability then
+            local row = math.floor((idx - 1) / columns)
+            local col = (idx - 1) % columns
+            local cellX = x + col * (cellW + cellPad)
+            local cellY = y + row * (cellW + cellPad)
 
-        local colors = cfgGrid.colors
-        if selectedForEditSlot ~= -1 then
-            colors = { normal = cfgGrid.colors.selected, hover = cfgGrid.colors.hover }
-        end
+            UIButton(cellX, cellY, cellW, cellW, cfgGrid.colors, nil, nil)
 
-        UIButton(cellX, cellY, cellW, cellW, colors, function()
-            if selectedForEditSlot ~= -1 and ability then
-                gPlayerSyncTable[0].Kaisen64.abilitiesSlots[selectedForEditSlot] = idx - 1
-                djui_chat_message_create("Set ability: " .. (ability.name or "?") .. " to slot " .. selectedForEditSlot)
-                selectedForEditSlot = -1
+            local texName = ability.iconTextureName or cfgGrid.lock_texture
+            UITexture(texName, cellX, cellY, cfgGrid.icon_scale)
+
+            -- Начало перетаскивания, только если нет активного драга
+            if not UIIsDragging() then
+                local mouseX = djui_hud_get_mouse_x()
+                local mouseY = djui_hud_get_mouse_y()
+                local buttonsPressed = djui_hud_get_mouse_buttons_pressed()
+                if buttonsPressed == 1 and mouseX >= cellX and mouseX <= cellX + cellW and mouseY >= cellY and mouseY <= cellY + cellW then
+                    UIStartDrag(idx - 1, texName, cfgGrid.drag_icon_scale, nil, mouseX, mouseY)
+                end
             end
-        end)
-
-        local texName = ability and ability.iconTextureName or cfgGrid.lock_texture
-        local texColor = ability and nil or { 63, 63, 63, 255 }
-        UITexture(texName, cellX, cellY, cfgGrid.icon_scale, texColor)
+        end
     end
 
+    -- Слоты способностей
     local slotSize = cfgSlots.size
     local slotPad = cfgSlots.padding
     local slotsStartY = y + gridAreaH + 8
     local maxSlots = K64_MAX_ABILITIES_SLOTS or 8
 
+    currentSlotRects = {}
     for slotIdx = 0, maxSlots - 1 do
         local slotX = x + slotIdx * (slotSize + slotPad)
         if slotX + slotSize <= x + w then
-            UIButton(slotX, slotsStartY, slotSize, slotSize, cfgSlots.colors, function()
-                selectedForEditSlot = slotIdx
-            end)
+            table.insert(currentSlotRects, { x = slotX, y = slotsStartY, w = slotSize, h = slotSize, idx = slotIdx })
+
+            UIButton(slotX, slotsStartY, slotSize, slotSize, cfgSlots.colors, nil, nil)
 
             local abilityIdx = gPlayerSyncTable[0].Kaisen64.abilitiesSlots[slotIdx]
             local slotAbility = AbilitiesData[abilityIdx]
@@ -169,13 +173,11 @@ local function renderModMenu()
 
     UIPanel(winX, winY, winW, winH, MenuConfig.window.bg_color)
 
-    -- Кнопка закрытия
     local closeSize = MenuConfig.window.close_btn_size
     local closeX = winX + winW - pad - closeSize
     local closeY = winY + pad
     UIButton(closeX, closeY, closeSize, closeSize, MenuConfig.window.close_btn_color, CloseModMenu)
 
-    -- Логотип
     local logo = MenuConfig.logo
     local logoInfo = get_texture_info(logo.texture)
     local logoHeight = 0
@@ -188,7 +190,6 @@ local function renderModMenu()
         logoHeight = logoH + pad
     end
 
-    -- Вкладки
     local tabCfg = MenuConfig.tabs
     local tabStartY = winY + pad + logoHeight + 16
     local tabHeight = tabCfg.height
@@ -227,7 +228,6 @@ local function renderModMenu()
         end
     end
 
-    -- Область контента
     local contentX = winX + pad
     local contentY = tabStartY + tabHeight + pad
     local contentW = winW - 2 * pad
@@ -238,6 +238,24 @@ local function renderModMenu()
     elseif selectedSection == 1 then
         renderCustomizationSection(contentX, contentY, contentW, contentH)
     end
+
+    UIDrawDrag()
+end
+
+local function handleDrop(dropData)
+    if not dropData or dropData.data == nil then return end
+    local abilityIndex = dropData.data
+    local dropX = dropData.dropX
+    local dropY = dropData.dropY
+
+    for _, slot in ipairs(currentSlotRects) do
+        if dropX >= slot.x and dropX <= slot.x + slot.w and dropY >= slot.y and dropY <= slot.y + slot.h then
+            gPlayerSyncTable[0].Kaisen64.abilitiesSlots[slot.idx] = abilityIndex
+            local abilityName = AbilitiesData[abilityIndex] and AbilitiesData[abilityIndex].name or "?"
+            djui_chat_message_create("Set ability: " .. abilityName .. " to slot " .. slot.idx)
+            break
+        end
+    end
 end
 
 function OpenModMenu()
@@ -245,7 +263,6 @@ function OpenModMenu()
     set_pause_menu_hidden(true)
     loadSettings()
     modMenuOpened = true
-    selectedForEditSlot = -1
 end
 
 function CloseModMenu()
@@ -260,6 +277,10 @@ end
 
 local function onHudRender()
     if modMenuOpened then
+        local dropData = UIUpdateDrag()
+        if dropData then
+            handleDrop(dropData)
+        end
         renderModMenu()
     end
 end
