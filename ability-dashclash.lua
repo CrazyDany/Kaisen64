@@ -39,6 +39,9 @@ RegisterAbility(ABILITY_ID_DASHCLASH, {
 
     onUseFunction = onUseDashClash,
     getPermissibilityToUse = function()
+        local m = gMarioStates[0]
+        if (m.action & ACT_FLAG_AIR) ~= 0 then return false end
+
         return true
     end,
     getExtraInfo = function()
