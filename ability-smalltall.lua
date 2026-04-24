@@ -1,23 +1,47 @@
 ABILITY_ID_SMALLTALL = 6
 
-local STTimer = 0
-local scale = 0
-
-function onUseSmallTall()
-    STTimer = 4096
-    scale = 3.0
+local function onUseSmallTall()
+    AbilitiesData[ABILITY_ID_SMALLTALL].STTimer = 512
+    if random_float() >= 0.5 then
+        AbilitiesData[ABILITY_ID_SMALLTALL].scale = 3.0
+    else
+        AbilitiesData[ABILITY_ID_SMALLTALL].scale = 0.2
+    end
 end
 
 hook_event(HOOK_MARIO_UPDATE, function(m)
-    if STTimer > 0 then
-        obj_scale(m.marioObj, scale)
-        STTimer = STTimer - 1
-        djui_chat_message_create(tostring(STTimer))
-        if scale == 3.0 then
+    if m.playerIndex ~= 0 then return end
+
+    if AbilitiesData[ABILITY_ID_SMALLTALL].STTimer > 1 then
+        obj_scale(m.marioObj, AbilitiesData[ABILITY_ID_SMALLTALL].scale)
+        obj_set_hitbox_radius_and_height(m.marioObj, 37 * AbilitiesData[ABILITY_ID_SMALLTALL].scale, 160 * AbilitiesData[ABILITY_ID_SMALLTALL].scale)
+        -- djui_chat_message_create(tostring(AbilitiesData[ABILITY_ID_SMALLTALL].STTimer))
+        AbilitiesData[ABILITY_ID_SMALLTALL].STTimer = AbilitiesData[ABILITY_ID_SMALLTALL].STTimer - 1
+        if AbilitiesData[ABILITY_ID_SMALLTALL].scale == 3.0 then
+            set_override_fov(65)
+            if (m.hurtCounter) ~= 0 then
+                m.hurtCounter = m.hurtCounter / 2
+            end
             if m.action == ACT_WALKING then
-                mario_set_forward_vel(m, 15)
+                mario_set_forward_vel(m, 20)
+                smlua_anim_util_set_animation(m.marioObj, "mario_anim_walking")
+                play_step_sound(m, 0, 88)
+            end
+            if AbilitiesData[ABILITY_ID_SMALLTALL].actionsShake[m.action] ~= nil then
+                set_camera_shake_from_hit(SHAKE_GROUND_POUND)
+            end
+        elseif AbilitiesData[ABILITY_ID_SMALLTALL].scale == 0.2 then
+            set_override_fov(35)
+            if (m.hurtCounter) ~= 0 then
+                m.hurtCounter = m.hurtCounter * 1.5
+            end
+            if m.action == ACT_WALKING then
+                mario_set_forward_vel(m, 70)
             end
         end
+    elseif AbilitiesData[ABILITY_ID_SMALLTALL].STTimer == 1 then
+        set_override_fov(50)
+        AbilitiesData[ABILITY_ID_SMALLTALL].STTimer = 0
     end
 end)
 
@@ -37,5 +61,27 @@ RegisterAbility(ABILITY_ID_SMALLTALL, {
     end,
     getExtraInfo = function()
         return { " - " }
-    end
+    end,
+
+    STTimer = 0,
+
+    scale = 0,
+
+    actionsShake = {
+        [ACT_WALKING] = true,
+        [ACT_JUMP_LAND] = true,
+        [ACT_DOUBLE_JUMP_LAND] = true,
+        [ACT_TRIPLE_JUMP_LAND] = true,
+        [ACT_LONG_JUMP_LAND] = true,
+        [ACT_SIDE_FLIP_LAND] = true,
+        [ACT_BACKFLIP_LAND] = true,
+        [ACT_SOFT_BONK] = true,
+        [ACT_SOFT_BACKWARD_GROUND_KB] = true,
+        [ACT_BACKWARD_GROUND_KB] = true,
+        [ACT_HARD_BACKWARD_GROUND_KB] = true,
+        [ACT_SOFT_FORWARD_GROUND_KB] = true,
+        [ACT_FORWARD_GROUND_KB] = true,
+        [ACT_HARD_FORWARD_GROUND_KB] = true,
+        [ACT_GROUND_POUND_LAND] = true,
+    }
 })

@@ -1,6 +1,6 @@
 ABILITY_ID_PURECURE = 3
 
-function onUsePureCure()
+local function onUsePureCure()
     local m = gMarioStates[0]
 
     m.health = m.health + 512
