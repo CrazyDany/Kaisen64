@@ -1,10 +1,17 @@
 ABILITY_ID_DASHCLASH = 5
 
-ACT_DASHCLASH_DASH = allocate_mario_action(ACT_GROUP_MOVING | ACT_FLAG_MOVING | ACT_FLAG_ATTACKING | ACT_FLAG_CUSTOM_ACTION)
+ACT_DASHCLASH_DASH = allocate_mario_action(ACT_GROUP_MOVING | ACT_FLAG_MOVING | ACT_FLAG_ATTACKING |
+    ACT_FLAG_CUSTOM_ACTION)
 
-function act_dashclash_dash(m)
+local function act_dashclash_dash(m)
+    local stepResult = perform_ground_step(m)
+
+    if stepResult == GROUND_STEP_LEFT_GROUND then
+        set_mario_action(m, ACT_FREEFALL, 0)
+        return
+    end
+
     mario_set_forward_vel(m, 100)
-    perform_ground_step(m)
 
     set_mario_particle_flags(m, PARTICLE_DUST, 0)
     play_sound(SOUND_MOVING_TERRAIN_SLIDE + m.terrainSoundAddend, m.marioObj.header.gfx.cameraToObject)
@@ -19,9 +26,9 @@ function act_dashclash_dash(m)
     end
 end
 
-hook_mario_action(ACT_DASHCLASH_DASH, {every_frame = act_dashclash_dash})
+hook_mario_action(ACT_DASHCLASH_DASH, { every_frame = act_dashclash_dash })
 
-function onUseDashClash()
+local function onUseDashClash()
     local m = gMarioStates[0]
 
     set_mario_action(m, ACT_DASHCLASH_DASH, 0)
