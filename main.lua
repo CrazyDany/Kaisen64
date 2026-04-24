@@ -1,6 +1,8 @@
 -- name: Kaisen64
 -- description: Kaisen64
 
+LEVEL_ARENA = level_register('level_arena_entry', COURSE_NONE, 'Arena', 'arena', 28000, 0x28, 0x28, 0x28)
+
 hook_event(HOOK_UPDATE, function()
     if gPlayerSyncTable[0].Kaisen64 == nil then
         gPlayerSyncTable[0].Kaisen64 = {}
@@ -39,8 +41,11 @@ hook_event(HOOK_UPDATE, function()
         if loadedEnergyColorR ~= 0 or loadedEnergyColorG ~= 0 or loadedEnergyColorB ~= 0 then
             SetCustomEnergyColor(loadedEnergyColorR, loadedEnergyColorG, loadedEnergyColorB)
         end
+        
+        warp_to_level(LEVEL_ARENA, 1, 0)
 
         djui_chat_message_create("Система Kaisen64 успешно добавлена!")
+
     end
 end)
 
