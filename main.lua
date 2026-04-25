@@ -19,12 +19,23 @@ hook_event(HOOK_UPDATE, function()
         gPlayerSyncTable[0].Kaisen64.abilitiesSlots = {}
 
         gPlayerSyncTable[0].Kaisen64.abilitiesSlots[0] = ABILITY_ID_SMALLTALL
-        gPlayerSyncTable[0].Kaisen64.abilitiesSlots[1] = ABILITY_ID_SWITCHSWAP
+        gPlayerSyncTable[0].Kaisen64.abilitiesSlots[1] = ABILITY_ID_DRYTRY
         gPlayerSyncTable[0].Kaisen64.abilitiesSlots[2] = ABILITY_ID_SWITCHSWAP
 
         gPlayerSyncTable[0].Kaisen64.currentAbilitySlot = 0
 
         gPlayerSyncTable[0].Kaisen64.playingTheme = nil
+
+        local screenWidth = djui_hud_get_screen_width()
+        local screenHeight = djui_hud_get_screen_height()
+        local frames = {
+            { frame = 0,           x = 0, y = 0, w = screenWidth, h = screenHeight, color = { 255, 255, 255, 1 } },
+            { frame = 4,           x = 0, y = 0, w = screenWidth, h = screenHeight, color = { 255, 255, 255, 255 } },
+            { frame = 4 + 32,      x = 0, y = 0, w = screenWidth, h = screenHeight, color = { 255, 255, 255, 255 } },
+            { frame = 4 + 32 + 16, x = 0, y = 0, w = screenWidth, h = screenHeight, color = { 255, 255, 255, 1 } },
+        }
+
+        UITweenRect(frames)
 
         -- Загрузка сохранененых штук
         -- local modFs = mod_fs_get() or mod_fs_create()

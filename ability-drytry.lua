@@ -170,6 +170,19 @@ hook_event(HOOK_ON_SET_MARIO_ACTION, function(m)
     end
 end)
 
+hook_event(HOOK_ALLOW_HAZARD_SURFACE, function(m, h)
+    if (gPlayerSyncTable[0].Kaisen64 == nil) or (m.playerIndex ~= 0) then return end
+
+    if AbilitiesData[ABILITY_ID_DRYTRY].jackpotTimer > 0 then
+        if h == HAZARD_TYPE_LAVA_FLOOR then
+            if m.action == ACT_WALKING then
+                play_sound_and_spawn_particles(m, SOUND_LAVA, 0)
+            end
+            return false
+        end
+    end
+end)
+
 RegisterAbility(ABILITY_ID_DRYTRY, {
     name = "DryTry",
     shortName = "DrTr",
