@@ -87,7 +87,7 @@ local function onUseDryTry()
             AbilitiesData[ABILITY_ID_DRYTRY].stage = 2
         elseif pseudoChance >= 30 and pseudoChance < 50 then
             AbilitiesData[ABILITY_ID_DRYTRY].stage = 3
-        elseif pseudoChance >= 75 then
+        elseif pseudoChance >= 50 then
             AbilitiesData[ABILITY_ID_DRYTRY].stage = 4
         end
     else
