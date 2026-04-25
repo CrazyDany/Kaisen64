@@ -201,3 +201,194 @@ function UITexture(textureName, x, y, scale, color)
         djui_hud_render_texture(tex, x, y, scale, scale)
     end
 end
+
+local activeTweens = {}
+
+local function lerp(a, b, t)
+    return a + (b - a) * t
+end
+
+local function lerpColor(c1, c2, t)
+    return {
+        lerp(c1[1], c2[1], t),
+        lerp(c1[2], c2[2], t),
+        lerp(c1[3], c2[3], t),
+        lerp(c1[4] or 255, c2[4] or 255, t),
+    }
+end
+
+local function findKeyframes(keyframes, currentFrame)
+    local prev = nil
+    local next = nil
+    for i, kf in ipairs(keyframes) do
+        if kf.frame <= currentFrame then
+            prev = kf
+        elseif next == nil then
+            next = kf
+            break
+        end
+    end
+    if not prev then
+        prev = keyframes[1]
+        next = keyframes[2]
+    end
+    if not next then
+        next = prev
+    end
+    local t = 0
+    if prev.frame ~= next.frame then
+        t = (currentFrame - prev.frame) / (next.frame - prev.frame)
+    end
+    return prev, next, t
+end
+
+local function updateTween(tween, currentFrame)
+    local prev, nextKf, t = findKeyframes(tween.keyframes, currentFrame)
+    for field, _ in pairs(prev) do
+        if field ~= "frame" then
+            local prevVal = prev[field]
+            local nextVal = nextKf[field]
+            if prevVal and nextVal then
+                if field == "color" then
+                    tween.current[field] = lerpColor(prevVal, nextVal, t)
+                elseif type(prevVal) == "number" then
+                    tween.current[field] = lerp(prevVal, nextVal, t)
+                else
+                    tween.current[field] = nextVal
+                end
+            else
+                tween.current[field] = prevVal
+            end
+        end
+    end
+end
+
+local function drawText(tween)
+    local cur = tween.current
+    djui_hud_set_color(cur.color[1], cur.color[2], cur.color[3], cur.color[4])
+    djui_hud_set_font(tween.font)
+    djui_hud_print_text(tween.text, cur.x, cur.y, cur.scale)
+end
+
+local function drawRect(tween)
+    local cur = tween.current
+    djui_hud_set_color(cur.color[1], cur.color[2], cur.color[3], cur.color[4])
+    djui_hud_render_rect(cur.x, cur.y, cur.w, cur.h)
+end
+
+local function drawTexture(tween)
+    local cur = tween.current
+    local tex = get_texture_info(tween.textureName)
+    if tex then
+        if cur.color then
+            djui_hud_set_color(cur.color[1], cur.color[2], cur.color[3], cur.color[4])
+        else
+            djui_hud_set_color(255, 255, 255, 255)
+        end
+        djui_hud_render_texture(tex, cur.x, cur.y, cur.scale, cur.scale)
+    end
+end
+
+function UITweenText(text, font, keyframes)
+    if #keyframes == 0 then return end
+    local startKf = keyframes[1]
+    local tween = {
+        type = "text",
+        font = font,
+        text = text,
+        current = {
+            x = startKf.x or 0,
+            y = startKf.y or 0,
+            scale = startKf.scale or 1,
+            color = startKf.color or { 255, 255, 255, 255 },
+        },
+        keyframes = keyframes,
+        startFrame = nil,
+        totalFrames = keyframes[#keyframes].frame,
+    }
+    table.insert(activeTweens, tween)
+    return tween
+end
+
+function UITweenRect(keyframes)
+    if #keyframes == 0 then return end
+    local startKf = keyframes[1]
+    local tween = {
+        type = "rect",
+        current = {
+            x = startKf.x or 0,
+            y = startKf.y or 0,
+            w = startKf.w or 0,
+            h = startKf.h or 0,
+            color = startKf.color or { 255, 255, 255, 255 },
+        },
+        keyframes = keyframes,
+        startFrame = nil,
+        totalFrames = keyframes[#keyframes].frame,
+    }
+    table.insert(activeTweens, tween)
+    return tween
+end
+
+function UITweenTexture(textureName, keyframes)
+    if #keyframes == 0 then return end
+    local startKf = keyframes[1]
+    local tween = {
+        type = "texture",
+        textureName = textureName,
+        current = {
+            x = startKf.x or 0,
+            y = startKf.y or 0,
+            scale = startKf.scale or 1,
+            color = startKf.color or { 255, 255, 255, 255 },
+        },
+        keyframes = keyframes,
+        startFrame = nil,
+        totalFrames = keyframes[#keyframes].frame,
+    }
+    table.insert(activeTweens, tween)
+    return tween
+end
+
+local frameCounter = 0
+local function onHudRender()
+    frameCounter = frameCounter + 1
+
+    local i = 1
+    while i <= #activeTweens do
+        local tween = activeTweens[i]
+        if not tween.startFrame then
+            tween.startFrame = frameCounter
+        end
+        local currentFrame = frameCounter - tween.startFrame
+
+        if currentFrame >= tween.totalFrames then
+            local lastKf = tween.keyframes[#tween.keyframes]
+            for k, v in pairs(lastKf) do
+                if k ~= "frame" then
+                    tween.current[k] = v
+                end
+            end
+            if tween.type == "text" then
+                drawText(tween)
+            elseif tween.type == "rect" then
+                drawRect(tween)
+            elseif tween.type == "texture" then
+                drawTexture(tween)
+            end
+            table.remove(activeTweens, i)
+        else
+            updateTween(tween, currentFrame)
+            if tween.type == "text" then
+                drawText(tween)
+            elseif tween.type == "rect" then
+                drawRect(tween)
+            elseif tween.type == "texture" then
+                drawTexture(tween)
+            end
+            i = i + 1
+        end
+    end
+end
+
+hook_event(HOOK_ON_HUD_RENDER, onHudRender)

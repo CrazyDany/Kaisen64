@@ -31,6 +31,26 @@ local function onUseDryTry()
     n1, n2, n3 = math.random(min, max), math.random(min, max), math.random(min, max)
     local n = n1 * 100 + n2 * 10 + n3
 
+    djui_hud_set_font(FONT_MENU)
+
+    local textScale = 7
+    local text = tostring(n)
+    if n % 111 == 0 then
+        text = "JACKPOT"
+    end
+
+    local textX = (djui_hud_get_screen_width() - djui_hud_measure_text(text) * textScale) / 2 - 40
+    local textY = djui_hud_get_screen_height() / 2 - 40 * textScale
+
+    local keyframes = {
+        { frame = 0,  x = textX, y = textY, scale = textScale, color = { 255, 255, 255, 31 } },
+        { frame = 16, x = textX, y = textY, scale = textScale, color = { 255, 255, 255, 63 } },
+        { frame = 24, x = textX, y = textY, scale = textScale, color = { 255, 255, 255, 63 } },
+        { frame = 40, x = textX, y = textY, scale = textScale, color = { 255, 255, 255, 0 } },
+    }
+
+    UITweenText(text, FONT_MENU, keyframes)
+
     if n % 111 == 0 then
         -- Hitting a Jackpot
 
