@@ -202,6 +202,7 @@ function UITexture(textureName, x, y, scale, color)
     end
 end
 
+local frameCounter = 0
 local activeTweens = {}
 
 local function lerp(a, b, t)
@@ -278,7 +279,16 @@ end
 
 local function drawTexture(tween)
     local cur = tween.current
-    local tex = get_texture_info(tween.textureName)
+    local texName = tween.textureName
+
+    if tween.animated and tween.numFrames and tween.numFrames > 0 then
+        local frameDelay = tween.frameDelay or 1
+        local elapsed = (frameCounter - (tween.startFrame or frameCounter))
+        local frameIndex = math.floor(elapsed / frameDelay) % tween.numFrames + 1
+        texName = tween.textureName .. frameIndex
+    end
+
+    local tex = get_texture_info(texName)
     if tex then
         if cur.color then
             djui_hud_set_color(cur.color[1], cur.color[2], cur.color[3], cur.color[4])
@@ -289,9 +299,10 @@ local function drawTexture(tween)
     end
 end
 
-function UITweenText(text, font, keyframes)
+function UITweenText(text, font, keyframes, options)
     if #keyframes == 0 then return end
     local startKf = keyframes[1]
+    options = options or {}
     local tween = {
         type = "text",
         font = font,
@@ -305,14 +316,17 @@ function UITweenText(text, font, keyframes)
         keyframes = keyframes,
         startFrame = nil,
         totalFrames = keyframes[#keyframes].frame,
+        looping = options.looping or false,
+        onComplete = options.onComplete,
     }
     table.insert(activeTweens, tween)
     return tween
 end
 
-function UITweenRect(keyframes)
+function UITweenRect(keyframes, options)
     if #keyframes == 0 then return end
     local startKf = keyframes[1]
+    options = options or {}
     local tween = {
         type = "rect",
         current = {
@@ -325,14 +339,17 @@ function UITweenRect(keyframes)
         keyframes = keyframes,
         startFrame = nil,
         totalFrames = keyframes[#keyframes].frame,
+        looping = options.looping or false,
+        onComplete = options.onComplete,
     }
     table.insert(activeTweens, tween)
     return tween
 end
 
-function UITweenTexture(textureName, keyframes)
+function UITweenTexture(textureName, keyframes, options)
     if #keyframes == 0 then return end
     local startKf = keyframes[1]
+    options = options or {}
     local tween = {
         type = "texture",
         textureName = textureName,
@@ -345,12 +362,16 @@ function UITweenTexture(textureName, keyframes)
         keyframes = keyframes,
         startFrame = nil,
         totalFrames = keyframes[#keyframes].frame,
+        animated = options.animated or false,
+        numFrames = options.numFrames or 1,
+        frameDelay = options.frameDelay or 1,
+        looping = options.looping or false,
+        onComplete = options.onComplete,
     }
     table.insert(activeTweens, tween)
     return tween
 end
 
-local frameCounter = 0
 local function onHudRender()
     frameCounter = frameCounter + 1
 
@@ -362,7 +383,21 @@ local function onHudRender()
         end
         local currentFrame = frameCounter - tween.startFrame
 
-        if currentFrame >= tween.totalFrames then
+        local completed = false
+        while currentFrame >= tween.totalFrames do
+            if tween.looping then
+                if tween.onComplete then
+                    tween.onComplete(tween)
+                end
+                tween.startFrame = tween.startFrame + tween.totalFrames
+                currentFrame = currentFrame - tween.totalFrames
+            else
+                completed = true
+                break
+            end
+        end
+
+        if completed then
             local lastKf = tween.keyframes[#tween.keyframes]
             for k, v in pairs(lastKf) do
                 if k ~= "frame" then
@@ -375,6 +410,9 @@ local function onHudRender()
                 drawRect(tween)
             elseif tween.type == "texture" then
                 drawTexture(tween)
+            end
+            if tween.onComplete and not tween.looping then
+                tween.onComplete(tween)
             end
             table.remove(activeTweens, i)
         else

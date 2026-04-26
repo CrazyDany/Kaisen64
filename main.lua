@@ -26,16 +26,14 @@ hook_event(HOOK_UPDATE, function()
 
         gPlayerSyncTable[0].Kaisen64.playingTheme = nil
 
-        local screenWidth = djui_hud_get_screen_width()
-        local screenHeight = djui_hud_get_screen_height()
-        local frames = {
-            { frame = 0,           x = 0, y = 0, w = screenWidth, h = screenHeight, color = { 255, 255, 255, 1 } },
-            { frame = 4,           x = 0, y = 0, w = screenWidth, h = screenHeight, color = { 255, 255, 255, 255 } },
-            { frame = 4 + 32,      x = 0, y = 0, w = screenWidth, h = screenHeight, color = { 255, 255, 255, 255 } },
-            { frame = 4 + 32 + 16, x = 0, y = 0, w = screenWidth, h = screenHeight, color = { 255, 255, 255, 1 } },
-        }
+        -- local scale = 8
+        -- local frames = {
+        --     { frame = 0,  x = 0, y = 0, scale = scale, color = { 255, 255, 255, 255 } },
+        --     { frame = 32, x = 0, y = 0, scale = scale, color = { 255, 255, 255, 255 } },
+        -- }
 
-        UITweenRect(frames)
+        -- local animTex = UITweenTexture("bf-anim", frames,
+        -- { looping = true, animated = true, numFrames = 32, frameDelay = 1 })
 
         -- Загрузка сохранененых штук
         -- local modFs = mod_fs_get() or mod_fs_create()
@@ -52,11 +50,10 @@ hook_event(HOOK_UPDATE, function()
         if loadedEnergyColorR ~= 0 or loadedEnergyColorG ~= 0 or loadedEnergyColorB ~= 0 then
             SetCustomEnergyColor(loadedEnergyColorR, loadedEnergyColorG, loadedEnergyColorB)
         end
-        
+
         warp_to_level(LEVEL_ARENA, 1, 0)
 
         djui_chat_message_create("Система Kaisen64 успешно добавлена!")
-
     end
 end)
 
