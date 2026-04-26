@@ -27,7 +27,7 @@ hook_event(HOOK_ON_PACKET_RECEIVE, function(dataTable)
         local scale = 8
         local frames = {
             { frame = 0,  x = 0, y = 0, scale = scale, color = { 255, 255, 255, 255 } },
-            { frame = 32, x = 0, y = 0, scale = scale, color = { 255, 255, 255, 255 } },
+            { frame = 14, x = 0, y = 0, scale = scale, color = { 255, 255, 255, 255 } },
         }
 
         PlaySound("BlackFlash", 1.5)
@@ -36,7 +36,7 @@ hook_event(HOOK_ON_PACKET_RECEIVE, function(dataTable)
             {
                 looping = false,
                 animated = true,
-                numFrames = 32,
+                numFrames = 14,
                 frameDelay = 1,
                 onComplete = function()
                     set_mario_action(m, ACT_JUMP_KICK, 0)
