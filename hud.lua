@@ -301,7 +301,7 @@ local function renderExtraInfo()
     local x = sw * settings.relativeX
     local y = sh * settings.relativeY
     local lineCount = math.min(#extraInfo, settings.maxLines)
-    local panelHeight = settings.padding * 2 + lineCount * settings.lineHeight + 24
+    local panelHeight = settings.padding * 2 + lineCount * settings.lineHeight + 32
 
     djui_hud_set_color(settings.bgColor[1], settings.bgColor[2], settings.bgColor[3], settings.bgColor[4])
     djui_hud_render_rect(x, y, panelWidth, panelHeight)
@@ -313,7 +313,7 @@ local function renderExtraInfo()
     local titleScale = getAdaptiveScale(settings.fontSize + 0.05)
     djui_hud_print_text(abilityName, x + settings.padding, y + settings.padding, titleScale)
 
-    local textY = y + settings.padding + 24
+    local textY = y + settings.padding + 32
     local textScale = getAdaptiveScale(settings.fontSize)
     djui_hud_set_color(settings.textColor[1], settings.textColor[2], settings.textColor[3], settings.textColor[4])
     for i = 1, lineCount do
