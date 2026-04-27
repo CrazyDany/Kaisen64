@@ -261,8 +261,8 @@ local function renderHealthBar()
     local mario = gMarioStates[0]
     if not mario then return end
 
-    local realHealth = mario.health
-    local MAX_REAL_HEALTH = 2176
+    local realHealth = mario.health - 255
+    local MAX_REAL_HEALTH = 1921
     local healthPercent = math.min(1, realHealth / MAX_REAL_HEALTH)
 
     djui_hud_set_color(settings.bgColor[1], settings.bgColor[2], settings.bgColor[3], settings.bgColor[4])

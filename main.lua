@@ -45,6 +45,8 @@ hook_event(HOOK_UPDATE, function()
 
         warp_to_level(LEVEL_ARENA, 1, 0)
 
+        hud_hide()
+
         djui_chat_message_create("Система Kaisen64 успешно добавлена!")
     end
 end)

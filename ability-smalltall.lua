@@ -42,6 +42,7 @@ hook_event(HOOK_MARIO_UPDATE, function(m)
     elseif AbilitiesData[ABILITY_ID_SMALLTALL].STTimer == 1 then
         set_override_fov(50)
         AbilitiesData[ABILITY_ID_SMALLTALL].STTimer = 0
+        obj_set_hitbox_radius_and_height(m.marioObj, 37, 160)
     end
 end)
 
