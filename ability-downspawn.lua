@@ -1,12 +1,16 @@
-ABILTY_ID_DOWNSPAWN = 120
+ABILTY_ID_DOWNSPAWN = 7
 
 
 
 local function onUseDownSpawn()
     local m = gMarioStates[0]
 	
-	
-	spawn_sync_object(DSObjects[0].id, DSObjects[0].model, DSObjects[0].dx, DSObjects[0].dy, nil)
+	local No = AbilitiesData[ABILITY_ID_DOWNSPAWN].DSPredictionObject
+	spawn_sync_object(
+	AbilitiesData[ABILITY_ID_DOWNSPAWN].DSObjects[No].id,
+	AbilitiesData[ABILITY_ID_DOWNSPAWN].DSObjects[No].model,
+	AbilitiesData[ABILITY_ID_DOWNSPAWN].DSObjects[No].dx,
+	AbilitiesData[ABILITY_ID_DOWNSPAWN].DSObjects[No].dy, nil)
 	    
 	
 end
