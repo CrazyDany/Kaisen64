@@ -37,6 +37,8 @@ const GeoLayout arena_area_1_geo[] = {
 		GEO_TRANSLATE_ROTATE_WITH_DL(LAYER_OPAQUE, -547, 6086, 92, 0, -177, 0, arena_dl_Plane_015_mesh_layer_1),
 		GEO_TRANSLATE_ROTATE_WITH_DL(LAYER_ALPHA, -562, 6176, 97, 90, 0, -3, arena_dl_Plane_016_mesh_layer_4),
 		GEO_TRANSLATE_ROTATE_WITH_DL(LAYER_ALPHA, 0, 6264, 0, 90, 0, -3, arena_dl_Plane_017_mesh_layer_4),
+		GEO_TRANSLATE_ROTATE_WITH_DL(LAYER_OPAQUE, -1141, 2331, 0, 0, 90, 0, arena_dl_Plane_018_mesh_layer_1),
+		GEO_TRANSLATE_ROTATE_WITH_DL(LAYER_OPAQUE, -419, 3100, -271, 0, -125, 0, arena_dl_Plane_019_mesh_layer_1),
 	GEO_CLOSE_NODE(),
 	GEO_RETURN(),
 };
