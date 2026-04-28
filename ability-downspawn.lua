@@ -16,9 +16,18 @@ local function onUseDownSpawn()
         end
     )
 
+    
+end
+
+hook_event(HOOK_ON_SET_MARIO_ACTION, function(m)
+    if m.playerIndex ~= 0 or gPlayerSyncTable[0].Kaisen64 == nil then
+        return
+    end
+
     AbilitiesData[ABILITY_ID_DOWNSPAWN].DSPredictionObject = math.random(0,
         #AbilitiesData[ABILITY_ID_DOWNSPAWN].DSObjects)
-end
+
+end)
 
 RegisterAbility(ABILITY_ID_DOWNSPAWN, {
     name = "DownSpawn",
