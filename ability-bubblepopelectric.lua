@@ -166,5 +166,5 @@ RegisterAbility(ABILITY_ID_BUBBLEPOPELECTRIC, {
     curFrame = 0,
     frames = {},
 	interpolationFrame = 0,
-	interpolationForce = 3.0
+	interpolationForce = 2.0
 })
