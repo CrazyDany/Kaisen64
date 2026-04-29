@@ -76,28 +76,66 @@ hook_event(HOOK_MARIO_UPDATE, function(m)
 
     if ability.isReplayingFrames then
         if get_global_timer() % ability.frameReplayTiming == 0 then
-            ability.curFrame = ability.curFrame + 1
+            
             if ability.curFrame > #ability.frames then
-                onEndReplayingFrames()
+				onEndReplayingFrames()
                 return
             end
 
-            local frame = ability.frames[ability.curFrame]
-            m.pos.x = frame.pos.x
-            m.pos.y = frame.pos.y
-            m.pos.z = frame.pos.z
-            m.vel.x = frame.vel.x
-            m.vel.y = frame.vel.y
-            m.vel.z = frame.vel.z
-            m.faceAngle.x = frame.angle.x
-            m.faceAngle.y = frame.angle.y
-            m.faceAngle.z = frame.angle.z
-
-            m.marioObj.header.gfx.pos.x = m.pos.x
-            m.marioObj.header.gfx.pos.y = m.pos.y
-            m.marioObj.header.gfx.pos.z = m.pos.z
-
-            set_mario_action(m, frame.action, 0)
+			if ability.curFrame == 0 then
+				ability.curFrame = ability.curFrame + 1
+				return	
+			end
+			if get_global_timer() % ability.interpolationForce == 0 or ability.curFrame == #ability.frames then
+				ability.curFrame = ability.curFrame + 1
+				local frame = ability.frames[ability.curFrame]
+				
+				ability.interpolationFrame = 0
+				
+				
+				if (frame ~= nil) then
+	            m.pos.x = frame.pos.x
+	            m.pos.y = frame.pos.y
+	            m.pos.z = frame.pos.z
+	            m.vel.x = frame.vel.x
+	            m.vel.y = frame.vel.y
+	            m.vel.z = frame.vel.z
+	            m.faceAngle.x = frame.angle.x
+	            m.faceAngle.y = frame.angle.y
+	            m.faceAngle.z = frame.angle.z
+	
+	            m.marioObj.header.gfx.pos.x = m.pos.x
+	            m.marioObj.header.gfx.pos.y = m.pos.y
+	            m.marioObj.header.gfx.pos.z = m.pos.z
+				end
+			else
+				local frame = ability.frames[ability.curFrame]
+				local frameNext = ability.frames[ability.curFrame+1]
+				
+				
+				
+				ability.interpolationFrame = ability.interpolationFrame + 1
+				local part = (ability.interpolationFrame/ability.interpolationForce)
+				if (frame ~= nil and frameNext ~= nil) then
+				m.pos.x = frame.pos.x+(frameNext.pos.x-frame.pos.x)*part
+				m.pos.y = frame.pos.y+(frameNext.pos.y-frame.pos.y)*part
+				m.pos.z = frame.pos.z+(frameNext.pos.z-frame.pos.z)*part
+				m.vel.x = frame.vel.x+(frameNext.vel.x-frame.vel.x)*part
+				m.vel.y = frame.vel.y+(frameNext.vel.y-frame.vel.y)*part
+				m.vel.z = frame.vel.z+(frameNext.vel.z-frame.vel.z)*part
+				m.faceAngle.x = frame.angle.x+(frameNext.angle.x-frame.angle.x)*part
+				m.faceAngle.y = frame.angle.y+(frameNext.angle.y-frame.angle.y)*part
+				m.faceAngle.z = frame.angle.z+(frameNext.angle.z-frame.angle.z)*part
+				
+				m.marioObj.header.gfx.pos.x = frame.pos.x+(frameNext.pos.x-frame.pos.x)*part
+				m.marioObj.header.gfx.pos.y = frame.pos.y+(frameNext.pos.y-frame.pos.y)*part
+				m.marioObj.header.gfx.pos.z = frame.pos.z+(frameNext.pos.z-frame.pos.z)*part
+				end
+			end
+			local frame = ability.frames[ability.curFrame]
+			if (frame ~= nil) then
+            	set_mario_action(m, frame.action, 0)
+			end
         end
     end
 end)
@@ -126,5 +164,7 @@ RegisterAbility(ABILITY_ID_BUBBLEPOPELECTRIC, {
     frameReplayTiming = 1,
     frameCost = 16,
     curFrame = 0,
-    frames = {}
+    frames = {},
+	interpolationFrame = 0,
+	interpolationForce = 3.0
 })
