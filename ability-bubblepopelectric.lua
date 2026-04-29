@@ -24,6 +24,12 @@ local function onRecordFrame()
             z = m.vel.z
         },
 
+        angle = {
+            x = m.faceAngle.x,
+            y = m.faceAngle.y,
+            z = m.faceAngle.z
+        },
+
         action = m.action
     }
     djui_chat_message_create("Frame recorded " .. #AbilitiesData[ABILITY_ID_BUBBLEPOPELECTRIC].frames)
@@ -86,6 +92,10 @@ hook_event(HOOK_MARIO_UPDATE,
                 m.vel.y = ability.frames[ability.curFrame].vel.y
                 m.vel.z = ability.frames[ability.curFrame].vel.z
 
+                m.faceAngle.x = ability.frames[ability.curFrame].angle.x
+                m.faceAngle.y = ability.frames[ability.curFrame].angle.y
+                m.faceAngle.z = ability.frames[ability.curFrame].angle.z
+
                 m.marioObj.header.gfx.pos.x = m.pos.x
                 m.marioObj.header.gfx.pos.y = m.pos.y
                 m.marioObj.header.gfx.pos.z = m.pos.z
@@ -124,9 +134,8 @@ RegisterAbility(ABILITY_ID_BUBBLEPOPELECTRIC, {
     isRecordingFrames = false,
     isReplayingFrames = false,
     frameRecordTiming = 8,
-    frameReplayTiming = 2,
-    frameCost = 8,
+    frameReplayTiming = 1,
+    frameCost = 16,
     curFrame = 0,
-    frames = {
-    }
+    frames = {}
 })
