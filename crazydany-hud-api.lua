@@ -38,6 +38,52 @@ function UIButton(x, y, w, h, colors, onClickLeft, onClickRight)
     return state
 end
 
+function UIToggle(x, y, w, h, initialState, colors, onChange)
+    local currentState = initialState
+    local hovered = false
+
+    local function renderAndHandle()
+        local mouseX = djui_hud_get_mouse_x()
+        local mouseY = djui_hud_get_mouse_y()
+        local mouseButtonsPressed = djui_hud_get_mouse_buttons_pressed()
+        if mouseX >= x and mouseX <= x + w and mouseY >= y and mouseY <= y + h then
+            if not hovered then
+                hovered = true
+            end
+            if mouseButtonsPressed == 1 then
+                currentState = not currentState
+                if onChange then
+                    onChange(currentState)
+                end
+            end
+        else
+            if hovered then
+                hovered = false
+            end
+        end
+        if hovered then
+            if colors.hover then
+                djui_hud_set_color(colors.hover[1], colors.hover[2], colors.hover[3], colors.hover[4])
+            elseif currentState and colors.on then
+                djui_hud_set_color(colors.on[1], colors.on[2], colors.on[3], colors.on[4])
+            elseif not currentState and colors.off then
+                djui_hud_set_color(colors.off[1], colors.off[2], colors.off[3], colors.off[4])
+            end
+        else
+            if currentState and colors.on then
+                djui_hud_set_color(colors.on[1], colors.on[2], colors.on[3], colors.on[4])
+            elseif not currentState and colors.off then
+                djui_hud_set_color(colors.off[1], colors.off[2], colors.off[3], colors.off[4])
+            end
+        end
+
+        djui_hud_render_rect(x, y, w, h)
+    end
+
+    renderAndHandle()
+    return currentState
+end
+
 local dragState = {
     active = false,
     data = nil,

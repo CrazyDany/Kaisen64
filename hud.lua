@@ -27,6 +27,8 @@ local HUDSettings = {
         textCooldownColor = { 100, 100, 100, 255 },
         textSelectedColor = { 255, 255, 255, 255 },
         cdTextScale = 0.65,
+        -- secounds / frames
+        cdTextType = "secounds",
     },
 
     energyBar = {
@@ -78,6 +80,9 @@ end
 
 local function getCooldownText(cooldownFrames)
     if cooldownFrames <= 0 then return nil end
+    if HUDSettings.slots.cdTextType == "secounds" then
+        return string.format("%.1fs", cooldownFrames / 30)
+    end
     return tostring(math.floor(cooldownFrames))
 end
 

@@ -102,7 +102,8 @@ local function renderAbilitiesSection(x, y, w, h)
             UIButton(cellX, cellY, cellW, cellW, cfgGrid.colors, nil, nil)
 
             local texName = ability.iconTextureName or cfgGrid.lock_texture
-            UITexture(texName, cellX + (cellW - 32 * cfgGrid.icon_scale)/2, cellY + (cellW - 32 * cfgGrid.icon_scale)/2, cfgGrid.icon_scale)
+            UITexture(texName, cellX + (cellW - 32 * cfgGrid.icon_scale) / 2, cellY + (cellW - 32 * cfgGrid.icon_scale) /
+                2, cfgGrid.icon_scale)
 
             -- Начало перетаскивания, только если нет активного драга
             if not UIIsDragging() then
@@ -159,6 +160,13 @@ local function renderCustomizationSection(x, y, w, h)
     if newColor then
         customEnergyBarColor = newColor
     end
+
+    -- -- secounds or frames
+    -- local toggleTimeType = UIToggle(0, 0, 100, 100, true, { on = { 255, 0, 0, 255 }, off = { 0, 255, 0, 255 } },
+    --     function(val)
+    --         djui_chat_message_create("val: " .. val)
+    --     end
+    -- )
 end
 
 local function renderModMenu()
