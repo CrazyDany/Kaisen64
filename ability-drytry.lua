@@ -29,7 +29,7 @@ local function onUseDryTry()
     end
 
     n1, n2, n3 = math.random(min, max), math.random(min, max), math.random(min, max)
-    local n = n1 * 100 + n2 * 10 + n3
+    local n = 777
 
     djui_hud_set_font(FONT_MENU)
 
@@ -154,8 +154,8 @@ hook_event(HOOK_MARIO_UPDATE, function(m)
         if (AbilitiesData[ABILITY_ID_DRYTRY].jackpotTimer % 8) == 0 then
             set_mario_particle_flags(m, PARTICLE_SPARKLES, 0)
         end
-        if m.action == ACT_WALKING then
-            mario_set_forward_vel(m, m.forwardVel + 10)
+        if (get_mario_stick_input(m)) and not (get_mario_turn_around(m)) then
+            mario_set_forward_vel(m, math.clamp(m.forwardVel * 1.15, -75, 75))
         end
     end
 end)
@@ -175,9 +175,6 @@ hook_event(HOOK_ALLOW_HAZARD_SURFACE, function(m, h)
 
     if AbilitiesData[ABILITY_ID_DRYTRY].jackpotTimer > 0 then
         if h == HAZARD_TYPE_LAVA_FLOOR then
-            if m.action == ACT_WALKING then
-                play_sound_and_spawn_particles(m, SOUND_LAVA, 0)
-            end
             return false
         end
     end

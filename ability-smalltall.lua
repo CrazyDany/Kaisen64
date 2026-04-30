@@ -15,15 +15,16 @@ hook_event(HOOK_MARIO_UPDATE, function(m)
     if AbilitiesData[ABILITY_ID_SMALLTALL].STTimer > 1 then
         obj_scale(m.marioObj, AbilitiesData[ABILITY_ID_SMALLTALL].scale)
         obj_set_hitbox_radius_and_height(m.marioObj, 37 * AbilitiesData[ABILITY_ID_SMALLTALL].scale, 160 * AbilitiesData[ABILITY_ID_SMALLTALL].scale)
-        -- djui_chat_message_create(tostring(AbilitiesData[ABILITY_ID_SMALLTALL].STTimer))
         AbilitiesData[ABILITY_ID_SMALLTALL].STTimer = AbilitiesData[ABILITY_ID_SMALLTALL].STTimer - 1
         if AbilitiesData[ABILITY_ID_SMALLTALL].scale == 3.0 then
             set_override_fov(65)
             if (m.hurtCounter) ~= 0 then
                 m.hurtCounter = m.hurtCounter / 2
             end
+            if (get_mario_stick_input(m)) and not (get_mario_turn_around(m)) then
+                mario_set_forward_vel(m, math.clamp(m.forwardVel, -25, 25))
+            end
             if m.action == ACT_WALKING then
-                mario_set_forward_vel(m, 20)
                 smlua_anim_util_set_animation(m.marioObj, "mario_anim_walking")
                 play_step_sound(m, 0, 88)
             end
@@ -35,8 +36,8 @@ hook_event(HOOK_MARIO_UPDATE, function(m)
             if (m.hurtCounter) ~= 0 then
                 m.hurtCounter = m.hurtCounter * 1.5
             end
-            if m.action == ACT_WALKING then
-                mario_set_forward_vel(m, 70)
+            if (get_mario_stick_input(m)) and not (get_mario_turn_around(m)) then
+                mario_set_forward_vel(m, math.clamp(m.forwardVel * 1.15, -75, 75))
             end
         end
     elseif AbilitiesData[ABILITY_ID_SMALLTALL].STTimer == 1 then
