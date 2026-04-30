@@ -113,7 +113,7 @@ local function onUseDryTry()
     else
         AbilitiesData[ABILITY_ID_DRYTRY].stage = 3
     end
-    djui_chat_message_create(tostring(pseudoChance))
+    -- djui_chat_message_create(tostring(pseudoChance))
     return true
 end
 

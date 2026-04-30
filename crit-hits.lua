@@ -56,7 +56,7 @@ hook_event(HOOK_ON_PVP_ATTACK,
                         -- set_character_anim_with_accel(a, CHAR_ANIM_AIR_KICK, 0)
                         v.faceAngle.y = attackYaw
                         set_mario_action(v, ACT_BACKWARD_AIR_KB, 0)
-                        djui_chat_message_create("Critical hit!")
+                        -- djui_chat_message_create("Critical hit!")
                         UITweenRect(
                             {
                                 { frame = 0,     x = 0, y = 0, w = screenWidth, h = screenHeight, color = { 255, 255, 255, 0 } },
