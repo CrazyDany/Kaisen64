@@ -33,16 +33,14 @@ local function onUseSwitchSwap()
     end
 end
 
-hook_event(HOOK_ALLOW_PVP_ATTACK, function(a, v, i)
-    if gPlayerSyncTable[0].Kaisen64 == nil then return end
+HookEvent_LocalMarioPVPAttack(
+    function(v, i)
+        if gPlayerSyncTable[0].Kaisen64 == nil then return end
 
-    if a.playerIndex == 0 then
         AbilitiesData[ABILITY_ID_SWITCHSWAP].target = v
         AbilitiesData[ABILITY_ID_SWITCHSWAP].targetType = "player"
     end
-
-    return true
-end)
+)
 
 RegisterAbility(ABILITY_ID_SWITCHSWAP, {
     name = "SwitchSwap",
