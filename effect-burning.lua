@@ -3,6 +3,9 @@
 ---@param dur number
 local function onApplyBurningEffect(m, dur)
     m.health = m.health - 2 ^ 7
+    spawn_sync_object(id_bhvFlameParticle, E_MODEL_RED_FLAME, m.pos.x, m.pos.y, m.pos.z, function(o)
+        o.parentObj = m.marioObj
+    end)
 end
 
 ---comment
