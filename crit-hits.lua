@@ -18,21 +18,60 @@ hook_mario_action(ACT_COMBO_BLACKFLASH,
         set_character_anim_with_accel(m, CHAR_ANIM_AIR_KICK, 0)
 
         if (m.controller.buttonPressed & B_BUTTON) ~= 0 then
-            set_mario_action(m, ACT_PUNCHING, 0)
+            -- set_mario_action(m, ACT_PUNCHING, 0)
         end
     end
 )
 
-hook_event(HOOK_ON_PVP_ATTACK,
-    function(a, v, i)
+HookEvent_LocalMarioPVPAttack(
+    function(v, i)
         if not IsCritAllowed() then return end
 
-        if v.playerIndex == 0 then
-            network_send_to(a.playerIndex, true, { k64_IDOACLACKERFLASH = true })
-            local attackYaw = a.faceAngle.y + 0x8000
+        set_mario_action(gMarioStates[0], ACT_COMBO_BLACKFLASH, 0)
+        network_send_to(v.playerIndex, true,
+            { k64_beHitWithBlackFlash = true, k64_beHitWithBlackFlash_attackYaw = gMarioStates[0].faceAngle.y })
 
-            -- set_mario_action(a, ACT_COMBO_BLACKFLASH, 0)
-            set_mario_action(v, ACT_BE_HITTED_WITH_BLACKFLASH, 0)
+        local screenWidth = djui_hud_get_screen_width()
+        local screenHeight = djui_hud_get_screen_height()
+
+        local scale = 8
+        local frames = {
+            { frame = 0,  x = 0, y = 0, scale = scale, color = { 255, 255, 255, 255 } },
+            { frame = 14, x = 0, y = 0, scale = scale, color = { 255, 255, 255, 255 } },
+        }
+
+        PlaySound("BlackFlash", 1.5)
+
+        UITweenTexture("bf-anim", frames,
+            {
+                looping = false,
+                animated = true,
+                numFrames = 14,
+                frameDelay = 1,
+                onComplete = function()
+                    set_mario_action(gMarioStates[0], ACT_JUMP_KICK, 0)
+                    set_character_anim_with_accel(gMarioStates[0], CHAR_ANIM_AIR_KICK, 0)
+                    UITweenRect(
+                        {
+                            { frame = 0,     x = 0, y = 0, w = screenWidth, h = screenHeight, color = { 255, 255, 255, 0 } },
+                            { frame = 1,     x = 0, y = 0, w = screenWidth, h = screenHeight, color = { 255, 255, 255, 255 } },
+                            { frame = 1 + 4, x = 0, y = 0, w = screenWidth, h = screenHeight, color = { 255, 255, 255, 0 } },
+                        }, {
+                            looping = false,
+                        }
+                    )
+                end
+            })
+    end
+)
+
+hook_event(HOOK_ON_PACKET_RECEIVE,
+    function(dataTable)
+        if dataTable.k64_beHitWithBlackFlash ~= nil then
+            local m = gMarioStates[0]
+
+            set_mario_action(m, ACT_BE_HITTED_WITH_BLACKFLASH, 0)
+            local attackYaw = (dataTable.k64_beHitWithBlackFlash_attackYaw or 0) + 0x8000
 
             local screenWidth = djui_hud_get_screen_width()
             local screenHeight = djui_hud_get_screen_height()
@@ -52,11 +91,8 @@ hook_event(HOOK_ON_PVP_ATTACK,
                     numFrames = 14,
                     frameDelay = 1,
                     onComplete = function()
-                        -- set_mario_action(a, ACT_IDLE, 0)
-                        -- set_character_anim_with_accel(a, CHAR_ANIM_AIR_KICK, 0)
-                        v.faceAngle.y = attackYaw
-                        set_mario_action(v, ACT_BACKWARD_AIR_KB, 0)
-                        -- djui_chat_message_create("Critical hit!")
+                        m.faceAngle.y = attackYaw
+                        set_mario_action(m, ACT_BACKWARD_AIR_KB, 0)
                         UITweenRect(
                             {
                                 { frame = 0,     x = 0, y = 0, w = screenWidth, h = screenHeight, color = { 255, 255, 255, 0 } },
@@ -90,6 +126,6 @@ hook_event(HOOK_UPDATE,
 )
 
 function IsCritAllowed()
-    -- return (gGlobalSyncTable.Kaisen64.critTiming or 0) == 1
-    return true
+    return (gGlobalSyncTable.Kaisen64.critTiming or 0) == 1
+    -- return true
 end
