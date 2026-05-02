@@ -38,8 +38,6 @@ end
 --- @param m MarioState
 --- @param dur number длительность в кадрах (>0)
 function EffectData:Apply(m, dur)
-    djui_chat_message_create("Applying effect " .. self.name .. " for player " .. m.playerIndex)
-
     if dur <= 0 then
         return
     end
@@ -72,7 +70,6 @@ hook_event(HOOK_MARIO_UPDATE, function(m)
             local effect = EffectsList[id]
             if effect then
                 if effect.onUpdate then
-                    djui_chat_message_create("Updating effect " .. effect.name .. " for player " .. m.playerIndex)
                     effect.onUpdate(m, dur)
                 end
 
@@ -83,7 +80,9 @@ hook_event(HOOK_MARIO_UPDATE, function(m)
                     end
                     effects[id] = nil
                 else
-                    effects[id] = newDur
+                    if m.playerIndex == 0 then
+                        effects[id] = newDur
+                    end
                 end
             end
         end
