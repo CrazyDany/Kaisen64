@@ -37,7 +37,7 @@ local HUDSettings = {
         bottomOffset = 0.12,
         bgColor = { 31, 31, 31, 200 },
         fillColors = { { 171, 205, 239, 255 }, { 100, 180, 250, 255 } },
-        costColor = { 255, 80, 80, 200 },
+        costColor = { 255, 80, 80, 255 },
         textColor = { 255, 255, 255, 255 },
         textScale = 0.55,
         showNumbers = true,
@@ -228,7 +228,7 @@ local function renderEnergyBar()
     local ability = AbilitiesData[abilityId]
     if ability and ability.cost and ability.cost > 0 then
         local isOffCooldown = (ability.curCooldown <= 0)
-        local isPermissible = (ability.getPermissibilityToUse and ability.getPermissibilityToUse()) or true
+        local isPermissible = (ability.getPermissibilityToUse and ability.getPermissibilityToUse())
         if isOffCooldown and isPermissible then
             local costPercent = ability.cost / maxEnergy
             local costWidth = barWidth * costPercent
