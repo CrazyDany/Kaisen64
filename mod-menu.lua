@@ -294,3 +294,11 @@ local function onHudRender()
 end
 
 hook_event(HOOK_ON_HUD_RENDER, onHudRender)
+
+hook_event(HOOK_UPDATE,
+    function()
+        if modMenuOpened and IsGameStarted() then
+            CloseModMenu()
+        end
+    end
+)
