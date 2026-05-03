@@ -11,7 +11,7 @@ local function act_dashclash_dash(m)
         return
     end
 
-    mario_set_forward_vel(m, 100)
+    mario_set_forward_vel(m, 128)
 
     set_mario_particle_flags(m, PARTICLE_DUST, 0)
     play_sound(SOUND_MOVING_TERRAIN_SLIDE + m.terrainSoundAddend, m.marioObj.header.gfx.cameraToObject)
@@ -41,7 +41,7 @@ RegisterAbility(ABILITY_ID_DASHCLASH, {
     iconTextureName = "rgtc",
 
     cost = 64,
-    cooldown = 64,
+    cooldown = 32,
     curCooldown = 0,
 
     onUseFunction = onUseDashClash,
