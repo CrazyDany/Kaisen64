@@ -5,7 +5,7 @@ local GAME_STATE_PLAYING          = 3
 local GAME_STATE_END              = 4
 
 local needPlayersForStart         = 2
-local REPARING_TIMER_DEFAULT      = 30 * 60
+local REPARING_TIMER_DEFAULT      = 30 * 5
 local preparingTimer              = REPARING_TIMER_DEFAULT
 
 local SPAWN_POINTS                = {}

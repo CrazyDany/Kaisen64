@@ -338,12 +338,24 @@ registerHudElement("EnergyBar", renderEnergyBar, 20,
 registerHudElement("ExtraInfo", renderExtraInfo, 30,
     function() return not IsModMenuOpened() and gPlayerSyncTable[0].Kaisen64 ~= nil end)
 
+local hudVisibility = true
+
 local function onHudRender()
     for _, elem in ipairs(hudElements) do
-        if elem.isActive() then
+        if (elem.isActive()) and (hudVisibility) then
             elem.draw()
         end
     end
 end
 
 hook_event(HOOK_ON_HUD_RENDER, onHudRender)
+
+hook_chat_command("hud", "hide/unhide hud", function(message)
+    hudVisibility = not hudVisibility
+    if hudVisibility == true then
+        hud_show()
+    else
+        hud_hide()
+    end
+    return true
+end)
