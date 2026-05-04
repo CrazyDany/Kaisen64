@@ -75,6 +75,11 @@ RegisterAbility(ABILITY_ID_SWITCHSWAP, {
         return { "Target: - " }
     end,
 
+    onResetVariables = function()
+        AbilitiesData[ABILITY_ID_SWITCHSWAP].target = nil
+        AbilitiesData[ABILITY_ID_SWITCHSWAP].targetType = nil
+    end,
+
     -- Кастомные поля
     target = nil,
     targetType = nil,
