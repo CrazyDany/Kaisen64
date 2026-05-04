@@ -41,12 +41,7 @@ local function isPlayerSpectator(pid)
 end
 
 local function onGameStateChanged(tag, oldState, newState)
-    for idx, ability in ipairs(AbilitiesData) do
-        if ability.onResetVariables then
-            ability.onResetVariables()
-            ability.curCooldown = 0
-        end
-    end
+    ResetAbilities()
     if newState == GAME_STATE.WAIT then
         gServerSettings.playerInteractions = PLAYER_INTERACTIONS_NONE
         djui_chat_message_create("Ожидание игроков...")
@@ -199,12 +194,7 @@ end)
 hook_event(HOOK_ON_DEATH, function(m)
     if not m then return end
 
-    for idx, ability in ipairs(AbilitiesData) do
-        if ability.onResetVariables then
-            ability.onResetVariables()
-            ability.curCooldown = 0
-        end
-    end
+    ResetAbilities()
 
     local pid = m.playerIndex
     if not isPlayerSpectator(pid) and gGlobalSyncTable.curGameState == GAME_STATE.PLAYING then

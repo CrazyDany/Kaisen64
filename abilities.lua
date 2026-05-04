@@ -59,3 +59,12 @@ function GetCooldownSpeed(i)
     if gPlayerSyncTable[i].Kaisen64 == nil then return end
     return gPlayerSyncTable[i].Kaisen64.cooldownSpeed or K64_DEFAULT_COOLDOWN_SPEED
 end
+
+function ResetAbilities()
+    for i, v in pairs(AbilitiesData) do
+        v.curCooldown = 0
+        if v.onResetVariables ~= nil then
+            v.onResetVariables()
+        end
+    end
+end
