@@ -1,37 +1,79 @@
-local GAME_STATE_NOTENOUGHPLAYERS = 0
-local GAME_STATE_WAIT             = 1
-local GAME_STATE_PREPARING        = 2
-local GAME_STATE_PLAYING          = 3
-local GAME_STATE_END              = 4
+local CONFIG = {
+    needPlayersForStart = 2,
+    preparingTimerDuration = 30 * 5,
+    endTimerDuration = 30 * 10,
+    spawnRadius = 10000,
+    spawnY = 100,
+}
 
-local needPlayersForStart         = 2
-local REPARING_TIMER_DEFAULT      = 30 * 5
-local preparingTimer              = REPARING_TIMER_DEFAULT
+local GAME_STATE = {
+    NOT_ENOUGH_PLAYERS = 0,
+    WAIT               = 1,
+    PREPARING          = 2,
+    PLAYING            = 3,
+    END                = 4,
+}
 
-local SPAWN_POINTS                = {}
-for i = 0, 36 do
-    SPAWN_POINTS[i] = {
-        x = 0 + 10000 * math.sin(2 * math.pi / 36 * i),
-        y = 100,
-        z = 0 - 10000 * math.cos(2 * math.pi / 36 * i)
-    }
+local SPAWN_POINTS = {}
+do
+    local count = 720
+    for i = 0, count - 1 do
+        local angle = 2 * math.pi / count * i
+        SPAWN_POINTS[i] = {
+            x = CONFIG.spawnRadius * math.sin(angle),
+            y = CONFIG.spawnY,
+            z = -CONFIG.spawnRadius * math.cos(angle),
+        }
+    end
 end
 
-gGlobalSyncTable.curGameState = GAME_STATE_NOTENOUGHPLAYERS
+if network_is_server() then
+    gGlobalSyncTable.curGameState = GAME_STATE.NOT_ENOUGH_PLAYERS
+    gGlobalSyncTable.preparingTimer = CONFIG.preparingTimerDuration
+    gGlobalSyncTable.endTimer = 0
+    gGlobalSyncTable.nonSpectatorCount = 0
+end
 
 gPlayerSyncTable[0].spectator = false
 
-local function on_start_game_command(msg)
-    if gGlobalSyncTable.curGameState == GAME_STATE_WAIT then
+local function isPlayerSpectator(pid)
+    return gPlayerSyncTable[pid] and gPlayerSyncTable[pid].spectator == true
+end
+
+local function onGameStateChanged(tag, oldState, newState)
+    if newState == GAME_STATE.WAIT then
+        gServerSettings.playerInteractions = PLAYER_INTERACTIONS_NONE
+        djui_chat_message_create("Ожидание игроков...")
+    elseif newState == GAME_STATE.PREPARING then
+        djui_chat_message_create("Подготовка...")
+    elseif newState == GAME_STATE.PLAYING then
+        djui_chat_message_create("Игра началась!")
+        gServerSettings.playerInteractions = PLAYER_INTERACTIONS_SOLID
+    elseif newState == GAME_STATE.END then
+        djui_chat_message_create("Игра окончена!")
+    elseif newState == GAME_STATE.NOT_ENOUGH_PLAYERS then
+        djui_chat_message_create("Недостаточно игроков для старта")
+    end
+end
+
+hook_on_sync_table_change(gGlobalSyncTable, "curGameState", "GameStateHook", onGameStateChanged)
+
+local function onStartGameCommand(msg)
+    if not network_is_server() then return true end
+
+    local state = gGlobalSyncTable.curGameState
+    if state == GAME_STATE.WAIT then
         djui_chat_message_create("Начинаем игру...")
-        gGlobalSyncTable.curGameState = GAME_STATE_PREPARING
-        for i, m in ipairs(gMarioStates) do
+        gGlobalSyncTable.curGameState = GAME_STATE.PREPARING
+        gGlobalSyncTable.preparingTimer = CONFIG.preparingTimerDuration
+
+        for i = 0, MAX_PLAYERS - 1 do
             if gNetworkPlayers[i].connected then
-                gPlayerSyncTable[i].spawnPointIndex = math.random(0, 36)
+                gPlayerSyncTable[i].spawnPointIndex = math.random(0, 719)
             end
         end
     else
-        if gGlobalSyncTable.curGameState == GAME_STATE_NOTENOUGHPLAYERS then
+        if state == GAME_STATE.NOT_ENOUGH_PLAYERS then
             djui_chat_message_create("Недостаточно игроков")
         else
             djui_chat_message_create("Игра уже началась")
@@ -41,87 +83,126 @@ local function on_start_game_command(msg)
 end
 
 if network_is_server() then
-    hook_chat_command("k64-start", "Начинает игру", on_start_game_command)
+    hook_chat_command("k64-start", "Начинает игру", onStartGameCommand)
 end
 
-local function on_server_update()
-    local activePlayers = {}
+local function serverUpdateGameState()
     local connectedCount = 0
-    for i = 0, (MAX_PLAYERS - 1) do
+    local nonSpectatorCount = 0
+
+    for i = 0, MAX_PLAYERS - 1 do
         if gNetworkPlayers[i].connected then
             connectedCount = connectedCount + 1
-            table.insert(activePlayers, gPlayerSyncTable[i])
+            if not isPlayerSpectator(i) then
+                nonSpectatorCount = nonSpectatorCount + 1
+            end
         end
     end
 
-    if connectedCount < needPlayersForStart then
-        gGlobalSyncTable.curGameState = GAME_STATE_NOTENOUGHPLAYERS
-    elseif gGlobalSyncTable.curGameState == GAME_STATE_NOTENOUGHPLAYERS then
-        gGlobalSyncTable.curGameState = GAME_STATE_WAIT
-    elseif gGlobalSyncTable.curGameState == GAME_STATE_PREPARING then
-        preparingTimer = preparingTimer - 1
-        if preparingTimer <= 0 then
-            preparingTimer = REPARING_TIMER_DEFAULT
-            gGlobalSyncTable.curGameState = GAME_STATE_PLAYING
+    gGlobalSyncTable.nonSpectatorCount = nonSpectatorCount
+    local currentState = gGlobalSyncTable.curGameState
+
+    if connectedCount < CONFIG.needPlayersForStart then
+        if currentState ~= GAME_STATE.NOT_ENOUGH_PLAYERS then
+            gGlobalSyncTable.curGameState = GAME_STATE.NOT_ENOUGH_PLAYERS
         end
+        return
     end
 
+    if currentState == GAME_STATE.NOT_ENOUGH_PLAYERS then
+        gGlobalSyncTable.curGameState = GAME_STATE.WAIT
+        return
+    end
 
-    -- Game States Logic
-    if gGlobalSyncTable.curGameState == GAME_STATE_WAIT then
-        gServerSettings.playerInteractions = PLAYER_INTERACTIONS_NONE
-    elseif gGlobalSyncTable.curGameState == GAME_STATE_PLAYING then
-        gServerSettings.playerInteractions = PLAYER_INTERACTIONS_PVP
+    if currentState == GAME_STATE.PREPARING then
+        local timer = gGlobalSyncTable.preparingTimer - 1
+        gGlobalSyncTable.preparingTimer = timer
+        if timer <= 0 then
+            gGlobalSyncTable.curGameState = GAME_STATE.PLAYING
+            gGlobalSyncTable.preparingTimer = CONFIG.preparingTimerDuration
+        end
+    elseif currentState == GAME_STATE.PLAYING then
+        if nonSpectatorCount < 2 then
+            gGlobalSyncTable.endTimer = CONFIG.endTimerDuration
+            gGlobalSyncTable.curGameState = GAME_STATE.END
+        end
+    elseif currentState == GAME_STATE.END then
+        local timer = gGlobalSyncTable.endTimer - 1
+        gGlobalSyncTable.endTimer = timer
+        if timer <= 0 then
+            gGlobalSyncTable.curGameState = GAME_STATE.WAIT
+        end
     end
 end
 
-hook_event(HOOK_UPDATE,
-    function()
-        if network_is_server() then
-            on_server_update()
-        end
+local function clientMarioUpdate(m)
+    if m.playerIndex ~= 0 then return end
+
+    local state = gGlobalSyncTable.curGameState
+    local isSpectator = isPlayerSpectator(m.playerIndex)
+
+    if state == GAME_STATE.WAIT then
+        m.health = 0x880
     end
-)
 
-hook_event(HOOK_MARIO_UPDATE,
-    --- @param m MarioState
-    function(m)
-        if m.playerIndex ~= 0 then return end
-
-        -- djui_chat_message_create("curGameState: " .. gGlobalSyncTable.curGameState)
-        -- djui_chat_message_create("spectator: " ..
-        --     (gPlayerSyncTable[m.playerIndex].spectator == true and "true" or "false"))
-
-        if gGlobalSyncTable.curGameState == GAME_STATE_WAIT then
-            m.health = 2176
-            m.invincTimer = m.invincTimer + 1
+    if state == GAME_STATE.PREPARING and not isSpectator then
+        local idx = gPlayerSyncTable[m.playerIndex].spawnPointIndex or 0
+        local point = SPAWN_POINTS[idx]
+        if point then
+            m.pos.x = point.x
+            m.pos.y = point.y
+            m.pos.z = point.z
         end
-        if (gGlobalSyncTable.curGameState == GAME_STATE_PREPARING) and (gPlayerSyncTable[m.playerIndex].spectator == false) then
-            m.pos.x = SPAWN_POINTS[gPlayerSyncTable[m.playerIndex].spawnPointIndex or 0].x
-            m.pos.y = SPAWN_POINTS[gPlayerSyncTable[m.playerIndex].spawnPointIndex or 0].y
-            m.pos.z = SPAWN_POINTS[gPlayerSyncTable[m.playerIndex].spawnPointIndex or 0].z
-            CloseModMenu()
-        end
+        if CloseModMenu then CloseModMenu() end
     end
-)
 
-hook_event(HOOK_ON_PLAYER_CONNECTED,
-    --- @param connector MarioState
-    function(connector)
-        if network_is_server() then
-            if connector.playerIndex == 0 then
-                return
-            end
-            if gGlobalSyncTable.curGameState == GAME_STATE_WAIT or gGlobalSyncTable.curGameState == GAME_STATE_NOTENOUGHPLAYERS then
-                gPlayerSyncTable[connector.playerIndex].spectator = false
-            else
-                gPlayerSyncTable[connector.playerIndex].spectator = true
-            end
-        end
+    if state == GAME_STATE.END and gGlobalSyncTable.endTimer <= 2 then
+        m.pos.x = m.spawnInfo.startPos.x
+        m.pos.y = m.spawnInfo.startPos.y
+        m.pos.z = m.spawnInfo.startPos.z
     end
-)
 
--- public functions
+    if state == GAME_STATE.PLAYING and isSpectator then
+        m.health = 0
+    end
+end
+
+hook_event(HOOK_UPDATE, function()
+    if network_is_server() then
+        serverUpdateGameState()
+    end
+end)
+
+hook_event(HOOK_MARIO_UPDATE, function(m)
+    if m.playerIndex ~= 0 then return end
+    clientMarioUpdate(m)
+end)
+
+hook_event(HOOK_ON_PLAYER_CONNECTED, function(connector)
+    if not network_is_server() then return end
+    if connector.playerIndex == 0 then return end
+
+    local state = gGlobalSyncTable.curGameState
+    if state == GAME_STATE.PLAYING or state == GAME_STATE.END or state == GAME_STATE.PREPARING then
+        gPlayerSyncTable[connector.playerIndex].spectator = true
+    else
+        gPlayerSyncTable[connector.playerIndex].spectator = false
+    end
+end)
+
+hook_event(HOOK_ON_DEATH, function(m)
+    if not m then return end
+
+    local pid = m.playerIndex
+    if not isPlayerSpectator(pid) and gGlobalSyncTable.curGameState == GAME_STATE.PLAYING then
+        gPlayerSyncTable[pid].spectator = true
+
+        m.pos.x = m.spawnInfo.startPos.x
+        m.pos.y = m.spawnInfo.startPos.y
+        m.pos.z = m.spawnInfo.startPos.z
+    end
+end)
+
 function IsGameStarted()
-    return gGlobalSyncTable.curGameState == GAME_STATE_PLAYING
+    return gGlobalSyncTable.curGameState == GAME_STATE.PLAYING
 end
