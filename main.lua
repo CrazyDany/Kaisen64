@@ -52,7 +52,7 @@ hook_event(HOOK_UPDATE, function()
 end)
 
 local function onCommandKaien64(msg)
-    if not IsModMenuOpened() then
+    if not IsModMenuOpened() and not IsGameStarted() then
         OpenModMenu()
     end
 
