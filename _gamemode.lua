@@ -65,6 +65,14 @@ local function on_server_update()
             gGlobalSyncTable.curGameState = GAME_STATE_PLAYING
         end
     end
+
+
+    -- Game States Logic
+    if gGlobalSyncTable.curGameState == GAME_STATE_WAIT then
+        gServerSettings.playerInteractions = PLAYER_INTERACTIONS_NONE
+    elseif gGlobalSyncTable.curGameState == GAME_STATE_PLAYING then
+        gServerSettings.playerInteractions = PLAYER_INTERACTIONS_PVP
+    end
 end
 
 hook_event(HOOK_UPDATE,
@@ -84,12 +92,15 @@ hook_event(HOOK_MARIO_UPDATE,
         -- djui_chat_message_create("spectator: " ..
         --     (gPlayerSyncTable[m.playerIndex].spectator == true and "true" or "false"))
 
+        if gGlobalSyncTable.curGameState == GAME_STATE_WAIT then
+            m.health = 2176
+            m.invincTimer = m.invincTimer + 1
+        end
         if (gGlobalSyncTable.curGameState == GAME_STATE_PREPARING) and (gPlayerSyncTable[m.playerIndex].spectator == false) then
             m.pos.x = SPAWN_POINTS[gPlayerSyncTable[m.playerIndex].spawnPointIndex or 0].x
             m.pos.y = SPAWN_POINTS[gPlayerSyncTable[m.playerIndex].spawnPointIndex or 0].y
             m.pos.z = SPAWN_POINTS[gPlayerSyncTable[m.playerIndex].spawnPointIndex or 0].z
-
-            djui_chat_message_create("Осталось " .. preparingTimer / 30 .. " секунд")
+            CloseModMenu()
         end
     end
 )
