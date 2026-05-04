@@ -228,6 +228,24 @@ RegisterAbility(ABILITY_ID_DRYTRY, {
         end
     end,
 
+    onResetVariables = function()
+        AbilitiesData[ABILITY_ID_DRYTRY].attempts = 0
+        AbilitiesData[ABILITY_ID_DRYTRY].losesInRow = 0
+        AbilitiesData[ABILITY_ID_DRYTRY].pseudoWinsInRow = 0
+        AbilitiesData[ABILITY_ID_DRYTRY].stage = 0
+        AbilitiesData[ABILITY_ID_DRYTRY].lastResult = 0
+        if AbilitiesData[ABILITY_ID_DRYTRY].jackpotTimer > 0 then
+            MultipleCooldownSpeed(0, 2)
+            audio_stream_destroy(AudioNames["JackpotMusic"])
+        end
+        AbilitiesData[ABILITY_ID_DRYTRY].jackpotTimer = 0
+        AbilitiesData[ABILITY_ID_DRYTRY].healthBeforeJackpot = 0
+
+        if gPlayerSyncTable[0].Kaisen64 ~= nil then
+            gPlayerSyncTable[0].Kaisen64.playingTheme = nil
+        end
+    end,
+
     -- кастомные поля
     attempts = 0,
     losesInRow = 0,
