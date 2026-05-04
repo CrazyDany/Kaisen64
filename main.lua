@@ -69,3 +69,24 @@ hook_chat_command("k64", "Начало работы с Kaisen64", onCommandKaien
 --         djui_chat_message_create("ATTAAAACK!!!")
 --     end
 -- )
+
+local DAMAGE_INTERACTION = {
+    INT_GROUND_POUND = 100,
+    INT_PUNCH = 10,
+    INT_KICK = 10,
+    INT_TRIP = 10,
+    INT_SLIDE_KICK = 20,
+    INT_FAST_ATTACK_OR_SHELL = 30,
+    INT_HIT_FROM_ABOVE = 20,
+    INT_HIT_FROM_BELOW = 20,
+    INT_TWIRL = 30
+}
+
+HookEvent_LocalMarioPVPDamage(
+--- @param a MarioState
+--- @param i integer
+    function(a, i)
+        local m = gMarioStates[0]
+        m.health = m.health - (DAMAGE_INTERACTION[i] or 10)
+    end
+)
