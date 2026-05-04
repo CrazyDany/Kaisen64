@@ -15,7 +15,8 @@ AbilitiesData = {
         getPermissibilityToUse = function() return true end,
         getExtraInfo = function()
             return { " - " }
-        end
+        end,
+        onResetVariables = function() end
     }
 }
 
