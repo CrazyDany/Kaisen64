@@ -36,6 +36,30 @@ end
 
 gPlayerSyncTable[0].spectator = false
 
+local backgroundMusicVolume = 0.4
+local musicLists = {
+    ["Lobby"] = audio_stream_load("LobbyTheme.mp3"),
+    ["Game"] = audio_stream_load("GameTheme.mp3"),
+}
+if network_is_server() then
+    gGlobalSyncTable.backgroundMusic = "Lobby"
+    if musicLists[gGlobalSyncTable.backgroundMusic] then
+        audio_stream_play(musicLists[gGlobalSyncTable.backgroundMusic], false, backgroundMusicVolume)
+    end
+end
+
+hook_on_sync_table_change(gGlobalSyncTable, "backgroundMusic", "MusicHook", function(tag, oldMusic, newMusic)
+    if newMusic then
+        if musicLists[oldMusic] then
+            audio_stream_stop(musicLists[oldMusic])
+        end
+        if musicLists[newMusic] then
+            audio_stream_play(musicLists[newMusic], false, backgroundMusicVolume)
+        end
+    end
+end)
+
+
 local function isPlayerSpectator(pid)
     return gPlayerSyncTable[pid] and gPlayerSyncTable[pid].spectator == true
 end
@@ -50,8 +74,15 @@ local function onGameStateChanged(tag, oldState, newState)
                 gPlayerSyncTable[0].spectator = false
             end
         end
+
+        if network_is_server() then
+            gGlobalSyncTable.backgroundMusic = "Lobby"
+        end
     elseif newState == GAME_STATE.PREPARING then
         djui_chat_message_create("Подготовка...")
+        if network_is_server() then
+            gGlobalSyncTable.backgroundMusic = "Game"
+        end
     elseif newState == GAME_STATE.PLAYING then
         djui_chat_message_create("Игра началась!")
         gServerSettings.playerInteractions = PLAYER_INTERACTIONS_SOLID
