@@ -45,6 +45,11 @@ local function onGameStateChanged(tag, oldState, newState)
     if newState == GAME_STATE.WAIT then
         gServerSettings.playerInteractions = PLAYER_INTERACTIONS_NONE
         djui_chat_message_create("Ожидание игроков...")
+        if oldState == GAME_STATE.END then
+            if gPlayerSyncTable[0].spectator then
+                gPlayerSyncTable[0].spectator = false
+            end
+        end
     elseif newState == GAME_STATE.PREPARING then
         djui_chat_message_create("Подготовка...")
     elseif newState == GAME_STATE.PLAYING then
