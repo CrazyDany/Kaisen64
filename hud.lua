@@ -229,7 +229,8 @@ local function renderEnergyBar()
     if ability and ability.cost and ability.cost > 0 then
         local isOffCooldown = (ability.curCooldown <= 0)
         local isPermissible = (ability.getPermissibilityToUse and ability.getPermissibilityToUse())
-        if isOffCooldown and isPermissible then
+        local isEnoughEnergy = (energy >= ability.cost)
+        if isOffCooldown and isPermissible and isEnoughEnergy then
             local costPercent = ability.cost / maxEnergy
             local costWidth = barWidth * costPercent
             local costX = x + fillWidth - costWidth
