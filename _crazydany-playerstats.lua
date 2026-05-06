@@ -1,10 +1,10 @@
 gPlayerSyncTable[0].CrazyDanyBetterStats = {}
 
-gPlayerSyncTable[0].CrazyDanyBetterStats.groundSpeed = 0.75
+gPlayerSyncTable[0].CrazyDanyBetterStats.groundSpeed = 1.0
 gPlayerSyncTable[0].CrazyDanyBetterStats.airSpeed = 1.0
 gPlayerSyncTable[0].CrazyDanyBetterStats.extraGravity = 0.0
 gPlayerSyncTable[0].CrazyDanyBetterStats.swimingSpeed = 1.0
-gPlayerSyncTable[0].CrazyDanyBetterStats.jumpStrength = 1.25
+gPlayerSyncTable[0].CrazyDanyBetterStats.jumpStrength = 1.0
 gPlayerSyncTable[0].CrazyDanyBetterStats.damageMult = 1.0
 
 hook_event(HOOK_BEFORE_PHYS_STEP,
@@ -61,6 +61,11 @@ hook_event(HOOK_MARIO_UPDATE,
                 m.vel.y = m.vel.y * jumpStrength
                 luigicooldown = true
             end
+        end
+
+        local extraGravity = gPlayerSyncTable[0].CrazyDanyBetterStats.extraGravity or 0
+        if (ACT_FLAG_AIR and (m.vel.y > 0)) ~= 0 then
+            m.vel.y = m.vel.y - extraGravity
         end
     end
 )
