@@ -18,9 +18,9 @@ hook_event(HOOK_UPDATE, function()
 
         gPlayerSyncTable[0].Kaisen64.abilitiesSlots = {}
 
-        gPlayerSyncTable[0].Kaisen64.abilitiesSlots[0] = ABILITY_ID_BUBBLEPOPELECTRIC
+        gPlayerSyncTable[0].Kaisen64.abilitiesSlots[0] = ABILITY_ID_RECTECH
         gPlayerSyncTable[0].Kaisen64.abilitiesSlots[1] = ABILITY_ID_DRYTRY
-        gPlayerSyncTable[0].Kaisen64.abilitiesSlots[2] = ABILITY_ID_SWITCHSWAP
+        gPlayerSyncTable[0].Kaisen64.abilitiesSlots[2] = ABILITY_ID_CLAPSWAP
 
         gPlayerSyncTable[0].Kaisen64.currentAbilitySlot = 0
 

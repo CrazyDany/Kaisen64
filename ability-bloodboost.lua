@@ -15,9 +15,9 @@ end
 
 RegisterAbility(ABILITY_ID_BLOODBOOST, {
     name = "BloodBoost",
-    shortName = "BlBo",
+    shortName = "BlBs",
     description = "Ability placeholder for modders",
-    iconTextureName = "rgtc",
+    iconTextureName = "blbs",
 
     cost = 32,
     cooldown = 1024,

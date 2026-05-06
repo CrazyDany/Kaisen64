@@ -1,9 +1,9 @@
-ABILITY_ID_BUBBLEPOPELECTRIC = 8
+ABILITY_ID_RECTECH = 8
 
 ACT_FRAME_REPLAY = allocate_mario_action(ACT_FLAG_CUSTOM_ACTION | ACT_FLAG_MOVING | ACT_FLAG_AIR)
 
 local function onStartRecordingFrames()
-    local ability = AbilitiesData[ABILITY_ID_BUBBLEPOPELECTRIC]
+    local ability = AbilitiesData[ABILITY_ID_RECTECH]
     ability.frames = {}
     ability.curFrame = 0
     ability.isRecordingFrames = true
@@ -12,7 +12,7 @@ end
 
 local function onRecordFrame()
     local m = gMarioStates[0]
-    local ability = AbilitiesData[ABILITY_ID_BUBBLEPOPELECTRIC]
+    local ability = AbilitiesData[ABILITY_ID_RECTECH]
     ability.frames[#ability.frames + 1] = {
         pos = { x = m.pos.x, y = m.pos.y, z = m.pos.z },
         vel = { x = m.vel.x, y = m.vel.y, z = m.vel.z },
@@ -22,7 +22,7 @@ local function onRecordFrame()
 end
 
 local function onEndRecordingFrames()
-    local ability = AbilitiesData[ABILITY_ID_BUBBLEPOPELECTRIC]
+    local ability = AbilitiesData[ABILITY_ID_RECTECH]
     if not ability.isRecordingFrames then return end
 
     onRecordFrame()
@@ -33,14 +33,14 @@ local function onEndRecordingFrames()
 end
 
 local function onEndReplayingFrames()
-    local ability = AbilitiesData[ABILITY_ID_BUBBLEPOPELECTRIC]
+    local ability = AbilitiesData[ABILITY_ID_RECTECH]
     ability.isReplayingFrames = false
     ability.curFrame = 0
     ability.frames = {}
 end
 
 local function onAbilityUse()
-    local ability = AbilitiesData[ABILITY_ID_BUBBLEPOPELECTRIC]
+    local ability = AbilitiesData[ABILITY_ID_RECTECH]
     if ability.isRecordingFrames or ability.isReplayingFrames then
         return
     end
@@ -52,7 +52,7 @@ hook_event(HOOK_MARIO_UPDATE, function(m)
         return
     end
 
-    local ability = AbilitiesData[ABILITY_ID_BUBBLEPOPELECTRIC]
+    local ability = AbilitiesData[ABILITY_ID_RECTECH]
 
     if ability.isRecordingFrames or ability.isReplayingFrames then
         ability.curCooldown = ability.curCooldown + 1
@@ -60,7 +60,7 @@ hook_event(HOOK_MARIO_UPDATE, function(m)
 
     if ability.isRecordingFrames and
         m.controller.buttonPressed == L_TRIG and
-        gPlayerSyncTable[0].Kaisen64.abilitiesSlots[gPlayerSyncTable[0].Kaisen64.currentAbilitySlot] == ABILITY_ID_BUBBLEPOPELECTRIC then
+        gPlayerSyncTable[0].Kaisen64.abilitiesSlots[gPlayerSyncTable[0].Kaisen64.currentAbilitySlot] == ABILITY_ID_RECTECH then
         onEndRecordingFrames()
         return
     end
@@ -141,9 +141,9 @@ hook_event(HOOK_MARIO_UPDATE, function(m)
     end
 end)
 
-RegisterAbility(ABILITY_ID_BUBBLEPOPELECTRIC, {
-    name = "BubblePopElectric",
-    shortName = "BpEl",
+RegisterAbility(ABILITY_ID_RECTECH, {
+    name = "RecTech",
+    shortName = "RcTc",
     description = "",
     iconTextureName = "rgtc",
 
@@ -153,7 +153,7 @@ RegisterAbility(ABILITY_ID_BUBBLEPOPELECTRIC, {
 
     onUseFunction = onAbilityUse,
     getPermissibilityToUse = function()
-        local ability = AbilitiesData[ABILITY_ID_BUBBLEPOPELECTRIC]
+        local ability = AbilitiesData[ABILITY_ID_RECTECH]
         return not (ability.isRecordingFrames or ability.isReplayingFrames) and ability.curCooldown == 0
     end,
     getExtraInfo = function() return { " - " } end,

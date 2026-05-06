@@ -1,8 +1,8 @@
-ABILITY_ID_SWITCHSWAP = 0
+ABILITY_ID_CLAPSWAP = 0
 
 local function onUseSwitchSwap()
-    local target = AbilitiesData[ABILITY_ID_SWITCHSWAP].target
-    local targetType = AbilitiesData[ABILITY_ID_SWITCHSWAP].targetType
+    local target = AbilitiesData[ABILITY_ID_CLAPSWAP].target
+    local targetType = AbilitiesData[ABILITY_ID_CLAPSWAP].targetType
 
     local m = gMarioStates[0]
 
@@ -28,8 +28,8 @@ local function onUseSwitchSwap()
         m.pos.y = target.pos.y
         m.pos.z = target.pos.z
 
-        AbilitiesData[ABILITY_ID_SWITCHSWAP].target = nil
-        AbilitiesData[ABILITY_ID_SWITCHSWAP].targetType = nil
+        AbilitiesData[ABILITY_ID_CLAPSWAP].target = nil
+        AbilitiesData[ABILITY_ID_CLAPSWAP].targetType = nil
     elseif targetType == "object" then
         if target == nil then return false end
 
@@ -53,8 +53,8 @@ local function onUseSwitchSwap()
         target.oPosY = selfPosY
         target.oPosZ = selfPosZ
 
-        AbilitiesData[ABILITY_ID_SWITCHSWAP].target = nil
-        AbilitiesData[ABILITY_ID_SWITCHSWAP].targetType = nil
+        AbilitiesData[ABILITY_ID_CLAPSWAP].target = nil
+        AbilitiesData[ABILITY_ID_CLAPSWAP].targetType = nil
     end
 end
 
@@ -62,8 +62,8 @@ HookEvent_LocalMarioPVPAttack(
     function(v, i)
         if gPlayerSyncTable[0].Kaisen64 == nil then return end
 
-        AbilitiesData[ABILITY_ID_SWITCHSWAP].target = v
-        AbilitiesData[ABILITY_ID_SWITCHSWAP].targetType = "player"
+        AbilitiesData[ABILITY_ID_CLAPSWAP].target = v
+        AbilitiesData[ABILITY_ID_CLAPSWAP].targetType = "player"
     end
 )
 
@@ -78,14 +78,14 @@ hook_event(HOOK_ON_ATTACK_OBJECT,
 
         if o.oPosX == nil or o.oPosY == nil or o.oPosZ == nil then return end
 
-        AbilitiesData[ABILITY_ID_SWITCHSWAP].target = o
-        AbilitiesData[ABILITY_ID_SWITCHSWAP].targetType = "object"
+        AbilitiesData[ABILITY_ID_CLAPSWAP].target = o
+        AbilitiesData[ABILITY_ID_CLAPSWAP].targetType = "object"
     end
 )
 
-RegisterAbility(ABILITY_ID_SWITCHSWAP, {
-    name = "SwitchSwap",
-    shortName = "SwSw",
+RegisterAbility(ABILITY_ID_CLAPSWAP, {
+    name = "ClapSwap",
+    shortName = "ClSw",
     description = "Clap your hands and switch places with your last hitted player.",
     iconTextureName = "swsw",
 
@@ -95,23 +95,23 @@ RegisterAbility(ABILITY_ID_SWITCHSWAP, {
 
     onUseFunction = onUseSwitchSwap,
     getPermissibilityToUse = function()
-        if AbilitiesData[ABILITY_ID_SWITCHSWAP].target == nil or AbilitiesData[ABILITY_ID_SWITCHSWAP].targetType == nil then
+        if AbilitiesData[ABILITY_ID_CLAPSWAP].target == nil or AbilitiesData[ABILITY_ID_CLAPSWAP].targetType == nil then
             return false
         end
 
         return true
     end,
     getExtraInfo = function()
-        local ability = AbilitiesData[ABILITY_ID_SWITCHSWAP]
+        local ability = AbilitiesData[ABILITY_ID_CLAPSWAP]
 
         if ability == nil then return { "" } end
 
         if ability.target == nil or ability.targetType == nil then return { "Target: - " } end
 
-        if AbilitiesData[ABILITY_ID_SWITCHSWAP].targetType == "player" then
-            local targetIndex = AbilitiesData[ABILITY_ID_SWITCHSWAP].target.playerIndex
+        if AbilitiesData[ABILITY_ID_CLAPSWAP].targetType == "player" then
+            local targetIndex = AbilitiesData[ABILITY_ID_CLAPSWAP].target.playerIndex
             return { "Target: " .. gNetworkPlayers[targetIndex].name }
-        elseif AbilitiesData[ABILITY_ID_SWITCHSWAP].targetType == "object" then
+        elseif AbilitiesData[ABILITY_ID_CLAPSWAP].targetType == "object" then
             return { "Target: Object" }
         end
 
@@ -119,8 +119,8 @@ RegisterAbility(ABILITY_ID_SWITCHSWAP, {
     end,
 
     onResetVariables = function()
-        AbilitiesData[ABILITY_ID_SWITCHSWAP].target = nil
-        AbilitiesData[ABILITY_ID_SWITCHSWAP].targetType = nil
+        AbilitiesData[ABILITY_ID_CLAPSWAP].target = nil
+        AbilitiesData[ABILITY_ID_CLAPSWAP].targetType = nil
     end,
 
     -- Кастомные поля

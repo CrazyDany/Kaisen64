@@ -1,16 +1,16 @@
-ABILITY_ID_DOWNSPAWN = 7
+ABILITY_ID_DAWNSPAWN = 7
 
 local function onUseDownSpawn()
     local m = gMarioStates[0]
 
-    local No = AbilitiesData[ABILITY_ID_DOWNSPAWN].DSPredictionObject
+    local No = AbilitiesData[ABILITY_ID_DAWNSPAWN].DSPredictionObject
 
     spawn_sync_object(
-        AbilitiesData[ABILITY_ID_DOWNSPAWN].DSObjects[No].id,
-        AbilitiesData[ABILITY_ID_DOWNSPAWN].DSObjects[No].model,
-        m.pos.x + AbilitiesData[ABILITY_ID_DOWNSPAWN].DSObjects[No].dx,
-        m.pos.y + AbilitiesData[ABILITY_ID_DOWNSPAWN].DSObjects[No].dy,
-        m.pos.z + AbilitiesData[ABILITY_ID_DOWNSPAWN].DSObjects[No].dz,
+        AbilitiesData[ABILITY_ID_DAWNSPAWN].DSObjects[No].id,
+        AbilitiesData[ABILITY_ID_DAWNSPAWN].DSObjects[No].model,
+        m.pos.x + AbilitiesData[ABILITY_ID_DAWNSPAWN].DSObjects[No].dx,
+        m.pos.y + AbilitiesData[ABILITY_ID_DAWNSPAWN].DSObjects[No].dy,
+        m.pos.z + AbilitiesData[ABILITY_ID_DAWNSPAWN].DSObjects[No].dz,
         function(o)
             -- Setup function
         end
@@ -24,13 +24,13 @@ hook_event(HOOK_ON_SET_MARIO_ACTION, function(m)
         return
     end
 
-    AbilitiesData[ABILITY_ID_DOWNSPAWN].DSPredictionObject = math.random(0,
-        #AbilitiesData[ABILITY_ID_DOWNSPAWN].DSObjects)
+    AbilitiesData[ABILITY_ID_DAWNSPAWN].DSPredictionObject = math.random(0,
+        #AbilitiesData[ABILITY_ID_DAWNSPAWN].DSObjects)
 
 end)
 
-RegisterAbility(ABILITY_ID_DOWNSPAWN, {
-    name = "DownSpawn",
+RegisterAbility(ABILITY_ID_DAWNSPAWN, {
+    name = "DawnSpawn",
     shortName = "DnSp",
     description = "Spawning object by current act.",
     iconTextureName = "shlk",
@@ -45,7 +45,7 @@ RegisterAbility(ABILITY_ID_DOWNSPAWN, {
     end,
     getExtraInfo = function()
         return { "Object: " ..
-        AbilitiesData[ABILITY_ID_DOWNSPAWN].DSObjects[AbilitiesData[ABILITY_ID_DOWNSPAWN].DSPredictionObject].name }
+        AbilitiesData[ABILITY_ID_DAWNSPAWN].DSObjects[AbilitiesData[ABILITY_ID_DAWNSPAWN].DSPredictionObject].name }
     end,
 
     DSPredictionObject = 0,
