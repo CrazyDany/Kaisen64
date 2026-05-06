@@ -1,158 +1,128 @@
--- ==============================
--- music_system.lua
--- Полностью переработанная система воспроизведения музыки для Kaisen64.
--- ==============================
-
--- Конфигурация
 local config = {
-    backgroundVolume = 0.4,     -- Базовая громкость фоновой музыки
-    themeFadeDistance = 7500.0, -- Дистанция, на которой тема игрока полностью затихает
+    backgroundVolume = 0.4,
+    themeFadeDistance = 7500.0,
 }
 
-
--- Таблица с загруженными аудиопотоками
 local audioStreams = {
-    -- Фоновая музыка
-    Lobby = audio_stream_load("LobbyTheme.mp3"),
-    Game = audio_stream_load("GameTheme.mp3"),
-    -- Темы игроков (и звуковые эффекты)
-    Clap = audio_stream_load("clap.mp3"),
-    Jackpot = audio_stream_load("JACKPOT-sfx.mp3"),
-    SwindlerLaugh = audio_stream_load("Swindler-Laugh.mp3"),
-    BlackFlash = audio_stream_load("ScuBF.mp3"),
+    Lobby        = audio_stream_load("LobbyTheme.mp3"),
+    Game         = audio_stream_load("GameTheme.mp3"),
     JackpotMusic = audio_stream_load("JackpotMusic.mp3"),
 }
 
--- --- Состояние музыки (клиентское)
+local backgroundStream = nil
 
-local currentStream = nil    -- текущий играющий аудиопоток (nil - ничего не играет)
-local activeThemes = {}      -- список активных тем { name, volume, distance, globalIndex }
-local needMixerUpdate = true -- флаг пересчёта микшера
+local themeStreams = {}
 
--- --- Вспомогательные функции
-
-local function getDistanceFactor(distance)
-    if distance >= config.themeFadeDistance then return 0 end
-    return 1 - (distance / config.themeFadeDistance)
+local function startBackgroundMusic()
+    if backgroundStream then return end
+    local bgName = gGlobalSyncTable.backgroundMusic
+    local stream = bgName and audioStreams[bgName]
+    if stream then
+        audio_stream_play(stream, false, 0)
+        audio_stream_set_looping(stream, true)
+        backgroundStream = stream
+    end
 end
 
--- Обновление списка активных тем на основе синхронизированных данных
-local function updateActiveThemes()
-    activeThemes = {}
-    local localPlayerGlobalIndex = gNetworkPlayers[0] and gNetworkPlayers[0].globalIndex
-    if not localPlayerGlobalIndex then return end
+local function updateBackgroundVolume()
+    if not backgroundStream then return end
+    local anyTheme = false
+    for i = 0, MAX_PLAYERS - 1 do
+        local musicData = gPlayerSyncTable[i] and gPlayerSyncTable[i].kaisen64_music
+        if musicData and musicData.themeName then
+            anyTheme = true
+            break
+        end
+    end
+    local targetVol = anyTheme and 0 or config.backgroundVolume
+    audio_stream_set_volume(backgroundStream, targetVol)
+end
 
-    for localIdx = 0, MAX_PLAYERS - 1 do
-        if gNetworkPlayers[localIdx] and gNetworkPlayers[localIdx].connected then
-            local playerSync = gPlayerSyncTable[localIdx] and gPlayerSyncTable[localIdx].kaisen64_music
-            if playerSync and playerSync.themeName then
-                local globalIdx = gNetworkPlayers[localIdx].globalIndex
-                local themeData = {
-                    name = playerSync.themeName,
-                    volume = playerSync.themeVolume or 1.0,
-                    globalIndex = globalIdx,
-                }
-                if globalIdx ~= localPlayerGlobalIndex then
-                    local otherMario = gMarioStates[localIdx]
-                    local localMario = gMarioStates[0]
-                    if otherMario and localMario then
-                        local distance = vec3f_dist(otherMario.pos, localMario.pos)
-                        themeData.distance = distance
-                        themeData.volume = themeData.volume * getDistanceFactor(distance)
-                    else
-                        themeData.volume = 0
+local function updateThemes()
+    local localMario = gMarioStates[0]
+    if not localMario then return end
+
+    local allActiveThemes = {}
+    local themeVolumes = {}
+
+    for i = 0, MAX_PLAYERS - 1 do
+        local musicData = gPlayerSyncTable[i] and gPlayerSyncTable[i].kaisen64_music
+        if musicData and musicData.themeName then
+            local themeName = musicData.themeName
+            local baseVol = musicData.themeVolume or 1.0
+            allActiveThemes[themeName] = true
+
+            if i == 0 then
+                themeVolumes[themeName] = math.max(themeVolumes[themeName] or 0, baseVol)
+            else
+                local otherMario = gMarioStates[i]
+                if otherMario then
+                    local dist = vec3f_dist(otherMario.pos, localMario.pos)
+                    local factor = (dist >= config.themeFadeDistance) and 0 or (1 - dist / config.themeFadeDistance)
+                    local vol = baseVol * factor
+                    if vol > 0 then
+                        themeVolumes[themeName] = math.max(themeVolumes[themeName] or 0, vol)
                     end
-                else
-                    themeData.distance = 0
-                end
-                if themeData.volume > 0 then
-                    table.insert(activeThemes, themeData)
                 end
             end
         end
     end
-    needMixerUpdate = true
-end
 
--- Микшер: решает, что именно играть
-local function mixer()
-    if #activeThemes == 0 then
-        local bgStream = audioStreams[gGlobalSyncTable.backgroundMusic]
-        if bgStream then
-            return bgStream, config.backgroundVolume, false
-        else
-            return nil, 0, false
+    for themeName, _ in pairs(allActiveThemes) do
+        if not themeStreams[themeName] and audioStreams[themeName] then
+            local stream = audioStreams[themeName]
+            audio_stream_play(stream, false, 0) -- стартуем с громкостью 0
+            themeStreams[themeName] = { stream = stream, active = true }
         end
     end
 
-    -- Приоритет: локальная тема > самая громкая (ближайшая)
-    local localPlayerGlobalIndex = gNetworkPlayers[0] and gNetworkPlayers[0].globalIndex
-    local bestTheme = nil
-    local bestScore = -1
+    for themeName, info in pairs(themeStreams) do
+        local desiredVol = themeVolumes[themeName] or 0
+        audio_stream_set_volume(info.stream, desiredVol)
+    end
 
-    for _, theme in ipairs(activeThemes) do
-        local score = (theme.globalIndex == localPlayerGlobalIndex) and 1000 or theme.volume
-        if score > bestScore then
-            bestScore = score
-            bestTheme = theme
+    for themeName, info in pairs(themeStreams) do
+        if not allActiveThemes[themeName] then
+            audio_stream_stop(info.stream)
+            themeStreams[themeName] = nil
         end
     end
-
-    if bestTheme and audioStreams[bestTheme.name] then
-        return audioStreams[bestTheme.name], math.min(bestTheme.volume, 1.0), true
-    end
-    return nil, 0, false
 end
 
--- --- Хуки
+local function initMusicSystem()
+    if network_is_server() then
+        if not gGlobalSyncTable.backgroundMusic then
+            gGlobalSyncTable.backgroundMusic = "Lobby"
+        end
+    end
+    startBackgroundMusic()
+end
 
--- Событие обновления кадра (только для локального игрока)
 hook_event(HOOK_MARIO_UPDATE, function(m)
     if m.playerIndex ~= 0 then return end
-
-    updateActiveThemes()
-    local stream, targetVolume, isTheme = mixer()
-
-    if currentStream ~= stream then
-        if currentStream then
-            audio_stream_stop(currentStream)
-            currentStream = nil
-        end
-        if stream and targetVolume > 0 then
-            audio_stream_play(stream, false, targetVolume)
-            currentStream = stream
-        end
-    elseif stream and currentStream == stream then
-        audio_stream_set_volume(stream, targetVolume)
-    end
+    updateBackgroundVolume()
+    updateThemes()
 end)
 
--- Подключение нового игрока: создаём подтаблицу для музыки
 hook_event(HOOK_ON_PLAYER_CONNECTED, function(connector)
     if not gPlayerSyncTable[connector.playerIndex] then return end
-
     if not gPlayerSyncTable[connector.playerIndex].kaisen64_music then
         gPlayerSyncTable[connector.playerIndex].kaisen64_music = {}
-
         gPlayerSyncTable[connector.playerIndex].kaisen64_music.themeName = nil
         gPlayerSyncTable[connector.playerIndex].kaisen64_music.themeVolume = 1.0
     end
-    needMixerUpdate = true
 end)
 
--- Инициализация глобального состояния (только на сервере)
-if network_is_server() then
-    if not gGlobalSyncTable.backgroundMusic then
-        gGlobalSyncTable.backgroundMusic = "Lobby"
+hook_on_sync_table_change(gGlobalSyncTable, "backgroundMusic", "Kaisen64_MusicHook", function(tag, old, new)
+    if new and audioStreams[new] then
+        if backgroundStream then
+            audio_stream_stop(backgroundStream)
+            backgroundStream = nil
+        end
+        startBackgroundMusic()
+        updateBackgroundVolume()
     end
-end
-
--- Отслеживание изменения фоновой музыки
-hook_on_sync_table_change(gGlobalSyncTable, "backgroundMusic", "Kaisen64_MusicHook", function()
-    needMixerUpdate = true
 end)
-
--- --- Публичные API
 
 function SetBackgroundMusic(musicName)
     if not network_is_server() then return end
@@ -164,7 +134,9 @@ end
 function PlayPlayerTheme(playerIndex, themeName, volume)
     if not gPlayerSyncTable[playerIndex] then return end
     if not gPlayerSyncTable[playerIndex].kaisen64_music then
-        gPlayerSyncTable[playerIndex].kaisen64_music = { themeName = nil, themeVolume = 1.0 }
+        gPlayerSyncTable[playerIndex].kaisen64_music = {}
+        gPlayerSyncTable[playerIndex].kaisen64_music.themeName = nil
+        gPlayerSyncTable[playerIndex].kaisen64_music.themeVolume = 1.0
     end
     gPlayerSyncTable[playerIndex].kaisen64_music.themeName = themeName
     gPlayerSyncTable[playerIndex].kaisen64_music.themeVolume = volume or 1.0
@@ -190,4 +162,4 @@ function PlaySoundEffect(sfxName, volume)
     end
 end
 
-print("[Kaisen64 Music System] Loaded successfully")
+initMusicSystem()

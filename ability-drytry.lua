@@ -29,7 +29,7 @@ local function onUseDryTry()
     end
 
     n1, n2, n3 = math.random(min, max), math.random(min, max), math.random(min, max)
-    local n = n1 * 100 + n2 * 10 + n3
+    local n = 777
 
     djui_hud_set_font(FONT_MENU)
 
@@ -67,8 +67,7 @@ local function onUseDryTry()
 
         -- Every hitting
         PlaySound("Jackpot", 0.5)
-        gPlayerSyncTable[0].Kaisen64.playingTheme = "JackpotMusic"
-        gPlayerSyncTable[0].Kaisen64.playingThemeVolume = 0.5
+        PlayPlayerTheme(0, "JackpotMusic", 1)
         AbilitiesData[ABILITY_ID_DRYTRY].jackpotTimer = (AbilitiesData[ABILITY_ID_DRYTRY].jackpotTimer or 0) +
             (2 * 60 + 5) * 30
     elseif (n1 == n2) or (n1 == n3) or (n2 == n3) then
@@ -136,7 +135,7 @@ hook_event(HOOK_UPDATE,
             if AbilitiesData[ABILITY_ID_DRYTRY].jackpotTimer == 0 then
                 MultipleCooldownSpeed(0, 2)
                 gMarioStates[0].health = AbilitiesData[ABILITY_ID_DRYTRY].healthBeforeJackpot
-                gPlayerSyncTable[0].Kaisen64.playingTheme = nil
+                StopPlayerTheme(0)
                 AbilitiesData[ABILITY_ID_DRYTRY].healthBeforeJackpot = 0
                 AbilitiesData[ABILITY_ID_DRYTRY].jackpotTimer = 0
                 AbilitiesData[ABILITY_ID_DRYTRY].attempts = 0
@@ -236,14 +235,9 @@ RegisterAbility(ABILITY_ID_DRYTRY, {
         AbilitiesData[ABILITY_ID_DRYTRY].lastResult = 0
         if AbilitiesData[ABILITY_ID_DRYTRY].jackpotTimer > 0 then
             MultipleCooldownSpeed(0, 2)
-            audio_stream_destroy(AudioNames["JackpotMusic"])
         end
         AbilitiesData[ABILITY_ID_DRYTRY].jackpotTimer = 0
         AbilitiesData[ABILITY_ID_DRYTRY].healthBeforeJackpot = 0
-
-        if gPlayerSyncTable[0].Kaisen64 ~= nil then
-            gPlayerSyncTable[0].Kaisen64.playingTheme = nil
-        end
     end,
 
     -- кастомные поля

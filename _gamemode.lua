@@ -53,6 +53,7 @@ local function onGameStateChanged(tag, oldState, newState)
         end
 
         if network_is_server() then
+            StopAllThemes()
             SetBackgroundMusic("Lobby")
         end
     elseif newState == GAME_STATE.PREPARING then
