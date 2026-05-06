@@ -29,7 +29,7 @@ local function onUseDryTry()
     end
 
     n1, n2, n3 = math.random(min, max), math.random(min, max), math.random(min, max)
-    local n = 777
+    local n = 100 * n1 + 10 * n2 + n3
 
     djui_hud_set_font(FONT_MENU)
 
