@@ -57,6 +57,29 @@ GroundMovingActions = {
     ACT_BACKFLIP_LAND
 }
 
+HurtActions = {
+    ACT_HARD_BACKWARD_GROUND_KB,
+    ACT_HARD_FORWARD_GROUND_KB,
+    ACT_BACKWARD_GROUND_KB,
+    ACT_FORWARD_GROUND_KB,
+    ACT_SOFT_BACKWARD_GROUND_KB,
+    ACT_SOFT_FORWARD_GROUND_KB,
+    ACT_HARD_BACKWARD_AIR_KB,
+    ACT_HARD_FORWARD_AIR_KB
+
+
+}
+
+
+function ChecIfHit()
+    for _, action in ipairs(HurtActions) do
+        if action == gMarioStates[0].action then
+            return true
+        end
+    end
+    return false
+end
+
 function CheckIfStationary()
     for _, action in ipairs(StationaryActions) do
         if action == gMarioStates[0].action then
