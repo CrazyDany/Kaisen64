@@ -20,6 +20,8 @@ hook_event(HOOK_BEFORE_PHYS_STEP,
 
         if effectStrength <= 0 then return end
 
+        if ChecIfHit() == true then return end
+
         local groundSpeed = f(effectStrength)
         m.vel.x = m.vel.x * groundSpeed
         m.vel.z = m.vel.z * groundSpeed

@@ -6,12 +6,21 @@ gPlayerSyncTable[0].CrazyDanyBetterStats.extraGravity = 0.0
 gPlayerSyncTable[0].CrazyDanyBetterStats.swimingSpeed = 1.0
 gPlayerSyncTable[0].CrazyDanyBetterStats.jumpStrength = 1.0
 gPlayerSyncTable[0].CrazyDanyBetterStats.damageMult = 1.0
+gPlayerSyncTable[0].CrazyDanyBetterStats.knockbackStrength = 1.0
 
 hook_event(HOOK_BEFORE_PHYS_STEP,
     --- @param m MarioState
     --- @param s integer
     function(m, s)
         if m.playerIndex ~= 0 then return end
+
+        if ChecIfHit() == true then
+            local knockbackStrength = gPlayerSyncTable[0].CrazyDanyBetterStats.knockbackStrength or 1
+            m.vel.x = m.vel.x * knockbackStrength
+            m.vel.z = m.vel.z * knockbackStrength
+            m.vel.y = m.vel.y * knockbackStrength
+            return
+        end
 
         if s == STEP_TYPE_GROUND then
             -- djui_chat_message_create("Ground step")
@@ -48,7 +57,6 @@ hook_event(HOOK_MARIO_UPDATE,
         else
             actionisold = false
         end
-
 
         if luigicooldown == true then
             if CheckIfStationary() == true or CheckIfGroundMoving() == true then
