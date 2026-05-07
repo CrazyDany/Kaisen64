@@ -10,7 +10,7 @@ function bhv_coldbreeze_init(obj)
     obj.oFriction         = 0
     obj.oBuoyancy         = 0
 
-    obj.oForwardVel       = 1.5
+    obj.oForwardVel       = 2
 
     -- hitbox
     obj.hitboxRadius      = 300
@@ -37,12 +37,19 @@ function bhv_coldbreeze_loop(obj)
         FreesingEffect:Apply(m, 3)
     end
 
-    obj.oTimer = obj.oTimer - 1
+    -- djui_chat_message_create("Timer: " .. obj.oTimer)
+    -- obj.oOpacity = 255 * (1024 / (1024 + 4 * obj.oTimer)) - 51
+    obj.oOpacity = 31
 
-    if obj.oTimer <= 0 then
+    if obj.oTimer >= 8192 then
         obj_mark_for_deletion(obj)
         obj.oTimer = 0
     end
+
+    -- if obj.oTimer <= 0 then
+    --     obj_mark_for_deletion(obj)
+    --     obj.oTimer = 0
+    -- end
 end
 
 id_bhvColdBreeze = hook_behavior(nil, OBJ_LIST_DEFAULT, false, bhv_coldbreeze_init, bhv_coldbreeze_loop)

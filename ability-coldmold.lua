@@ -29,7 +29,6 @@ hook_event(HOOK_UPDATE,
                 m.pos.z,
                 function(o)
                     o.parentObj = m.marioObj
-                    o.oTimer = AbilitiesData[ABILITY_ID_COLDMOLD].lifeTime
                 end
             )
         end
@@ -42,7 +41,7 @@ RegisterAbility(ABILITY_ID_COLDMOLD, {
     description = "Freeze enemies.",
     iconTextureName = "ability-icon-locked",
 
-    cost = 64,
+    cost = 128,
     cooldown = 128,
     curCooldown = 0,
 
@@ -55,9 +54,8 @@ RegisterAbility(ABILITY_ID_COLDMOLD, {
     end,
 
     -- custom fields
-    duration = 32,
-    lifeTime = 8,
-    tickSpawnRatio = 8,
+    duration = 64,
+    tickSpawnRatio = 16,
 
     curTimer = 0,
 })
