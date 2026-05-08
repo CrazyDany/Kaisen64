@@ -7,12 +7,6 @@ local function onUseArefare()
     djui_chat_message_create("Activied")
 end
 
-local inAreFare = false
-local areFareDist = 0
--- Убираем глобальные переменные, они больше не нужны
--- local inAreFare = false
--- local areFareDist = 0
-
 hook_event(HOOK_BEFORE_MARIO_UPDATE,
     function(m)
         if m.playerIndex == 0 then
