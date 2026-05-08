@@ -4,7 +4,7 @@
 local function onApplyFreesingEffect(m, dur)
 end
 
-local function f(n) return 1024 / (n + 1024) end
+local function f(n) return 2048 / (n + 2048) end
 
 ---comment
 ---@param m MarioState

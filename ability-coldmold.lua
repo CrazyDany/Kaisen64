@@ -54,8 +54,8 @@ RegisterAbility(ABILITY_ID_COLDMOLD, {
     end,
 
     -- custom fields
-    duration = 64,
-    tickSpawnRatio = 16,
+    duration = 16,
+    tickSpawnRatio = 4,
 
     curTimer = 0,
 })
