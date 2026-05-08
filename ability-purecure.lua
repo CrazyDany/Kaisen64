@@ -4,6 +4,7 @@ local function onUsePureCure()
     local m = gMarioStates[0]
 
     m.health = m.health + 512
+    ClearAllEffects(m)
 end
 
 RegisterAbility(ABILITY_ID_PURECURE, {
