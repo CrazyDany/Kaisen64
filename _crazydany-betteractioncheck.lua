@@ -70,46 +70,55 @@ HurtActions = {
 
 }
 
-
-function ChecIfHit()
+--- @param m MarioState
+--- @return boolean
+function ChecIfHit(m)
     for _, action in ipairs(HurtActions) do
-        if action == gMarioStates[0].action then
+        if action == gMarioStates[m.playerIndex].action then
             return true
         end
     end
     return false
 end
 
-function CheckIfStationary()
+--- @param m MarioState
+--- @return boolean
+function CheckIfStationary(m)
     for _, action in ipairs(StationaryActions) do
-        if action == gMarioStates[0].action then
+        if action == gMarioStates[m.playerIndex].action then
             return true
         end
     end
     return false
 end
 
-function CheckIfStationaryBefore()
+--- @param m MarioState
+--- @return boolean
+function CheckIfStationaryBefore(m)
     for _, action in ipairs(StationaryActions) do
-        if action == gMarioStates[0].prevAction then
+        if action == gMarioStates[m.playerIndex].prevAction then
             return true
         end
     end
     return false
 end
 
-function CheckIfGroundMoving()
+--- @param m MarioState
+--- @return boolean
+function CheckIfGroundMoving(m)
     for _, action in ipairs(GroundMovingActions) do
-        if action == gMarioStates[0].action then
+        if action == gMarioStates[m.playerIndex].action then
             return true
         end
     end
     return false
 end
 
-function CheckIfGroundMovingBeforeBefore()
+--- @param m MarioState
+--- @return boolean
+function CheckIfGroundMovingBeforeBefore(m)
     for _, action in ipairs(GroundMovingActions) do
-        if action == gMarioStates[0].prevAction then
+        if action == gMarioStates[m.playerIndex].prevAction then
             return true
         end
     end

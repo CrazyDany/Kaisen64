@@ -122,6 +122,7 @@ hook_event(HOOK_UPDATE,
         if gPlayerSyncTable[0].Kaisen64 == nil then return end
 
         if AbilitiesData[ABILITY_ID_DRYTRY].jackpotTimer > 0 then
+            gPlayerSyncTable[0].CrazyDanyBetterStats.lavaResist = true
             -- djui_chat_message_create("Jackpot timer: " .. AbilitiesData[ABILITY_ID_DRYTRY].jackpotTimer)
             AbilitiesData[ABILITY_ID_DRYTRY].jackpotTimer = AbilitiesData[ABILITY_ID_DRYTRY].jackpotTimer - 1
             gPlayerSyncTable[0].Kaisen64.currentEnergy = gPlayerSyncTable[0].Kaisen64.maxEnergy
@@ -133,6 +134,7 @@ hook_event(HOOK_UPDATE,
 
             -- End jackpot
             if AbilitiesData[ABILITY_ID_DRYTRY].jackpotTimer == 0 then
+                gPlayerSyncTable[0].CrazyDanyBetterStats.lavaResist = false
                 MultipleCooldownSpeed(0, 2)
                 gMarioStates[0].health = AbilitiesData[ABILITY_ID_DRYTRY].healthBeforeJackpot
                 StopPlayerTheme(0)
@@ -165,16 +167,6 @@ hook_event(HOOK_ON_SET_MARIO_ACTION, function(m)
     if AbilitiesData[ABILITY_ID_DRYTRY].jackpotTimer > 0 then
         if m.action == ACT_JUMP then
             set_mario_action(m, ACT_DOUBLE_JUMP, 0)
-        end
-    end
-end)
-
-hook_event(HOOK_ALLOW_HAZARD_SURFACE, function(m, h)
-    if (gPlayerSyncTable[0].Kaisen64 == nil) or (m.playerIndex ~= 0) then return end
-
-    if AbilitiesData[ABILITY_ID_DRYTRY].jackpotTimer > 0 then
-        if h == HAZARD_TYPE_LAVA_FLOOR then
-            return false
         end
     end
 end)
@@ -235,6 +227,7 @@ RegisterAbility(ABILITY_ID_DRYTRY, {
         AbilitiesData[ABILITY_ID_DRYTRY].lastResult = 0
         if AbilitiesData[ABILITY_ID_DRYTRY].jackpotTimer > 0 then
             MultipleCooldownSpeed(0, 2)
+            gPlayerSyncTable[0].CrazyDanyBetterStats.lavaResist = false
         end
         AbilitiesData[ABILITY_ID_DRYTRY].jackpotTimer = 0
         AbilitiesData[ABILITY_ID_DRYTRY].healthBeforeJackpot = 0

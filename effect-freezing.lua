@@ -20,7 +20,7 @@ hook_event(HOOK_BEFORE_PHYS_STEP,
 
         if effectStrength <= 0 then return end
 
-        if ChecIfHit() == true then return end
+        if ChecIfHit(m) == true then return end
 
         local groundSpeed = f(effectStrength)
         m.vel.x = m.vel.x * groundSpeed
@@ -48,12 +48,12 @@ hook_event(HOOK_MARIO_UPDATE,
         end
 
         if idkcooldown == true then
-            if CheckIfStationary() == true or CheckIfGroundMoving() == true then
+            if CheckIfStationary(m) == true or CheckIfGroundMoving(m) == true then
                 idkcooldown = false
             end
         end
 
-        if (CheckIfStationaryBefore() or CheckIfGroundMovingBeforeBefore()) and actionisold == false and (m.controller.buttonPressed & A_BUTTON) ~= 0 then
+        if (CheckIfStationaryBefore(m) or CheckIfGroundMovingBeforeBefore(m)) and actionisold == false and (m.controller.buttonPressed & A_BUTTON) ~= 0 then
             if idkcooldown == false then
                 m.vel.y = m.vel.y * jumpStrength
                 idkcooldown = true
@@ -69,7 +69,7 @@ end
 
 FreesingEffect = EffectData.new("freezing", onUpdateFreesingEffect, onApplyFreesingEffect, onEndFreesingEffect)
 
-hook_chat_command("freeze", "Apply freezing effect", function(m)
+hook_chat_command("freeze", "Apply freezing effect", function(msg)
     FreesingEffect:Apply(gMarioStates[0], 128)
     return true
 end)
