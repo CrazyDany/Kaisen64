@@ -44,8 +44,11 @@ end
 local function onGameStateChanged(tag, oldState, newState)
     ResetAbilities()
     ClearAllEffects(gMarioStates[0])
-    gPlayerSyncTable[0].Kaisen64.currentEnergy = gPlayerSyncTable[0].Kaisen64.maxEnergy
-    gPlayerSyncTable[0].Kaisen64.RCTStateTimer = 0
+
+    if gPlayerSyncTable[0].Kaisen64 ~= nil then
+        gPlayerSyncTable[0].Kaisen64.currentEnergy = gPlayerSyncTable[0].Kaisen64.maxEnergy
+        gPlayerSyncTable[0].Kaisen64.RCTStateTimer = 0
+    end
     if newState == GAME_STATE.WAIT then
         gServerSettings.playerInteractions = PLAYER_INTERACTIONS_NONE
         djui_chat_message_create("Ожидание игроков...")
