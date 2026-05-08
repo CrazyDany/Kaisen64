@@ -43,6 +43,9 @@ end
 
 local function onGameStateChanged(tag, oldState, newState)
     ResetAbilities()
+    ClearAllEffects(gMarioStates[0])
+    gPlayerSyncTable[0].Kaisen64.currentEnergy = gPlayerSyncTable[0].Kaisen64.maxEnergy
+    gPlayerSyncTable[0].Kaisen64.RCTStateTimer = 0
     if newState == GAME_STATE.WAIT then
         gServerSettings.playerInteractions = PLAYER_INTERACTIONS_NONE
         djui_chat_message_create("Ожидание игроков...")
@@ -74,7 +77,10 @@ end
 hook_on_sync_table_change(gGlobalSyncTable, "curGameState", "GameStateHook", onGameStateChanged)
 
 local function onStartGameCommand(msg)
-    if not network_is_server() then return true end
+    if not network_is_server() then
+        djui_chat_message_create("Иди нахуй, ты не админ сервака!!!")
+        return true
+    end
 
     local state = gGlobalSyncTable.curGameState
     if state == GAME_STATE.WAIT then
