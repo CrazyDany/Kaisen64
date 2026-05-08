@@ -78,3 +78,15 @@ hook_event(HOOK_MARIO_UPDATE, function(m)
         end
     end
 end)
+
+--- @param m MarioState
+function ClearAllEffects(m)
+    for id = 1, maxEffectId do
+        local dur = gPlayerSyncTable[m.playerIndex].crazydany_effects[id]
+        if dur and dur > 0 then
+            local effect = EffectsList[id]
+            if effect and effect.onEnd then effect.onEnd(m) end
+            gPlayerSyncTable[m.playerIndex].crazydany_effects[id] = nil
+        end
+    end
+end
