@@ -37,9 +37,9 @@ hook_event(HOOK_UPDATE,
 
 RegisterAbility(ABILITY_ID_COLDMOLD, {
     name = "ColdMold",
-    shortName = "CoMo",
+    shortName = "ClMl",
     description = "Freeze enemies.",
-    iconTextureName = "ability-icon-locked",
+    iconTextureName = "clml",
 
     cost = 128,
     cooldown = 128,

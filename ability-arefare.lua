@@ -58,7 +58,7 @@ hook_event(HOOK_BEFORE_PHYS_STEP,
     end
 )
 RegisterAbility(ABILITY_ID_AREFARE, {
-    name = "Arefare",
+    name = "AreFare",
     shortName = "ArFe",
     description = "Ability placeholder for modders",
     iconTextureName = "rgtc",

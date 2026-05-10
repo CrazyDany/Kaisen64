@@ -1,6 +1,7 @@
 function bhv_coldbreeze_init(obj)
     obj.oFlags = OBJ_FLAG_UPDATE_GFX_POS_AND_ANGLE
     cur_obj_scale(10.0)
+    obj_set_billboard(obj)
 
     -- physics
     obj.oWallHitboxRadius = 40.00

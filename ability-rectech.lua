@@ -145,7 +145,7 @@ RegisterAbility(ABILITY_ID_RECTECH, {
     name = "RecTech",
     shortName = "RcTc",
     description = "",
-    iconTextureName = "rgtc",
+    iconTextureName = "rctc",
 
     cost = 64,
     cooldown = 256,

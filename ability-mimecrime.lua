@@ -33,9 +33,9 @@ HookEvent_LocalMarioPVPAttack(
 
 RegisterAbility(ABILITY_ID_MIMECRIME, {
     name = "MimeCrime",
-    shortName = "MiCr",
+    shortName = "MmCm",
     description = "Ability placeholder for modders",
-    iconTextureName = "rgtc",
+    iconTextureName = "mmcm",
 
     cost = 128,
     cooldown = 256,
