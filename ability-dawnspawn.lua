@@ -33,7 +33,7 @@ RegisterAbility(ABILITY_ID_DAWNSPAWN, {
     name = "DawnSpawn",
     shortName = "DnSp",
     description = "Spawning object by current act.",
-    iconTextureName = "shlk",
+    iconTextureName = "ml",
 
     cost = 128,
     cooldown = 128,

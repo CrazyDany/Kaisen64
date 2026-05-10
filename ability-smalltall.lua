@@ -51,7 +51,7 @@ RegisterAbility(ABILITY_ID_SMALLTALL, {
     name = "SmallTall",
     shortName = "SmTl",
     description = "Grow up in size for destructibility or shrink down in size for slickness.",
-    iconTextureName = "rgtc",
+    iconTextureName = "smtl",
 
     cost = 128,
     cooldown = 512,
