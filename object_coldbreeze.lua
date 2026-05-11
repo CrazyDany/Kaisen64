@@ -35,14 +35,14 @@ function bhv_coldbreeze_loop(obj)
 
     -- Столкнулся с локальным Марио
     if dist_xOz <= obj.hitboxRadius and dist_y <= obj.hitboxHeight then
-        FreesingEffect:Apply(m, 3)
+        FreesingEffect:Apply(m, 5)
     end
 
     -- djui_chat_message_create("Timer: " .. obj.oTimer)
     -- obj.oOpacity = 255 * (1024 / (1024 + 4 * obj.oTimer)) - 51
     obj.oOpacity = 31
 
-    if obj.oTimer >= 8192 then
+    if obj.oTimer >= 1024 then
         obj_mark_for_deletion(obj)
         obj.oTimer = 0
     end

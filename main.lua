@@ -75,6 +75,7 @@ HookEvent_LocalMarioPVPDamage(
 --- @param i integer
     function(a, i)
         local m = gMarioStates[0]
-        m.health = m.health - 10
+        m.health = m.health - 100
+        djui_chat_message_create("obezyana pizdul")
     end
 )
