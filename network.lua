@@ -15,4 +15,20 @@ hook_event(HOOK_ON_PACKET_RECEIVE, function(dataTable)
         local playVolume = dataTable.k64_playStream_playVolume or 1
         PlaySound(AudioNames[dataTable.k64_playStream], playVolume)
     end
+
+    if dataTable.k64_playFlash ~= nil then
+        local screenWidth = djui_hud_get_screen_width()
+        local screenHeight = djui_hud_get_screen_height()
+
+        UITweenRect(
+            {
+                { frame = 0,     x = 0, y = 0, w = screenWidth, h = screenHeight, color = { 255, 255, 255, 0 } },
+                { frame = 1,     x = 0, y = 0, w = screenWidth, h = screenHeight, color = { 255, 255, 255, 255 } },
+                { frame = 1 + 8, x = 0, y = 0, w = screenWidth, h = screenHeight, color = { 255, 255, 255, 255 } },
+                { frame = 1 + 8 + 4, x = 0, y = 0, w = screenWidth, h = screenHeight, color = { 255, 255, 255, 0 } },
+            }, {
+                looping = false,
+            }
+        )
+    end
 end)

@@ -9,12 +9,27 @@ local function onUseSwitchSwap()
     if targetType == "player" then
         if target.playerIndex == 0 then return false end
 
+        local screenWidth = djui_hud_get_screen_width()
+        local screenHeight = djui_hud_get_screen_height()
+
         PlaySound("Clap", 1)
+
+        UITweenRect(
+            {
+                { frame = 0,     x = 0, y = 0, w = screenWidth, h = screenHeight, color = { 255, 255, 255, 0 } },
+                { frame = 1,     x = 0, y = 0, w = screenWidth, h = screenHeight, color = { 255, 255, 255, 255 } },
+                { frame = 1 + 8, x = 0, y = 0, w = screenWidth, h = screenHeight, color = { 255, 255, 255, 255 } },
+                { frame = 1 + 8 + 4, x = 0, y = 0, w = screenWidth, h = screenHeight, color = { 255, 255, 255, 0 } },
+            }, {
+                looping = false,
+            }
+        )
 
         network_send(true,
             {
                 k64_playSample = "Clap",
-                k64_playSample_playVolume = 1
+                k64_playSample_playVolume = 1,
+                k64_playFlash = true,
             })
 
         network_send_to(target.playerIndex, true,
