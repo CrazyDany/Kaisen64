@@ -279,17 +279,6 @@ local function renderHealthBar()
         djui_hud_set_color(settings.fillColor[1], settings.fillColor[2], settings.fillColor[3], settings.fillColor[4])
         djui_hud_render_rect(x + 2, y + 2, fillWidth - 4, barHeight - 4)
     end
-
-    if settings.showNumbers then
-        local text = string.format("%d / %d", math.floor(realHealth), MAX_REAL_HEALTH)
-        djui_hud_set_font(HUDSettings.font)
-        djui_hud_set_color(settings.textColor[1], settings.textColor[2], settings.textColor[3], settings.textColor[4])
-        local adaptiveScale = getAdaptiveScale(settings.textScale)
-        local textWidth = djui_hud_measure_text(text) * adaptiveScale
-        local textX = x + (barWidth - textWidth) / 2
-        local textY = y
-        djui_hud_print_text(text, textX, textY, adaptiveScale)
-    end
 end
 
 local function renderExtraInfo()
