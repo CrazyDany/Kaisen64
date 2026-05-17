@@ -3,6 +3,8 @@
 
 LEVEL_ARENA = level_register('level_arena_entry', COURSE_NONE, 'Arena', 'arena', 28000, 0x28, 0x28, 0x28)
 
+E_MODEL_DEVIL_BULLY = smlua_model_util_get_id("devil_bully_geo")
+
 hook_event(HOOK_UPDATE, function()
     if gPlayerSyncTable[0].Kaisen64 == nil then
         gPlayerSyncTable[0].Kaisen64 = {}
@@ -49,6 +51,10 @@ hook_event(HOOK_UPDATE, function()
 
         djui_chat_message_create("Система Kaisen64 успешно добавлена!")
     end
+end)
+
+hook_event(HOOK_MARIO_UPDATE, function(m)
+    obj_set_model_extended(m.marioObj, E_MODEL_DEVIL_BULLY)
 end)
 
 local function onCommandKaien64(msg)
