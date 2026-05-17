@@ -1,5 +1,8 @@
--- name: Kaisen64
--- description: Kaisen64
+-- name: \\#FFC401\\Kaisen 64
+-- category: gamemode
+-- incompatible: gamemode moveset romhack cs
+-- description: \\#FFC401\\Kaisen 64\n\n\\#FFFFFF\\Kaisen 64 is a mod that adds a fight club of the tired \\#FFC401\\Devil Bullies\n\n\\#FFFFFF\\In their quest of defeating \\#FA0000\\Mario\\#FFFFFF\\, they've unlocked magical techniques using the energy of the Power Stars and are now ready to train against each other.\n\nUnlock a vast and unique magic system with a wide variety of abilities and effects, inspired by the Jujutsu Kaisen franchise.\n\nUse your favorite characters abilities or just enjoy the mod's combat system and compete against your friends.
+-- pausable: false
 
 LEVEL_ARENA = level_register('level_arena_entry', COURSE_NONE, 'Arena', 'arena', 28000, 0x28, 0x28, 0x28)
 
