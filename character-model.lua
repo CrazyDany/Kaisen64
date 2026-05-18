@@ -5,9 +5,14 @@ K64_SKINS_TABLE = {
     },
 
     [1] = {
-        name = "judas",
+        name = "eternal",
         model = smlua_model_util_get_id("devil_bully_skin1_geo")
-    }
+    },
+
+    [2] = {
+        name = "kaichi",
+        model = smlua_model_util_get_id("devil_bully_skin2_geo")
+    },
 }
 
 local k64_defaultSkin = 0
