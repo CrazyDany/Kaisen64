@@ -22,7 +22,7 @@ extern Vtx arena_dl_Circle_002_mesh_layer_1_vtx_0[106];
 extern Gfx arena_dl_Circle_002_mesh_layer_1_tri_0[];
 extern Vtx arena_dl_Circle_005_mesh_layer_1_vtx_0[422];
 extern Gfx arena_dl_Circle_005_mesh_layer_1_tri_0[];
-extern Vtx arena_dl_Cube_mesh_layer_1_vtx_0[140];
+extern Vtx arena_dl_Cube_mesh_layer_1_vtx_0[153];
 extern Gfx arena_dl_Cube_mesh_layer_1_tri_0[];
 extern Vtx arena_dl_Cube_001_mesh_layer_1_vtx_0[26];
 extern Gfx arena_dl_Cube_001_mesh_layer_1_tri_0[];
