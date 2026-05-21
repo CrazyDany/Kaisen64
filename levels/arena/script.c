@@ -37,6 +37,7 @@ const LevelScript level_arena_entry[] = {
 		MARIO_POS(0x01, 0, 0, 200, 0),
 		OBJECT(E_MODEL_PIRANHA_PLANT, -756, 86, 2253, 0, 0, 0, 0x00000000, id_bhvPiranhaPlant),
 		OBJECT(E_MODEL_PIRANHA_PLANT, 756, 86, 2253, 0, 0, 0, 0x00000000, id_bhvPiranhaPlant),
+		OBJECT(E_MODEL_NONE, -2227, 116, 2227, 0, 0, 0, 0x00000000, id_bhvTTCTreadmill),
 		OBJECT(MODEL_NONE, 0, 493, 1938, 0, -180, 0, 0x000A0000, bhvSpinAirborneWarp),
 		TERRAIN(arena_area_1_collision),
 		MACRO_OBJECTS(arena_area_1_macro_objs),
