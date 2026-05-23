@@ -67,20 +67,19 @@ end
 hook_chat_command("kaisen64", "Начало работы с Kaisen64", onCommandKaien64)
 hook_chat_command("k64", "Начало работы с Kaisen64", onCommandKaien64)
 
--- HookEvent_LocalMarioPVPAttack(
--- --- @param v MarioState
--- --- @param i integer
---     function(v, i)
---         djui_chat_message_create("ATTAAAACK!!!")
---     end
--- )
+HookEvent_LocalMarioPVPAttack(
+--- @param v MarioState
+--- @param i integer
+    function(v, i)
+        djui_chat_message_create("ATTAAAACK!!!")
+    end
+)
 
 HookEvent_LocalMarioPVPDamage(
 --- @param a MarioState
 --- @param i integer
     function(a, i)
         local m = gMarioStates[0]
-        m.health = m.health - 100
-        djui_chat_message_create("obezyana pizdul")
+        m.health = m.health - 150
     end
 )

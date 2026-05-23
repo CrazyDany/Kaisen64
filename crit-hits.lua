@@ -1,6 +1,5 @@
 local n = 7
 
-
 ACT_BE_HITTED_WITH_BLACKFLASH = allocate_mario_action(ACT_FLAG_STATIONARY)
 
 hook_mario_action(ACT_BE_HITTED_WITH_BLACKFLASH,
@@ -26,6 +25,9 @@ hook_mario_action(ACT_COMBO_BLACKFLASH,
 HookEvent_LocalMarioPVPAttack(
     function(v, i)
         if not IsCritAllowed() then return end
+
+
+        AddRCTStateTimer(0, 256)
 
         set_mario_action(gMarioStates[0], ACT_COMBO_BLACKFLASH, 0)
         network_send_to(v.playerIndex, true,
@@ -69,6 +71,9 @@ hook_event(HOOK_ON_PACKET_RECEIVE,
     function(dataTable)
         if dataTable.k64_beHitWithBlackFlash ~= nil then
             local m = gMarioStates[0]
+
+            m.health = m.health - 200
+            AddRCTStateTimer(0, -256)
 
             set_mario_action(m, ACT_BE_HITTED_WITH_BLACKFLASH, 0)
             local attackYaw = (dataTable.k64_beHitWithBlackFlash_attackYaw or 0) + 0x8000
