@@ -51,13 +51,17 @@ local function onGameStateChanged(tag, oldState, newState)
     end
     if newState == GAME_STATE.WAIT then
         gServerSettings.playerInteractions = PLAYER_INTERACTIONS_NONE
-        djui_chat_message_create("Ожидание игроков...")
         if oldState == GAME_STATE.END then
-            if gPlayerSyncTable[0].spectator then
-                gPlayerSyncTable[0].spectator = false
+            for i = 0, MAX_PLAYERS - 1 do
+                if gNetworkPlayers[i].connected then
+                    gPlayerSyncTable[i].spectator = false
+                    if gMarioStates[i] then
+                        gMarioStates[i].health = 0x880
+                        set_mario_action(gMarioStates[i], ACT_IDLE, 0)
+                    end
+                end
             end
         end
-
         if network_is_server() then
             StopAllThemes()
             SetBackgroundMusic("Lobby")
@@ -70,6 +74,7 @@ local function onGameStateChanged(tag, oldState, newState)
     elseif newState == GAME_STATE.PLAYING then
         djui_chat_message_create("Игра началась!")
         gServerSettings.playerInteractions = PLAYER_INTERACTIONS_SOLID
+        disableFreeCam()
     elseif newState == GAME_STATE.END then
         djui_chat_message_create("Игра окончена!")
     elseif newState == GAME_STATE.NOT_ENOUGH_PLAYERS then
@@ -214,21 +219,60 @@ hook_event(HOOK_ON_PLAYER_CONNECTED, function(connector)
     end
 end)
 
-hook_event(HOOK_ON_DEATH, function(m)
-    if not m then return end
+local ACT_DEATH_LIES = allocate_mario_action(ACT_GROUP_CUTSCENE | ACT_FLAG_STATIONARY | ACT_FLAG_INTANGIBLE |
+    ACT_FLAG_INVULNERABLE)
 
-    ResetAbilities()
-
-    local pid = m.playerIndex
-    if not isPlayerSpectator(pid) and gGlobalSyncTable.curGameState == GAME_STATE.PLAYING then
-        gPlayerSyncTable[pid].spectator = true
-
-        m.pos.x = m.spawnInfo.startPos.x
-        m.pos.y = m.spawnInfo.startPos.y
-        m.pos.z = m.spawnInfo.startPos.z
+--- @param m MarioState
+local function act_death_lies(m)
+    set_character_anim_with_accel(m, CHAR_ANIM_DYING_ON_BACK, 0)
+    m.marioObj.header.gfx.animInfo.animFrame = 55
+    -- m.marioObj.header.gfx.animInfo.animFrame = 40 + (m.actionArg * 5)
+    m.marioBodyState.eyeState = MARIO_EYES_DEAD
+    if m.playerIndex == 0 then
+        vec3f_set(m.marioObj.header.gfx.angle, 0, 0x8000, 0)
+        vec3f_copy(m.marioObj.header.gfx.pos, m.pos)
     end
-end)
+end
+
+--- @param action integer
+--- Checks if the action is one suitable for the death cutscene to play from
+local function is_death_action_acceptable(action)
+    return action == ACT_DEATH_ON_BACK or
+        action == ACT_DEATH_ON_STOMACH or
+        action == ACT_STANDING_DEATH or
+        action == ACT_ELECTROCUTION or
+        action == ACT_SUFFOCATION or
+        action == ACT_DROWNING
+end
+
+
+hook_mario_action(ACT_DEATH_LIES, { every_frame = act_death_lies })
+
+
+hook_event(HOOK_ON_SET_MARIO_ACTION,
+    function(m)
+        -- set_mario_action(m, ACT_DEATH_LIES, 0)
+        -- freeCamToggle()
+        if (is_death_action_acceptable(m.action)) then
+            djui_chat_message_create("Вы умерли")
+            ResetAbilities()
+            gPlayerSyncTable[m.playerIndex].spectator = true
+            set_mario_action(m, ACT_DEATH_LIES, math.random(0, 3) * random_sign())
+        end
+    end
+)
 
 function IsGameStarted()
     return gGlobalSyncTable.curGameState == GAME_STATE.PLAYING
 end
+
+hook_event(HOOK_UPDATE,
+    function()
+        if gPlayerSyncTable[0].spectator then
+            enableFreeCam()
+        else
+            -- djui_chat_message_create("Вы в игре")
+            disableFreeCam()
+        end
+    end
+)

@@ -71,7 +71,7 @@ HookEvent_LocalMarioPVPAttack(
 --- @param v MarioState
 --- @param i integer
     function(v, i)
-        djui_chat_message_create("ATTAAAACK!!!")
+        -- djui_chat_message_create("Attack.")
     end
 )
 
@@ -81,5 +81,6 @@ HookEvent_LocalMarioPVPDamage(
     function(a, i)
         local m = gMarioStates[0]
         m.health = m.health - 150
+        -- djui_chat_message_create("Damage.")
     end
 )

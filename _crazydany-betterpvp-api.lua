@@ -86,13 +86,13 @@ hook_event(HOOK_ON_PVP_ATTACK,
 hook_event(HOOK_ON_PACKET_RECEIVE,
     --- @param dataTable table
     function(dataTable)
-        if (dataTable.betterpvp_localMarioAttackVictim ~= nil) and (dataTable.betterpvp_localMarioAttackInteraction ~= nil) then
+        if (dataTable.betterpvp_localMarioAttackVictim ~= nil) then
             local victim = gMarioStates[network_local_index_from_global(dataTable.betterpvp_localMarioAttackVictim)]
             local interaction = dataTable.betterpvp_localMarioAttackInteraction
             onLocalMarioAttack(victim, interaction)
         end
 
-        if (dataTable.betterpvp_localMarioDamage ~= nil) and (dataTable.betterpvp_localMarioDamage ~= nil) then
+        if (dataTable.betterpvp_localMarioDamage ~= nil) then
             local attacker = gMarioStates[network_local_index_from_global(dataTable.betterpvp_localMarioDamage)]
             local interaction = dataTable.betterpvp_localMarioDamage_Interaction
             onLocalMarioDamage(attacker, interaction)
