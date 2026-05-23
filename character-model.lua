@@ -13,6 +13,16 @@ K64_SKINS_TABLE = {
         name = "kaichi",
         model = smlua_model_util_get_id("devil_bully_skin2_geo")
     },
+
+    [3] = {
+        name = "bullgoat",
+        model = smlua_model_util_get_id("devil_bully_skin3_geo")
+    },
+
+    [4] = {
+        name = "bibik",
+        model = smlua_model_util_get_id("devil_bully_skin4_geo")
+    },
 }
 
 local k64_defaultSkin = 0
