@@ -13,7 +13,7 @@ hook_event(HOOK_ON_PACKET_RECEIVE, function(dataTable)
 
     if dataTable.k64_playStream ~= nil then
         local playVolume = dataTable.k64_playStream_playVolume or 1
-        PlaySound(AudioNames[dataTable.k64_playStream], playVolume)
+        PlaySound(dataTable.k64_playStream, playVolume)
     end
 
     if dataTable.k64_playFlash ~= nil then
@@ -22,9 +22,9 @@ hook_event(HOOK_ON_PACKET_RECEIVE, function(dataTable)
 
         UITweenRect(
             {
-                { frame = 0,     x = 0, y = 0, w = screenWidth, h = screenHeight, color = { 255, 255, 255, 0 } },
-                { frame = 1,     x = 0, y = 0, w = screenWidth, h = screenHeight, color = { 255, 255, 255, 255 } },
-                { frame = 1 + 8, x = 0, y = 0, w = screenWidth, h = screenHeight, color = { 255, 255, 255, 255 } },
+                { frame = 0,         x = 0, y = 0, w = screenWidth, h = screenHeight, color = { 255, 255, 255, 0 } },
+                { frame = 1,         x = 0, y = 0, w = screenWidth, h = screenHeight, color = { 255, 255, 255, 255 } },
+                { frame = 1 + 8,     x = 0, y = 0, w = screenWidth, h = screenHeight, color = { 255, 255, 255, 255 } },
                 { frame = 1 + 8 + 4, x = 0, y = 0, w = screenWidth, h = screenHeight, color = { 255, 255, 255, 0 } },
             }, {
                 looping = false,

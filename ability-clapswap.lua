@@ -16,9 +16,9 @@ local function onUseSwitchSwap()
 
         UITweenRect(
             {
-                { frame = 0,     x = 0, y = 0, w = screenWidth, h = screenHeight, color = { 255, 255, 255, 0 } },
-                { frame = 1,     x = 0, y = 0, w = screenWidth, h = screenHeight, color = { 255, 255, 255, 255 } },
-                { frame = 1 + 8, x = 0, y = 0, w = screenWidth, h = screenHeight, color = { 255, 255, 255, 255 } },
+                { frame = 0,         x = 0, y = 0, w = screenWidth, h = screenHeight, color = { 255, 255, 255, 0 } },
+                { frame = 1,         x = 0, y = 0, w = screenWidth, h = screenHeight, color = { 255, 255, 255, 255 } },
+                { frame = 1 + 8,     x = 0, y = 0, w = screenWidth, h = screenHeight, color = { 255, 255, 255, 255 } },
                 { frame = 1 + 8 + 4, x = 0, y = 0, w = screenWidth, h = screenHeight, color = { 255, 255, 255, 0 } },
             }, {
                 looping = false,
@@ -27,8 +27,8 @@ local function onUseSwitchSwap()
 
         network_send(true,
             {
-                k64_playSample = "Clap",
-                k64_playSample_playVolume = 1,
+                k64_playStream = "Clap",
+                k64_playStream_playVolume = 1,
                 k64_playFlash = true,
             })
 
@@ -52,8 +52,8 @@ local function onUseSwitchSwap()
 
         network_send(true,
             {
-                k64_playSample = "Clap",
-                k64_playSample_playVolume = 1
+                k64_playStream = "Clap",
+                k64_playStream_playVolume = 1
             })
 
         local selfPosX = m.pos.x
