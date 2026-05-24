@@ -35,7 +35,7 @@ function bhv_coldbreeze_loop(obj)
 
     -- Столкнулся с локальным Марио
     if dist_xOz <= obj.hitboxRadius and dist_y <= obj.hitboxHeight then
-        if (m.invincTimer <= 0) then
+        if CheckPlayerCanBeAttacked(m) then
             FreesingEffect:Apply(m, 6)
         end
     end
@@ -44,7 +44,7 @@ function bhv_coldbreeze_loop(obj)
     -- obj.oOpacity = 255 * (1024 / (1024 + 4 * obj.oTimer)) - 51
     obj.oOpacity = 31
 
-    if obj.oTimer >= 1024 then
+    if obj.oTimer >= 1024 or not IsGameStarted() then
         obj_mark_for_deletion(obj)
     end
 

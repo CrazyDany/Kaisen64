@@ -37,8 +37,14 @@ end
 gPlayerSyncTable[0].spectator = false
 
 
-local function isPlayerSpectator(pid)
+function isPlayerSpectator(pid)
     return gPlayerSyncTable[pid] and gPlayerSyncTable[pid].spectator == true
+end
+
+function CheckPlayerCanBeAttacked(m)
+    return not isPlayerSpectator(m.playerIndex)
+        and gGlobalSyncTable.curGameState == GAME_STATE.PLAYING
+        and m.invincTimer <= 0
 end
 
 local function onGameStateChanged(tag, oldState, newState)
