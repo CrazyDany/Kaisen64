@@ -1,6 +1,6 @@
 function bhv_coldbreeze_init(obj)
     obj.oFlags = OBJ_FLAG_UPDATE_GFX_POS_AND_ANGLE
-    cur_obj_scale(10.0)
+    cur_obj_scale(11.0)
     obj_set_billboard(obj)
 
     -- physics
@@ -14,8 +14,8 @@ function bhv_coldbreeze_init(obj)
     obj.oForwardVel       = 2
 
     -- hitbox
-    obj.hitboxRadius      = 300
-    obj.hitboxHeight      = 100
+    obj.hitboxRadius      = 400
+    obj.hitboxHeight      = 200
 
     network_init_object(obj, true, nil)
 end
@@ -35,7 +35,9 @@ function bhv_coldbreeze_loop(obj)
 
     -- Столкнулся с локальным Марио
     if dist_xOz <= obj.hitboxRadius and dist_y <= obj.hitboxHeight then
-        FreesingEffect:Apply(m, 5)
+        if (m.invincTimer <= 0) then
+            FreesingEffect:Apply(m, 6)
+        end
     end
 
     -- djui_chat_message_create("Timer: " .. obj.oTimer)
@@ -44,7 +46,6 @@ function bhv_coldbreeze_loop(obj)
 
     if obj.oTimer >= 1024 then
         obj_mark_for_deletion(obj)
-        obj.oTimer = 0
     end
 
     -- if obj.oTimer <= 0 then
