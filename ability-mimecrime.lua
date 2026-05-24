@@ -34,7 +34,7 @@ HookEvent_LocalMarioPVPAttack(
 RegisterAbility(ABILITY_ID_MIMECRIME, {
     name = "MimeCrime",
     shortName = "MmCm",
-    description = "Ability placeholder for modders",
+    description = "Steal a random ability from your last hitted player.",
     iconTextureName = "mmcm",
 
     cost = 128,

@@ -10,7 +10,7 @@ end
 RegisterAbility(ABILITY_ID_PURECURE, {
     name = "PureCure",
     shortName = "PuCu",
-    description = "",
+    description = "Heal yourself and also get cured from any negative effect.",
     iconTextureName = "rgtc",
 
     cost = 512,

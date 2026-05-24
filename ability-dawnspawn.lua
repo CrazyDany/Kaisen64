@@ -32,7 +32,7 @@ end)
 RegisterAbility(ABILITY_ID_DAWNSPAWN, {
     name = "DawnSpawn",
     shortName = "DnSp",
-    description = "Spawning object by current act.",
+    description = "Spawn a random object that can help you in fight.",
     iconTextureName = "ml",
 
     cost = 128,

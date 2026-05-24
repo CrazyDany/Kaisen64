@@ -62,7 +62,7 @@ hook_event(HOOK_MARIO_UPDATE,
 RegisterAbility(ABILITY_ID_SPLIZBLITZ, {
     name = "SplizBlitz",
     shortName = "SpBl",
-    description = "Ability placeholder for modders",
+    description = "Constantly change your visible position and confuse enemies.",
     iconTextureName = "spbl",
 
     cost = 128,

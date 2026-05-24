@@ -144,7 +144,7 @@ end)
 RegisterAbility(ABILITY_ID_RECTECH, {
     name = "RecTech",
     shortName = "RcTc",
-    description = "",
+    description = "Record your actions and reactivate it to replay them.",
     iconTextureName = "rctc",
 
     cost = 64,

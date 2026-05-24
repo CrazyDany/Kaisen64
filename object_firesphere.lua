@@ -83,7 +83,7 @@ function bhv_firesphere_loop(obj)
     local m = gMarioStates[0]
 
     if obj_check_hitbox_overlap(m.marioObj, obj) and (network_global_index_from_local(0) ~= obj.oMarioParentGlobalIndex) and CheckPlayerCanBeAttacked(m) then
-        hurt_and_set_mario_action(m, ACT_AIR_HIT_WALL, 0, 1)
+        hurt_and_set_mario_action(m, ACT_LAVA_BOOST, 0, 0)
         m.invincTimer = m.invincTimer + 16
         BurningEffect:Apply(m, 64)
         obj_mark_for_deletion(obj)
