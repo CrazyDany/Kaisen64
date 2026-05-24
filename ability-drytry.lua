@@ -1,6 +1,20 @@
 ABILITY_ID_DRYTRY = 1
 
 local function onUseDryTry()
+    local m = gMarioStates[0]
+
+    spawn_sync_object(
+            id_bhvAura,
+            E_MODEL_AURA,
+            m.pos.x,
+            m.pos.y,
+            m.pos.z,
+            function(o)
+                o.parentObj = m.marioObj
+                o.oMarioParentGlobalIndex = network_global_index_from_local(0)
+            end
+        )
+
     AbilitiesData[ABILITY_ID_DRYTRY].attempts = (AbilitiesData[ABILITY_ID_DRYTRY].attempts or 0) + 1
     local attempts = AbilitiesData[ABILITY_ID_DRYTRY].attempts
     local losesInRow = AbilitiesData[ABILITY_ID_DRYTRY].losesInRow or 0

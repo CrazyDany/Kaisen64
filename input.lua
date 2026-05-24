@@ -25,7 +25,7 @@ hook_event(HOOK_UPDATE, function(...)
     local ability = AbilitiesData[selectedAbilityIndex]
 
 
-    if ability ~= nil and IsGameStarted() then
+    if ability ~= nil then
         if m.controller.buttonPressed == L_TRIG then
             if (ability.onUseFunction ~= nil) and (ability.curCooldown <= 0) and (gPlayerSyncTable[0].Kaisen64.currentEnergy >= ability.cost) then
                 if ability.getPermissibilityToUse() then
