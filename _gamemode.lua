@@ -240,6 +240,12 @@ local function act_death_lies(m)
         vec3f_set(m.marioObj.header.gfx.angle, 0, 0x8000, 0)
         vec3f_copy(m.marioObj.header.gfx.pos, m.pos)
     end
+
+    if m.floor.type == SURFACE_WATER
+        or m.floor.type == SURFACE_BURNING
+    then
+        m.pos.y = m.pos.y - 1
+    end
 end
 
 --- @param action integer
@@ -250,9 +256,9 @@ local function is_death_action_acceptable(action)
         action == ACT_STANDING_DEATH or
         action == ACT_ELECTROCUTION or
         action == ACT_SUFFOCATION or
-        action == ACT_DROWNING
+        action == ACT_DROWNING or
+        action == ACT_BUBBLED
 end
-
 
 hook_mario_action(ACT_DEATH_LIES, { every_frame = act_death_lies })
 
@@ -265,9 +271,11 @@ hook_event(HOOK_ON_SET_MARIO_ACTION,
             if m.playerIndex == 0 then
                 ResetAbilities()
                 gPlayerSyncTable[m.playerIndex].spectator = true
+                handleDeath(m)
             end
 
             set_mario_action(m, ACT_DEATH_LIES, math.random(0, 3) * random_sign())
+            stop_and_set_height_to_floor(m)
         end
     end
 )

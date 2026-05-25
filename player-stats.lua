@@ -6,9 +6,13 @@ hook_event(HOOK_ALLOW_PVP_ATTACK, function(a, v, i)
     return true
 end)
 
-hook_event(HOOK_ON_DEATH, function(m)
+function handleDeath(m)
     if lastAttacker ~= nil then
         gPlayerSyncTable[lastAttacker.playerIndex].Kaisen64.kills = (gPlayerSyncTable[lastAttacker.playerIndex].Kaisen64.kills or 0) +
             1
     end
+end
+
+hook_event(HOOK_ON_DEATH, function(m)
+    handleDeath(m)
 end)
