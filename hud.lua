@@ -331,6 +331,7 @@ registerHudElement("ExtraInfo", renderExtraInfo, 30,
 local hudVisibility = true
 
 local function onHudRender()
+    hud_hide()
     for _, elem in ipairs(hudElements) do
         if (elem.isActive()) and (hudVisibility) then
             elem.draw()
@@ -342,10 +343,5 @@ hook_event(HOOK_ON_HUD_RENDER, onHudRender)
 
 hook_chat_command("hud", "hide/unhide hud", function(message)
     hudVisibility = not hudVisibility
-    if hudVisibility == true then
-        hud_show()
-    else
-        hud_hide()
-    end
     return true
 end)
