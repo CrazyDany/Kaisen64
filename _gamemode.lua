@@ -48,15 +48,15 @@ function CheckPlayerCanBeAttacked(m)
 end
 
 local function onGameStateChanged(tag, oldState, newState)
-    ResetAbilities()
-    ClearAllEffects(gMarioStates[0])
-
     if gPlayerSyncTable[0].Kaisen64 ~= nil then
         gPlayerSyncTable[0].Kaisen64.currentEnergy = gPlayerSyncTable[0].Kaisen64.maxEnergy
         gPlayerSyncTable[0].Kaisen64.RCTStateTimer = 0
     end
     if newState == GAME_STATE.WAIT then
+        ResetAbilities()
+        ClearAllEffects(gMarioStates[0])
         gServerSettings.playerInteractions = PLAYER_INTERACTIONS_NONE
+
         if oldState == GAME_STATE.END then
             for i = 0, MAX_PLAYERS - 1 do
                 if gNetworkPlayers[i].connected then
@@ -85,6 +85,8 @@ local function onGameStateChanged(tag, oldState, newState)
         djui_chat_message_create("Игра окончена!")
     elseif newState == GAME_STATE.NOT_ENOUGH_PLAYERS then
         djui_chat_message_create("Недостаточно игроков для старта")
+        ResetAbilities()
+        ClearAllEffects(gMarioStates[0])
     end
 end
 
@@ -260,9 +262,11 @@ hook_event(HOOK_ON_SET_MARIO_ACTION,
         -- set_mario_action(m, ACT_DEATH_LIES, 0)
         -- freeCamToggle()
         if (is_death_action_acceptable(m.action)) then
-            djui_chat_message_create("Вы умерли")
-            ResetAbilities()
-            gPlayerSyncTable[m.playerIndex].spectator = true
+            if m.playerIndex == 0 then
+                ResetAbilities()
+                gPlayerSyncTable[m.playerIndex].spectator = true
+            end
+
             set_mario_action(m, ACT_DEATH_LIES, math.random(0, 3) * random_sign())
         end
     end
