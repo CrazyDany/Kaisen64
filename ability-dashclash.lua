@@ -11,7 +11,7 @@ local function act_dashclash_dash(m)
         return
     end
 
-    mario_set_forward_vel(m, 128)
+    mario_set_forward_vel(m, 256)
 
     set_mario_particle_flags(m, PARTICLE_DUST, 0)
     play_sound(SOUND_MOVING_TERRAIN_SLIDE + m.terrainSoundAddend, m.marioObj.header.gfx.cameraToObject)
@@ -20,7 +20,7 @@ local function act_dashclash_dash(m)
 
     m.actionTimer = m.actionTimer + 1
 
-    if m.actionTimer >= 8 then
+    if m.actionTimer >= 9 then
         set_mario_action(m, ACT_IDLE, 0)
         m.actionTimer = 0
     end
@@ -41,7 +41,7 @@ RegisterAbility(ABILITY_ID_DASHCLASH, {
     iconTextureName = "dscl",
 
     cost = 64,
-    cooldown = 32,
+    cooldown = 96,
     curCooldown = 0,
 
     onUseFunction = onUseDashClash,
