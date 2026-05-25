@@ -89,6 +89,10 @@ hook_event(HOOK_ALLOW_HAZARD_SURFACE, function(m, h)
 end)
 
 hook_chat_command("groundspeed", "Set ground speed", function(msg)
+    if not IsDevModActivated() then
+        djui_chat_message_create("Права разработчка отсутствуют, выполнение команды не возможно.")
+        return false
+    end
     if gPlayerSyncTable[0].CrazyDanyBetterStats == nil then
         gPlayerSyncTable[0].CrazyDanyBetterStats = {}
     end
@@ -98,6 +102,10 @@ hook_chat_command("groundspeed", "Set ground speed", function(msg)
 end)
 
 hook_chat_command("airspeed", "Set air speed", function(msg)
+    if not IsDevModActivated() then
+        djui_chat_message_create("Права разработчка отсутствуют, выполнение команды не возможно.")
+        return false
+    end
     if gPlayerSyncTable[0].CrazyDanyBetterStats == nil then
         gPlayerSyncTable[0].CrazyDanyBetterStats = {}
     end
@@ -107,6 +115,10 @@ hook_chat_command("airspeed", "Set air speed", function(msg)
 end)
 
 hook_chat_command("swimingspeed", "Set swimming speed", function(msg)
+    if not IsDevModActivated() then
+        djui_chat_message_create("Права разработчка отсутствуют, выполнение команды не возможно.")
+        return false
+    end
     if gPlayerSyncTable[0].CrazyDanyBetterStats == nil then
         gPlayerSyncTable[0].CrazyDanyBetterStats = {}
     end
@@ -116,6 +128,10 @@ hook_chat_command("swimingspeed", "Set swimming speed", function(msg)
 end)
 
 hook_chat_command("jumpstrength", "Set jump strength", function(msg)
+    if not IsDevModActivated() then
+        djui_chat_message_create("Права разработчка отсутствуют, выполнение команды не возможно.")
+        return false
+    end
     if gPlayerSyncTable[0].CrazyDanyBetterStats == nil then
         gPlayerSyncTable[0].CrazyDanyBetterStats = {}
     end
@@ -125,6 +141,10 @@ hook_chat_command("jumpstrength", "Set jump strength", function(msg)
 end)
 
 hook_chat_command("extragravity", "Set extra gravity", function(msg)
+    if not IsDevModActivated() then
+        djui_chat_message_create("Права разработчка отсутствуют, выполнение команды не возможно.")
+        return false
+    end
     if gPlayerSyncTable[0].CrazyDanyBetterStats == nil then
         gPlayerSyncTable[0].CrazyDanyBetterStats = {}
     end
@@ -134,6 +154,10 @@ hook_chat_command("extragravity", "Set extra gravity", function(msg)
 end)
 
 hook_chat_command("lavaresist", "Set lava resist", function(msg)
+    if not IsDevModActivated() then
+        djui_chat_message_create("Права разработчка отсутствуют, выполнение команды не возможно.")
+        return false
+    end
     if gPlayerSyncTable[0].CrazyDanyBetterStats == nil then
         gPlayerSyncTable[0].CrazyDanyBetterStats = {}
     end
