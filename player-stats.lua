@@ -10,9 +10,6 @@ function handleDeath(m)
     if lastAttacker ~= nil then
         gPlayerSyncTable[lastAttacker.playerIndex].Kaisen64.kills = (gPlayerSyncTable[lastAttacker.playerIndex].Kaisen64.kills or 0) +
             1
+        lastAttacker = nil
     end
 end
-
-hook_event(HOOK_ON_DEATH, function(m)
-    handleDeath(m)
-end)

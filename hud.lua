@@ -68,6 +68,19 @@ local HUDSettings = {
         lineHeight = 26,
         maxLines = 6,
     },
+
+    leaderboard = {
+        relativeWidth = 0.28,
+        relativeX = 0.01,
+        relativeY = 0.15,
+        padding = 12,
+        bgColor = { 0, 0, 0, 180 },
+        textColor = { 255, 255, 255, 255 },
+        titleColor = nil,
+        fontSize = 0.5,
+        lineHeight = 26,
+        maxLines = 6,
+    },
 }
 
 local function getAdaptiveScale(baseScale)
@@ -319,6 +332,94 @@ local function renderExtraInfo()
     end
 end
 
+function getLeaderboard()
+    local temp = {}
+
+    -- MAX_PLAYERS обычно равно 4, но цикл до MAX_PLAYERS-1, чтобы не выйти за границы
+    for i = 0, MAX_PLAYERS - 1 do
+        -- Проверка подключения игрока
+        local connected = false
+        if gNetworkPlayers and gNetworkPlayers[i] and gNetworkPlayers[i].connected then
+            connected = true
+        end
+
+        if not connected then
+            goto continue
+        end
+
+        local playerData = gPlayerSyncTable[i]
+        if playerData then
+            local kills = (playerData.Kaisen64 and playerData.Kaisen64.kills) or 0
+            local name = gNetworkPlayers[i].name or ("Player " .. i)
+            -- Получаем глобальный индекс (уникальный сетевой ID)
+            local globalIdx = network_global_index_from_local(i)
+
+            table.insert(temp, {
+                name = name,
+                kills = kills,
+                globalIdx = globalIdx,
+                localIdx = i -- на всякий случай
+            })
+        end
+        ::continue::
+    end
+
+    -- Сортировка: сначала по убийствам (убывание), затем по глобальному индексу (возрастание)
+    table.sort(temp, function(a, b)
+        if a.kills == b.kills then
+            return a.globalIdx < b.globalIdx
+        else
+            return a.kills > b.kills
+        end
+    end)
+
+    -- Преобразуем в 0-индексную таблицу (как в условии)
+    local leaderboard = {}
+    for idx, entry in ipairs(temp) do
+        leaderboard[idx - 1] = {
+            name = entry.name,
+            kills = entry.kills
+        }
+    end
+    return leaderboard
+end
+
+local function renderLeaderboard()
+    local settings = HUDSettings.leaderboard
+    local sw, sh = djui_hud_get_screen_width(), djui_hud_get_screen_height()
+
+    local panelWidth = sw * settings.relativeWidth
+    local x = sw * settings.relativeX
+    local y = sh * settings.relativeY
+    local lineCount = settings.maxLines
+    local panelHeight = settings.padding * 2 + lineCount * settings.lineHeight + 32
+
+    djui_hud_set_color(settings.bgColor[1], settings.bgColor[2], settings.bgColor[3], settings.bgColor[4])
+    djui_hud_render_rect(x, y, panelWidth, panelHeight)
+
+    local textY = y + settings.padding + 32
+    local textScale = getAdaptiveScale(settings.fontSize)
+
+    local leaderboard = getLeaderboard()
+
+    for i = 0, settings.maxLines - 1 do
+        if leaderboard[i] == nil then
+            break
+        end
+        local line = "" .. i .. " - " .. (leaderboard[i].name or "") .. " | " .. (leaderboard[i].kills or 0) .. " Kills"
+        djui_hud_set_font(HUDSettings.font)
+        djui_hud_set_color(settings.textColor[1], settings.textColor[2], settings.textColor[3], settings.textColor[4])
+        djui_hud_print_text(line, x + settings.padding, textY, textScale)
+        textY = textY + settings.lineHeight
+    end
+end
+
+hook_chat_command("leaderboard", "sus", function(msg)
+    local leaderboard = getLeaderboard()
+    djui_chat_message_create("Leaderboard: " .. leaderboard[0].name)
+    return true
+end)
+
 registerHudElement("HealthBar", renderHealthBar, 5,
     function() return not IsModMenuOpened() and gPlayerSyncTable[0].Kaisen64 ~= nil end)
 registerHudElement("AbilitiesSlots", renderAbilitiesSlots, 10,
@@ -326,6 +427,8 @@ registerHudElement("AbilitiesSlots", renderAbilitiesSlots, 10,
 registerHudElement("EnergyBar", renderEnergyBar, 20,
     function() return not IsModMenuOpened() and gPlayerSyncTable[0].Kaisen64 ~= nil end)
 registerHudElement("ExtraInfo", renderExtraInfo, 30,
+    function() return not IsModMenuOpened() and gPlayerSyncTable[0].Kaisen64 ~= nil end)
+registerHudElement("Leaderboard", renderLeaderboard, 40,
     function() return not IsModMenuOpened() and gPlayerSyncTable[0].Kaisen64 ~= nil end)
 
 local hudVisibility = true
