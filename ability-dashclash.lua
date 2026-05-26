@@ -11,7 +11,7 @@ local function act_dashclash_dash(m)
         return
     end
 
-    mario_set_forward_vel(m, 256)
+    mario_set_forward_vel(m, 256 + (128 * m.actionArg))
 
     set_mario_particle_flags(m, PARTICLE_DUST, 0)
     play_sound(SOUND_MOVING_TERRAIN_SLIDE + m.terrainSoundAddend, m.marioObj.header.gfx.cameraToObject)
@@ -31,7 +31,9 @@ hook_mario_action(ACT_DASHCLASH_DASH, { every_frame = act_dashclash_dash })
 local function onUseDashClash()
     local m = gMarioStates[0]
 
-    set_mario_action(m, ACT_DASHCLASH_DASH, 0)
+    local used_chants = gPlayerSyncTable[0].Kaisen64.cur_chant or 0
+
+    set_mario_action(m, ACT_DASHCLASH_DASH, 3)
 end
 
 RegisterAbility(ABILITY_ID_DASHCLASH, {
