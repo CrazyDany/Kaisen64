@@ -1,4 +1,4 @@
-local dev_mode = false
+local dev_mode = true
 
 hook_chat_command('k64-dev', 'Укажите специальный ключ для подтверждения перехода в режим разработчика',
     function(msg)
