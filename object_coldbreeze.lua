@@ -1,6 +1,10 @@
+define_custom_obj_fields(
+    { oSpawnedWithChants = "f32" }
+)
+
 function bhv_coldbreeze_init(obj)
     obj.oFlags = OBJ_FLAG_UPDATE_GFX_POS_AND_ANGLE
-    cur_obj_scale(11.0)
+    cur_obj_scale(10.0 * (1 + (obj.oSpawnedWithChants or 0) / 2))
     obj_set_billboard(obj)
 
     -- physics
@@ -17,7 +21,7 @@ function bhv_coldbreeze_init(obj)
     obj.hitboxRadius      = 400
     obj.hitboxHeight      = 200
 
-    network_init_object(obj, true, nil)
+    network_init_object(obj, true, { "oSpawnedWithChants" })
 end
 
 function bhv_coldbreeze_loop(obj)
@@ -36,7 +40,7 @@ function bhv_coldbreeze_loop(obj)
     -- Столкнулся с локальным Марио
     if dist_xOz <= obj.hitboxRadius and dist_y <= obj.hitboxHeight then
         if CheckPlayerCanBeAttacked(m) then
-            FreesingEffect:Apply(m, 6)
+            FreesingEffect:Apply(m, 6 + (obj.oSpawnedWithChants or 0))
         end
     end
 

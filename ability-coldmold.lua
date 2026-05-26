@@ -3,7 +3,10 @@ ABILITY_ID_COLDMOLD = 10
 local function onUseColdMold()
     local m = gMarioStates[0]
 
-    AbilitiesData[ABILITY_ID_COLDMOLD].curTimer = AbilitiesData[ABILITY_ID_COLDMOLD].duration
+    local used_chants = gPlayerSyncTable[0].Kaisen64.cur_chant or 0
+
+    AbilitiesData[ABILITY_ID_COLDMOLD].curTimer = AbilitiesData[ABILITY_ID_COLDMOLD].duration * (1 + (used_chants / 2))
+    AbilitiesData[ABILITY_ID_COLDMOLD].usingChants = used_chants
 end
 
 hook_event(HOOK_UPDATE,
@@ -29,6 +32,7 @@ hook_event(HOOK_UPDATE,
                 m.pos.z,
                 function(o)
                     o.parentObj = m.marioObj
+                    o.oSpawnedWithChants = AbilitiesData[ABILITY_ID_COLDMOLD].usingChants
                 end
             )
         end
@@ -58,4 +62,5 @@ RegisterAbility(ABILITY_ID_COLDMOLD, {
     tickSpawnRatio = 4,
 
     curTimer = 0,
+    usingChants = 0
 })
