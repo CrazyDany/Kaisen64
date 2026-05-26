@@ -3,17 +3,19 @@ ABILITY_ID_DRYTRY = 1
 local function onUseDryTry()
     local m = gMarioStates[0]
 
-    spawn_sync_object(
-            id_bhvAura,
-            E_MODEL_AURA,
-            m.pos.x,
-            m.pos.y,
-            m.pos.z,
-            function(o)
-                o.parentObj = m.marioObj
-                o.oMarioParentGlobalIndex = network_global_index_from_local(0)
-            end
-        )
+    -- spawn_sync_object(
+    --         id_bhvAura,
+    --         E_MODEL_AURA,
+    --         m.pos.x,
+    --         m.pos.y,
+    --         m.pos.z,
+    --         function(o)
+    --             o.parentObj = m.marioObj
+    --             o.oMarioParentGlobalIndex = network_global_index_from_local(0)
+    --         end
+    --     )
+
+    local used_chants = gPlayerSyncTable[0].Kaisen64.cur_chant or 0
 
     AbilitiesData[ABILITY_ID_DRYTRY].attempts = (AbilitiesData[ABILITY_ID_DRYTRY].attempts or 0) + 1
     local attempts = AbilitiesData[ABILITY_ID_DRYTRY].attempts
@@ -89,19 +91,19 @@ local function onUseDryTry()
         AbilitiesData[ABILITY_ID_DRYTRY].losesInRow = 0
         AbilitiesData[ABILITY_ID_DRYTRY].winsInRow = (AbilitiesData[ABILITY_ID_DRYTRY].winsInRow or 0) + 1
         -- AddEnergy(0, (n / 6 * (gPlayerSyncTable[0].Kaisen64.maxEnergy / 1024)))
-        AddRCTStateTimer(0, (n / 8) * (gPlayerSyncTable[0].Kaisen64.maxEnergy / 1024))
+        AddRCTStateTimer(0, (n / (8 - (used_chants * 2))) * (gPlayerSyncTable[0].Kaisen64.maxEnergy / 1024))
 
         if random_float() <= 0.125 then
-            gMarioStates[0].health = gMarioStates[0].health + 256
+            gMarioStates[0].health = gMarioStates[0].health + (256 + (16 * used_chants))
         end
     else
         -- Losing
         AbilitiesData[ABILITY_ID_DRYTRY].winsInRow = 0
         AbilitiesData[ABILITY_ID_DRYTRY].losesInRow = (AbilitiesData[ABILITY_ID_DRYTRY].losesInRow or 0) + 1
         -- AddEnergy(0, (-n / 8) * (gPlayerSyncTable[0].Kaisen64.maxEnergy / 1024))
-        AddRCTStateTimer(0, (-n / 6) * (gPlayerSyncTable[0].Kaisen64.maxEnergy / 1024))
+        AddRCTStateTimer(0, (-n / (6 + used_chants)) * (gPlayerSyncTable[0].Kaisen64.maxEnergy / 1024))
         if random_float() <= (1 / 12) then
-            gMarioStates[0].health = gMarioStates[0].health - 256
+            gMarioStates[0].health = gMarioStates[0].health - (256 - (8 * used_chants))
         end
 
         if random_float() <= (1 / 10) then
