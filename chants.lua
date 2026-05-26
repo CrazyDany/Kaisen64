@@ -82,76 +82,59 @@ end
 hook_event(HOOK_ON_HUD_RENDER, render_bubbles)
 hook_event(HOOK_ON_WARP, clearmsgs)
 hook_event(HOOK_UPDATE, updatetimer)
-
 hook_event(HOOK_MARIO_UPDATE,
-    --- @param m MarioState
     function(m)
         if gPlayerSyncTable[m.playerIndex].Kaisen64 == nil then return end
 
         if (m.controller.buttonPressed & CONT_UP) ~= 0 then
-            if (gPlayerSyncTable[m.playerIndex].Kaisen64.chant_cooldown or 0) > 0 then
+            if m.playerIndex ~= 0 then return end
+
+            local data = gPlayerSyncTable[0].Kaisen64
+            if (data.chant_cooldown or 0) > 0 then return end
+
+            local cur = data.cur_chant or 0
+            if cur == 3 then
                 return
             end
 
-            if gPlayerSyncTable[m.playerIndex].Kaisen64.cur_chant == 3 then
-                return
+            local new_cur = cur + 1
+            data.cur_chant = new_cur
+
+            if new_cur == 3 then
+                data.chant_cooldown = 1024
+            else
+                data.chant_cooldown = 256
             end
 
-            if m.playerIndex == 0 then
-                if gPlayerSyncTable[m.playerIndex].Kaisen64.cur_chant == 3 then
-                    gPlayerSyncTable[m.playerIndex].Kaisen64.cur_chant = 0
-                    gPlayerSyncTable[m.playerIndex].Kaisen64.chant_cooldown = 512
-                else
-                    gPlayerSyncTable[m.playerIndex].Kaisen64.cur_chant = math.clamp(
-                        (gPlayerSyncTable[m.playerIndex].Kaisen64.cur_chant or 0) +
-                        1, 0, 3)
-                    gPlayerSyncTable[m.playerIndex].Kaisen64.chant_cooldown = 128
-                end
-
-                addmsg(m,
-                    chants[gPlayerSyncTable[m.playerIndex].Kaisen64.chant or 0]
-                    [gPlayerSyncTable[m.playerIndex].Kaisen64.cur_chant]
-                )
-
-                -- djui_chat_message_create("Chant: " .. gPlayerSyncTable[m.playerIndex].Kaisen64.cur_chant)
-
-                for i = 0, MAX_PLAYERS - 1 do
-                    if gNetworkPlayers[i].currActNum == gNetworkPlayers[0].currActNum and gNetworkPlayers[i].currAreaIndex == gNetworkPlayers[0].currAreaIndex and gNetworkPlayers[i].currLevelNum == gNetworkPlayers[0].currLevelNum then
-                        network_send(true,
-                            {
-                                chant_msg = chants[gPlayerSyncTable[m.playerIndex].Kaisen64.chant or 0]
-                                    [gPlayerSyncTable[m.playerIndex].Kaisen64.cur_chant],
-                                chant_msg_index = network_global_index_from_local(0)
-                            }
-                        )
-                    end
-                end
+            for i, v in pairs(AbilitiesData) do
+                v.curCooldown = v.curCooldown + v.cooldown * 0.5 * new_cur
             end
 
-            if gPlayerSyncTable[m.playerIndex].Kaisen64.cur_chant == 1 then
-                PlaySound("Chant1", 1)
-                network_send(true,
-                    {
-                        k64_playStream = "Chant1",
-                        k64_playStream_playVolume = 1
-                    }
-                )
-            elseif gPlayerSyncTable[m.playerIndex].Kaisen64.cur_chant == 2 then
-                PlaySound("Chant2", 1)
-                network_send(true,
-                    {
-                        k64_playStream = "Chant2",
-                        k64_playStream_playVolume = 1
-                    }
-                )
-            elseif gPlayerSyncTable[m.playerIndex].Kaisen64.cur_chant == 3 then
-                PlaySound("Chant3", 1)
-                network_send(true,
-                    {
-                        k64_playStream = "Chant3",
-                        k64_playStream_playVolume = 1
-                    }
-                )
+            local chant_text = chants[data.chant or 0][new_cur]
+            addmsg(m, chant_text)
+
+            local sound = nil
+            if new_cur == 1 then
+                sound = "Chant1"
+            elseif new_cur == 2 then
+                sound = "Chant2"
+            elseif new_cur == 3 then
+                sound = "Chant3"
+            end
+            if sound then
+                PlaySound(sound, 1)
+                network_send(true, { k64_playStream = sound, k64_playStream_playVolume = 1 })
+            end
+
+            for i = 0, MAX_PLAYERS - 1 do
+                if gNetworkPlayers[i].currActNum == gNetworkPlayers[0].currActNum and
+                    gNetworkPlayers[i].currAreaIndex == gNetworkPlayers[0].currAreaIndex and
+                    gNetworkPlayers[i].currLevelNum == gNetworkPlayers[0].currLevelNum then
+                    network_send(true, {
+                        chant_msg = chant_text,
+                        chant_msg_index = network_global_index_from_local(0)
+                    })
+                end
             end
         end
     end
@@ -161,9 +144,11 @@ hook_event(HOOK_UPDATE,
     function()
         if gPlayerSyncTable[0].Kaisen64 == nil then return end
 
-        if (gPlayerSyncTable[0].Kaisen64.chant_cooldown or 0) > 0 then
+        if ((gPlayerSyncTable[0].Kaisen64.chant_cooldown or 0) > 0) and (gPlayerSyncTable[0].Kaisen64.cur_chant ~= 3) then
             gPlayerSyncTable[0].Kaisen64.chant_cooldown = gPlayerSyncTable[0].Kaisen64.chant_cooldown - 1
         end
+
+        -- djui_chat_message_create("Chant cooldown: " .. (gPlayerSyncTable[0].Kaisen64.chant_cooldown or 0))
     end
 )
 

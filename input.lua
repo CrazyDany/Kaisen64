@@ -29,9 +29,15 @@ hook_event(HOOK_UPDATE, function(...)
         if m.controller.buttonPressed == L_TRIG and (IsGameStarted() or IsDevModActivated()) then
             if (ability.onUseFunction ~= nil) and (ability.curCooldown <= 0) and (gPlayerSyncTable[0].Kaisen64.currentEnergy >= ability.cost) then
                 if ability.getPermissibilityToUse() then
-                    ability.curCooldown = (ability.cooldown * GetCooldownSpeed(0)) or 0
                     AddEnergy(0, -ability.cost or 0)
+                    ability.curCooldown = ((ability.cooldown * GetCooldownSpeed(0)) or 0)
                     ability.onUseFunction()
+                    if (gPlayerSyncTable[m.playerIndex].Kaisen64.cur_chant or 0) > 0 then
+                        ability.curCooldown = ability.curCooldown +
+                            (ability.cooldown * 0.75 * (gPlayerSyncTable[m.playerIndex].Kaisen64.cur_chant or 0) *
+                                GetCooldownSpeed(0))
+                        gPlayerSyncTable[m.playerIndex].Kaisen64.cur_chant = 0
+                    end
                 end
             end
         end

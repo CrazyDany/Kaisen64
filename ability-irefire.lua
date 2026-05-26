@@ -22,10 +22,6 @@ local function onUseIreFire()
             end
         )
     end
-
-    if chants > 0 then
-        gPlayerSyncTable[0].Kaisen64.cur_chant = 0
-    end
 end
 
 RegisterAbility(ABILITY_ID_IREFIRE, {

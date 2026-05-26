@@ -25,7 +25,7 @@ function bhv_Aura_loop(obj)
     obj.header.gfx.scale.y = 3.0
     obj.header.gfx.scale.z = 3.0
 
-    djui_chat_message_create("oTimer: " .. obj.oTimer)
+    -- djui_chat_message_create("oTimer: " .. obj.oTimer)
 
     obj.oFaceAnglePitch = 16900
     obj.oFaceAngleYaw = gLakituState.yaw
