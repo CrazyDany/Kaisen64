@@ -155,7 +155,7 @@ local function renderAbilitiesSlots()
 
         if abilityData then
             if abilityData.curCooldown > 0 then
-                local ratio = abilityData.curCooldown / abilityData.cooldown
+                local ratio = math.clamp(abilityData.curCooldown / abilityData.cooldown, 0, 1)
                 djui_hud_set_color(settings.cooldownColor[1], settings.cooldownColor[2], settings.cooldownColor[3],
                     settings.cooldownColor[4])
                 djui_hud_render_rect(x, y + slotSize * (1 - ratio), slotSize, slotSize * ratio)
