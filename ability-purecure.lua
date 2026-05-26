@@ -3,7 +3,9 @@ ABILITY_ID_PURECURE = 3
 local function onUsePureCure()
     local m = gMarioStates[0]
 
-    m.health = m.health + 512
+    local used_chants = gPlayerSyncTable[0].Kaisen64.cur_chant or 0
+
+    m.health = m.health + 512 + (64 * used_chants)
     ClearAllEffects(m)
 end
 
