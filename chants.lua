@@ -1,4 +1,4 @@
-local chants = {
+chants = {
     [0] = {
         "[[ scale of the dragon ]]",
         "[[ Recoil ]]",

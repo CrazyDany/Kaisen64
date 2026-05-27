@@ -40,6 +40,8 @@ hook_event(HOOK_UPDATE, function()
         local loadedEnergyColorG = mod_storage_load_number("customenergycolor.g")
         local loadedEnergyColorB = mod_storage_load_number("customenergycolor.b")
 
+        gPlayerSyncTable[0].Kaisen64.chant = mod_storage_load_number("chants.selectedSet") or 0
+
         SetCustomEnergyColor(K64_HUD_DEFAULT_ENERGY_COLOR.r, K64_HUD_DEFAULT_ENERGY_COLOR.g,
             K64_HUD_DEFAULT_ENERGY_COLOR.b)
 

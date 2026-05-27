@@ -19,19 +19,19 @@ local MenuConfig = {
         text_scale = 1,
     },
     abilities_grid = {
-        cell_size = 96,
-        cell_padding = 8,
+        cell_size = 64,
+        cell_padding = 4,
         colors = {
             normal = { 31, 31, 31, 200 },
             hover = { 63, 63, 63, 255 },
         },
-        icon_scale = 2,
+        icon_scale = 1.5,
         lock_texture = "lock",
-        drag_icon_scale = 2.5,
+        drag_icon_scale = 2,
     },
     ability_slots = {
         size = 64,
-        padding = 8,
+        padding = 4,
         colors = {
             normal = { 31, 31, 31, 200 },
             hover = { 63, 63, 63, 255 },
@@ -41,6 +41,22 @@ local MenuConfig = {
     customization = {
         preview_size = 128,
         picker_offset_x = 20,
+    },
+    chants = {
+        preview_width = 300,
+        preview_height = 150,
+        preview_bg = { 20, 20, 20, 200 },
+        preview_text_scale = 0.8,
+        button_width = 140,
+        button_height = 40,
+        button_spacing = 10,
+        grid_columns = 3,
+        button_colors = {
+            normal = { 31, 31, 31, 200 },
+            hover = { 63, 63, 63, 255 },
+            active = { 80, 80, 80, 255 },
+        },
+        text_scale = 0.7,
     },
     logo = {
         texture = "k64-logo",
@@ -52,13 +68,25 @@ local MenuConfig = {
 local modMenuOpened = false
 local selectedSection = 0
 local customEnergyBarColor = { r = 255, g = 255, b = 255 }
+local currentChantsSet = 0
 
 local Sections = {
     [0] = { name = "Abilities", id = 0 },
-    [1] = { name = "Customization", id = 1 },
+    [1] = { name = "Energy", id = 1 },
+    [2] = { name = "Chants", id = 2 },
 }
 
 local currentSlotRects = {}
+
+local function applyChantsSet(setIndex)
+    if gPlayerSyncTable[0] and gPlayerSyncTable[0].Kaisen64 then
+        gPlayerSyncTable[0].Kaisen64.chant = setIndex
+    else
+        if not gPlayerSyncTable[0] then gPlayerSyncTable[0] = {} end
+        if not gPlayerSyncTable[0].Kaisen64 then gPlayerSyncTable[0].Kaisen64 = {} end
+        gPlayerSyncTable[0].Kaisen64.chant = setIndex
+    end
+end
 
 local function loadSettings()
     local r = mod_storage_load_number("customenergycolor.r")
@@ -69,6 +97,14 @@ local function loadSettings()
     else
         customEnergyBarColor = { r = 255, g = 255, b = 255 }
     end
+
+    local savedSet = mod_storage_load_number("chants.selectedSet")
+    if savedSet ~= nil and savedSet >= 0 and savedSet <= 18 then
+        currentChantsSet = savedSet
+    else
+        currentChantsSet = 0
+    end
+    applyChantsSet(currentChantsSet)
 end
 
 local function saveColorSetting()
@@ -78,6 +114,10 @@ local function saveColorSetting()
     if SetCustomEnergyColor then
         SetCustomEnergyColor(customEnergyBarColor.r, customEnergyBarColor.g, customEnergyBarColor.b)
     end
+end
+
+local function saveChantsSet()
+    mod_storage_save_number("chants.selectedSet", currentChantsSet)
 end
 
 local function renderAbilitiesSection(x, y, w, h)
@@ -90,7 +130,6 @@ local function renderAbilitiesSection(x, y, w, h)
     local columns = math.max(1, math.floor(w / (cellW + cellPad)))
     local rows = math.floor(gridAreaH / (cellW + cellPad))
 
-    -- Отрисовка сетки способностей
     for idx = 1, columns * rows do
         local ability = AbilitiesData[idx - 1]
         if ability then
@@ -102,10 +141,9 @@ local function renderAbilitiesSection(x, y, w, h)
             UIButton(cellX, cellY, cellW, cellW, cfgGrid.colors, nil, nil)
 
             local texName = ability.iconTextureName or cfgGrid.lock_texture
-            UITexture(texName, cellX + (cellW - 32 * cfgGrid.icon_scale) / 2, cellY + (cellW - 32 * cfgGrid.icon_scale) /
-                2, cfgGrid.icon_scale)
+            UITexture(texName, cellX + (cellW - 32 * cfgGrid.icon_scale) / 2,
+                cellY + (cellW - 32 * cfgGrid.icon_scale) / 2, cfgGrid.icon_scale)
 
-            -- Начало перетаскивания, только если нет активного драга
             if not UIIsDragging() then
                 local mouseX = djui_hud_get_mouse_x()
                 local mouseY = djui_hud_get_mouse_y()
@@ -117,7 +155,6 @@ local function renderAbilitiesSection(x, y, w, h)
         end
     end
 
-    -- Слоты способностей
     local slotSize = cfgSlots.size
     local slotPad = cfgSlots.padding
     local slotsStartY = y + gridAreaH + 8
@@ -140,7 +177,7 @@ local function renderAbilitiesSection(x, y, w, h)
     end
 end
 
-local function renderCustomizationSection(x, y, w, h)
+local function renderEnergySection(x, y, w, h)
     local cfg = MenuConfig.customization
     local previewX = x
     local previewY = y
@@ -160,13 +197,76 @@ local function renderCustomizationSection(x, y, w, h)
     if newColor then
         customEnergyBarColor = newColor
     end
+end
 
-    -- -- secounds or frames
-    -- local toggleTimeType = UIToggle(0, 0, 100, 100, true, { on = { 255, 0, 0, 255 }, off = { 0, 255, 0, 255 } },
-    --     function(val)
-    --         djui_chat_message_create("val: " .. val)
-    --     end
-    -- )
+local function renderChantsSection(x, y, w, h)
+    local cfg = MenuConfig.chants
+
+    local previewW = cfg.preview_width
+    local previewH = cfg.preview_height
+    local previewX = x
+    local previewY = y
+    UIPanel(previewX, previewY, previewW, previewH, cfg.preview_bg)
+
+    local previewTitle = "Preview"
+    local titleScale = 0.7
+    UIText(previewTitle, previewX + 10, previewY + 5, titleScale, { 255, 255, 255, 255 })
+
+    local selectedChants = chants[currentChantsSet]
+    if selectedChants then
+        local lineHeight = 20
+        local startY = previewY + 30
+        for i, chant in ipairs(selectedChants) do
+            UIText(chant, previewX + 10, startY + (i - 1) * lineHeight, cfg.preview_text_scale, { 220, 220, 220, 255 })
+        end
+    else
+        UIText("No chants selected", previewX + 10, previewY + 40, cfg.preview_text_scale, { 255, 100, 100, 255 })
+    end
+
+    local gridX = previewX + previewW + 20
+    local gridW = w - (previewW + 20)
+    local gridY = y
+    local gridH = h
+
+    local btnW = cfg.button_width
+    local btnH = cfg.button_height
+    local spacing = cfg.button_spacing
+    local columns = cfg.grid_columns
+
+    local startX = gridX
+    local startY = gridY
+    local row = 0
+    local col = 0
+
+    for setIdx = 0, 18 do
+        if col >= columns then
+            col = 0
+            row = row + 1
+        end
+        local btnX = startX + col * (btnW + spacing)
+        local btnY = startY + row * (btnH + spacing)
+
+        if btnY + btnH > gridY + gridH then break end
+
+        local colors = cfg.button_colors
+        local isActive = (setIdx == currentChantsSet)
+        local btnColors = {
+            normal = isActive and colors.active or colors.normal,
+            hover = colors.hover,
+        }
+        UIButton(btnX, btnY, btnW, btnH, btnColors, function()
+            currentChantsSet = setIdx
+            saveChantsSet()
+            applyChantsSet(setIdx)
+        end)
+
+        local btnText = "Set " .. (setIdx + 1)
+        local textW = djui_hud_measure_text(btnText) * cfg.text_scale
+        local textX = btnX + (btnW - textW) / 2
+        local textY = btnY + (btnH - 16 * cfg.text_scale) / 2
+        UIText(btnText, textX, textY, cfg.text_scale, { 255, 255, 255, 255 })
+        col = col + 1
+    end
 end
 
 local function renderModMenu()
@@ -212,7 +312,7 @@ local function renderModMenu()
     end
 
     local tabX = winX + pad
-    for i = 0, 1 do
+    for i = 0, 2 do
         local section = Sections[i]
         if section then
             local btnW = getTabWidth(section.name)
@@ -244,7 +344,9 @@ local function renderModMenu()
     if selectedSection == 0 then
         renderAbilitiesSection(contentX, contentY, contentW, contentH)
     elseif selectedSection == 1 then
-        renderCustomizationSection(contentX, contentY, contentW, contentH)
+        renderEnergySection(contentX, contentY, contentW, contentH)
+    elseif selectedSection == 2 then
+        renderChantsSection(contentX, contentY, contentW, contentH)
     end
 
     UIDrawDrag()
@@ -294,11 +396,3 @@ local function onHudRender()
 end
 
 hook_event(HOOK_ON_HUD_RENDER, onHudRender)
-
--- hook_event(HOOK_UPDATE,
---     function()
---         if modMenuOpened and IsGameStarted() then
---             CloseModMenu()
---         end
---     end
--- )
