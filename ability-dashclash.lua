@@ -33,7 +33,7 @@ local function onUseDashClash()
 
     local used_chants = gPlayerSyncTable[0].Kaisen64.cur_chant or 0
 
-    set_mario_action(m, ACT_DASHCLASH_DASH, 3)
+    set_mario_action(m, ACT_DASHCLASH_DASH, used_chants)
 end
 
 RegisterAbility(ABILITY_ID_DASHCLASH, {
