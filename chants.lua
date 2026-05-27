@@ -103,7 +103,7 @@ hook_event(HOOK_MARIO_UPDATE,
             if new_cur == 3 then
                 data.chant_cooldown = 1024
             else
-                data.chant_cooldown = 256
+                data.chant_cooldown = 128
             end
 
             for i, v in pairs(AbilitiesData) do
