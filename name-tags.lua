@@ -12,6 +12,8 @@ hook_event(HOOK_ON_NAMETAGS_RENDER,
 hook_event(HOOK_ON_HUD_RENDER_BEHIND,
     function()
         djui_hud_set_resolution(RESOLUTION_N64)
+
+        if not IsGameStarted() then return end
         for i = 1, MAX_PLAYERS - 1 do
             if gNetworkPlayers[i].currActNum == gNetworkPlayers[0].currActNum and gNetworkPlayers[i].currAreaIndex == gNetworkPlayers[0].currAreaIndex and gNetworkPlayers[i].currLevelNum == gNetworkPlayers[0].currLevelNum then
                 local m = gMarioStates[i]
