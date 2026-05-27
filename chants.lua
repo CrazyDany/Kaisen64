@@ -19,6 +19,97 @@ local chants = {
         "[[ Polarised Light ]]",
         "[[ CROW AND DECLARATION ]]",
     },
+
+    -- DryTry
+    [4] = {
+        "[[ fever of the slot ]]",
+        "[[ Unending Gamble ]]",
+        "[[ JACKPOT REQUIEM ]]",
+    },
+    -- ColdMod
+    [5] = {
+        "[[ frost offering ]]",
+        "[[ Cold Mandala ]]",
+        "[[ SILENT NIRVANA ]]",
+    },
+    -- IreFire
+    [6] = {
+        "[[ ember sermon ]]",
+        "[[ Ash And Pride ]]",
+        "[[ CALDERA OF REMORSE ]]",
+    },
+    -- RecTech
+    [7] = {
+        "[[ broken frame ]]",
+        "[[ Stopped Karma ]]",
+        "[[ CURSED PROJECTION ]]",
+    },
+
+    [8] = {
+        "[[ iron fist sutra ]]",
+        "[[ Black Compassion ]]",
+        "[[ DIVINE CROSS COUNTER ]]",
+    },
+    -- DawnSpawn
+    [9] = {
+        "[[ shadow womb ]]",
+        "[[ Ten Treasures ]]",
+        "[[ DOMINION OF THE VOID ]]",
+    },
+
+    [10] = {
+        "[[ cursed seed ]]",
+        "[[ Thorn Mandala ]]",
+        "[[ BLOSSOM OF EXTERMINATION ]]",
+    },
+
+    [11] = {
+        "[[ winged decree ]]",
+        "[[ Hollow Radiance ]]",
+        "[[ PURIFICATION PARADOX ]]",
+    },
+
+    [12] = {
+        "[[ twisted sutra ]]",
+        "[[ Soul Refrain ]]",
+        "[[ METAMORPHOSIS OF SAMSARA ]]",
+    },
+
+    [13] = {
+        "[[ swirling void ]]",
+        "[[ Hollow Heart ]]",
+        "[[ INFINITE COLLAPSE ]]",
+    },
+
+    [14] = {
+        "[[ broken scale ]]",
+        "[[ Fate Severed ]]",
+        "[[ BALANCE OF NOTHING ]]",
+    },
+
+    [15] = {
+        "[[ silent bell ]]",
+        "[[ Last Toll ]]",
+        "[[ EXORCISM'S END ]]",
+    },
+
+    [16] = {
+        "[[ rusted chain ]]",
+        "[[ Binding Vow ]]",
+        "[[ PRISON OF THE SOUL ]]",
+    },
+
+    [17] = {
+        "[[ weeping lotus ]]",
+        "[[ Petal Storm ]]",
+        "[[ BLOOM OF ANNIHILATION ]]",
+    },
+
+    [18] = {
+        "[[ fleeting shadow ]]",
+        "[[ Moonlit Edge ]]",
+        "[[ SEVERANCE OF TWILIGHT ]]",
+    },
 }
 
 hook_chat_command("k64-setchant", "Выбирает произносимые заклинания",
