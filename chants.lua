@@ -116,7 +116,7 @@ hook_chat_command("k64-setchant", "Выбирает произносимые з�
     function(msg)
         if gPlayerSyncTable[0].Kaisen64 == nil then return false end
 
-        local number = math.clamp((tonumber(msg) or 0), 0, 3)
+        local number = math.clamp((tonumber(msg) or 0), 0, #chants - 1)
 
         gPlayerSyncTable[0].Kaisen64.chant = number
         return true
@@ -177,7 +177,7 @@ hook_event(HOOK_MARIO_UPDATE,
     function(m)
         if gPlayerSyncTable[m.playerIndex].Kaisen64 == nil then return end
 
-        if (m.controller.buttonPressed & CONT_UP) ~= 0 then
+        if ((m.controller.buttonPressed & CONT_UP) ~= 0) and (IsGameStarted() or IsDevModActivated()) then
             if m.playerIndex ~= 0 then return end
 
             local data = gPlayerSyncTable[0].Kaisen64
