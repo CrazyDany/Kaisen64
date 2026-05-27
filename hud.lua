@@ -70,12 +70,13 @@ local HUDSettings = {
     },
 
     leaderboard = {
-        relativeWidth = 0.28,
+        relativeWidth = 0.22,
         relativeX = 0.01,
         relativeY = 0.15,
         padding = 12,
         bgColor = { 0, 0, 0, 180 },
         textColor = { 255, 255, 255, 255 },
+        textColorLocalPlayer = { 255, 215, 0, 255 },
         titleColor = nil,
         fontSize = 0.5,
         lineHeight = 26,
@@ -406,9 +407,14 @@ local function renderLeaderboard()
         if leaderboard[i] == nil then
             break
         end
-        local line = "" .. i .. " - " .. (leaderboard[i].name or "") .. " | " .. (leaderboard[i].kills or 0) .. " Kills"
+        local line = "" ..
+            i + 1 .. " - " .. (leaderboard[i].name or "") .. " | " .. (leaderboard[i].kills or 0) .. " Kills"
         djui_hud_set_font(HUDSettings.font)
         djui_hud_set_color(settings.textColor[1], settings.textColor[2], settings.textColor[3], settings.textColor[4])
+        if leaderboard[i].name == gNetworkPlayers[0].name then
+            djui_hud_set_color(settings.textColorLocalPlayer[1], settings.textColorLocalPlayer[2],
+                settings.textColorLocalPlayer[3], settings.textColorLocalPlayer[4])
+        end
         djui_hud_print_text(line, x + settings.padding, textY, textScale)
         textY = textY + settings.lineHeight
     end
