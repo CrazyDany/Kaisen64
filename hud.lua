@@ -427,13 +427,25 @@ hook_chat_command("leaderboard", "sus", function(msg)
 end)
 
 registerHudElement("HealthBar", renderHealthBar, 5,
-    function() return not IsModMenuOpened() and gPlayerSyncTable[0].Kaisen64 ~= nil and IsGameStarted() end)
+    function()
+        return not IsModMenuOpened() and gPlayerSyncTable[0].Kaisen64 ~= nil and
+            (IsGameStarted() or IsDevModActivated())
+    end)
 registerHudElement("AbilitiesSlots", renderAbilitiesSlots, 10,
-    function() return not IsModMenuOpened() and gPlayerSyncTable[0].Kaisen64 ~= nil and IsGameStarted() end)
+    function()
+        return not IsModMenuOpened() and gPlayerSyncTable[0].Kaisen64 ~= nil and
+            (IsGameStarted() or IsDevModActivated())
+    end)
 registerHudElement("EnergyBar", renderEnergyBar, 20,
-    function() return not IsModMenuOpened() and gPlayerSyncTable[0].Kaisen64 ~= nil and IsGameStarted() end)
+    function()
+        return not IsModMenuOpened() and gPlayerSyncTable[0].Kaisen64 ~= nil and
+            (IsGameStarted() or IsDevModActivated())
+    end)
 registerHudElement("ExtraInfo", renderExtraInfo, 30,
-    function() return not IsModMenuOpened() and gPlayerSyncTable[0].Kaisen64 ~= nil and IsGameStarted() end)
+    function()
+        return not IsModMenuOpened() and gPlayerSyncTable[0].Kaisen64 ~= nil and
+            (IsGameStarted() or IsDevModActivated())
+    end)
 registerHudElement("Leaderboard", renderLeaderboard, 40,
     function() return not IsModMenuOpened() and gPlayerSyncTable[0].Kaisen64 ~= nil end)
 
