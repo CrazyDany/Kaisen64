@@ -117,7 +117,7 @@ RegisterAbility(ABILITY_ID_SHINESIGN, {
     iconTextureName = "rctc",
 
     cost = 128,
-    cooldown = 32,
+    cooldown = 256,
     curCooldown = 0,
 
     onUseFunction = onUseShineSign,
