@@ -144,6 +144,10 @@ local function renderAbilitiesSlots()
         djui_hud_set_color(bgColor[1], bgColor[2], bgColor[3], bgColor[4])
         djui_hud_render_rect(x, y, slotSize, slotSize)
 
+        if GetSlotDisplayMode() == 'icons' then
+            djui_hud_set_color(255, 255, 255, 255)
+            djui_hud_render_texture(get_texture_info(abilityData.iconTextureName), x + 8, y + 8, 2, 2)
+        end
         if isSelected then
             local bw = 3
             djui_hud_set_color(settings.borderColor[1], settings.borderColor[2], settings.borderColor[3],
@@ -168,7 +172,9 @@ local function renderAbilitiesSlots()
             djui_hud_set_font(HUDSettings.font)
             djui_hud_set_color(textColor[1], textColor[2], textColor[3], textColor[4])
             local textWidth = djui_hud_measure_text(displayText) * textScale
-            djui_hud_print_text(displayText, x + (slotSize - textWidth) / 2, y + slotSize / 2 - 6, textScale)
+            if GetSlotDisplayMode() == 'text' then
+                djui_hud_print_text(displayText, x + (slotSize - textWidth) / 2, y + slotSize / 2 - 6, textScale)
+            end
 
             if abilityData.curCooldown > 0 then
                 local cdText = getCooldownText(abilityData.curCooldown)
