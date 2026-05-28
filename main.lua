@@ -42,6 +42,20 @@ hook_event(HOOK_UPDATE, function()
 
         gPlayerSyncTable[0].Kaisen64.chant = mod_storage_load_number("chants.selectedSet") or 0
 
+        local savedSkin = mod_storage_load_number("skin.selected")
+        if savedSkin ~= nil and K64_SKINS_TABLE[savedSkin] then
+            gPlayerSyncTable[0].k64_skin = savedSkin
+        else
+            if gPlayerSyncTable[0].k64_skin == nil then
+                gPlayerSyncTable[0].k64_skin = 0
+            end
+        end
+
+        for i = 0, 3 do
+            gPlayerSyncTable[0].Kaisen64.abilitiesSlots[i] = mod_storage_load_number("selectedabilities." .. i) or
+                gPlayerSyncTable[0].Kaisen64.abilitiesSlots[i]
+        end
+
         SetCustomEnergyColor(K64_HUD_DEFAULT_ENERGY_COLOR.r, K64_HUD_DEFAULT_ENERGY_COLOR.g,
             K64_HUD_DEFAULT_ENERGY_COLOR.b)
 

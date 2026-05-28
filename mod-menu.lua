@@ -64,6 +64,20 @@ local MenuConfig = {
         description_scale = 0.9,
         line_spacing = 22,
     },
+    skins = {
+        button_width = 140,
+        button_height = 48,
+        button_spacing = 12,
+        grid_columns = 3,
+        button_colors = {
+            normal = { 31, 31, 31, 200 },
+            hover = { 63, 63, 63, 255 },
+            active = { 80, 80, 80, 255 },
+        },
+        text_scale = 0.8,
+        preview_size = 128,
+        preview_bg = { 20, 20, 20, 200 },
+    },
     logo = {
         texture = "k64-logo",
         scale = 0.2,
@@ -72,19 +86,19 @@ local MenuConfig = {
 }
 
 local modMenuOpened = false
-local selectedSection = 0
+local selectedSection = 0 -- 0=Abilities, 1=Energy, 2=Chants, 3=Skins
 local customEnergyBarColor = { r = 255, g = 255, b = 255 }
 local currentChantsSet = 0
 local chantsScrollOffset = 0
 local maxChantsScroll = 0
 local chantsContentHeight = 0
-
 local hoveredAbilityIndex = nil
 
 local Sections = {
     [0] = { name = "Abilities", id = 0 },
     [1] = { name = "Energy", id = 1 },
     [2] = { name = "Chants", id = 2 },
+    [3] = { name = "Skins", id = 3 },
 }
 
 local currentSlotRects = {}
@@ -116,6 +130,15 @@ local function loadSettings()
         currentChantsSet = 0
     end
     applyChantsSet(currentChantsSet)
+
+    local savedSkin = mod_storage_load_number("skin.selected")
+    if savedSkin ~= nil and K64_SKINS_TABLE[savedSkin] then
+        gPlayerSyncTable[0].k64_skin = savedSkin
+    else
+        if gPlayerSyncTable[0].k64_skin == nil then
+            gPlayerSyncTable[0].k64_skin = 0
+        end
+    end
 end
 
 local function saveColorSetting()
@@ -131,6 +154,19 @@ local function saveChantsSet()
     mod_storage_save_number("chants.selectedSet", currentChantsSet)
 end
 
+local function saveSkin(skinId)
+    mod_storage_save_number("skin.selected", skinId)
+end
+
+local function saveSelectedAbilities()
+    for idx = 0, K64_MAX_ABILITIES_SLOTS - 1 do
+        local abilityIdx = gPlayerSyncTable[0].Kaisen64.abilitiesSlots[idx]
+        if abilityIdx then
+            mod_storage_save_number("selectedabilities." .. tostring(idx), abilityIdx)
+        end
+    end
+end
+
 local function renderAbilitiesSection(x, y, w, h)
     local cfgGrid = MenuConfig.abilities_grid
     local cfgSlots = MenuConfig.ability_slots
@@ -140,6 +176,7 @@ local function renderAbilitiesSection(x, y, w, h)
     local rightW = w * 0.5
     local leftX = x
     local rightX = x + leftW
+
 
     local cellW = cfgGrid.cell_size
     local cellPad = cfgGrid.cell_padding
@@ -200,14 +237,12 @@ local function renderAbilitiesSection(x, y, w, h)
         end
     end
 
-    -- Правая часть: информационная панель
     local infoX = rightX + 10
     local infoY = y
     local infoW = rightW - 20
     local infoH = h
 
     UIPanel(infoX, infoY, infoW, infoH, cfgInfo.bg_color)
-
     local maxTextWidth = infoW - 2 * cfgInfo.padding
 
     if hoveredAbilityIndex ~= nil and AbilitiesData[hoveredAbilityIndex] then
@@ -215,7 +250,7 @@ local function renderAbilitiesSection(x, y, w, h)
         local title = ability.name or "Unknown"
         local description = ability.description or { "No description" }
 
-        -- Название (с переносом)
+        -- Название
         local titleLines = wrapText(title, maxTextWidth, cfgInfo.title_scale)
         local lineY = infoY + cfgInfo.padding
         for _, line in ipairs(titleLines) do
@@ -225,10 +260,8 @@ local function renderAbilitiesSection(x, y, w, h)
             lineY = lineY + cfgInfo.line_spacing
         end
 
-        -- Небольшой отступ перед описанием
         lineY = lineY + 8
 
-        -- Описание (каждая исходная строка переносится отдельно)
         for _, descLine in ipairs(description) do
             local wrappedLines = wrapText(descLine, maxTextWidth, cfgInfo.description_scale)
             for _, line in ipairs(wrappedLines) do
@@ -347,6 +380,72 @@ local function renderChantsSection(x, y, w, h)
     end
 end
 
+local function renderSkinsSection(x, y, w, h)
+    local cfg = MenuConfig.skins
+    local currentSkin = gPlayerSyncTable[0].k64_skin or 0
+
+    local previewW = cfg.preview_size
+    local previewH = cfg.preview_size
+    local previewX = x
+    local previewY = y
+    UIPanel(previewX, previewY, previewW, previewH, cfg.preview_bg)
+    UIText("Skin preview", previewX + 10, previewY + 10, 0.8, { 255, 255, 255, 255 })
+
+    local skinName = K64_SKINS_TABLE[currentSkin] and K64_SKINS_TABLE[currentSkin].name or "unknown"
+    UIText("Selected: " .. skinName, previewX + 10, previewY + 40, 0.7, { 220, 220, 220, 255 })
+
+    local gridX = previewX + previewW + 20
+    local gridW = w - (previewW + 20)
+    local gridY = y
+    local gridH = h
+
+    local btnW = cfg.button_width
+    local btnH = cfg.button_height
+    local spacing = cfg.button_spacing
+    local columns = cfg.grid_columns
+    local fullBtnW = btnW + spacing
+
+    local totalSkins = 0
+    for _ in pairs(K64_SKINS_TABLE) do totalSkins = totalSkins + 1 end
+    local rows = math.ceil(totalSkins / columns)
+
+    local startX = gridX
+    local startY = gridY
+    local row = 0
+    local col = 0
+
+    for skinIdx = 0, totalSkins - 1 do
+        if K64_SKINS_TABLE[skinIdx] then
+            if col >= columns then
+                col = 0
+                row = row + 1
+            end
+            local btnX = startX + col * fullBtnW
+            local btnY = startY + row * (btnH + spacing)
+
+            if btnY + btnH <= gridY + gridH then
+                local isActive = (skinIdx == currentSkin)
+                local btnColors = {
+                    normal = isActive and cfg.button_colors.active or cfg.button_colors.normal,
+                    hover = cfg.button_colors.hover,
+                }
+                UIButton(btnX, btnY, btnW, btnH, btnColors, function()
+                    gPlayerSyncTable[0].k64_skin = skinIdx
+                    saveSkin(skinIdx)
+                    djui_chat_message_create("Skin set to " .. K64_SKINS_TABLE[skinIdx].name)
+                end)
+
+                local btnText = K64_SKINS_TABLE[skinIdx].name
+                local textW = djui_hud_measure_text(btnText) * cfg.text_scale
+                local textX = btnX + (btnW - textW) / 2
+                local textY = btnY + (btnH - 16 * cfg.text_scale) / 2
+                UIText(btnText, textX, textY, cfg.text_scale, { 255, 255, 255, 255 })
+            end
+            col = col + 1
+        end
+    end
+end
+
 local function renderModMenu()
     local screenW = djui_hud_get_screen_width()
     local screenH = djui_hud_get_screen_height()
@@ -390,7 +489,7 @@ local function renderModMenu()
     end
 
     local tabX = winX + pad
-    for i = 0, 2 do
+    for i = 0, 3 do
         local section = Sections[i]
         if section then
             local btnW = getTabWidth(section.name)
@@ -425,6 +524,8 @@ local function renderModMenu()
         renderEnergySection(contentX, contentY, contentW, contentH)
     elseif selectedSection == 2 then
         renderChantsSection(contentX, contentY, contentW, contentH)
+    elseif selectedSection == 3 then
+        renderSkinsSection(contentX, contentY, contentW, contentH)
     end
 
     UIDrawDrag()
@@ -444,6 +545,8 @@ local function handleDrop(dropData)
             break
         end
     end
+
+    saveSelectedAbilities()
 end
 
 function OpenModMenu()
