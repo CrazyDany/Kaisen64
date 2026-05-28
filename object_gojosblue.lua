@@ -20,8 +20,17 @@ function bhv_GojosBlue_init(obj)
         "oAttractStrength",
         "oLapseRadius",
         "oLapseStrength",
-        "oForwardVelAfterHit"
+        "oForwardVelAfterHit",
+        "oLifetime"
     })
+
+    djui_chat_message_create("oMarioParentGlobalIndex: " .. obj.oMarioParentGlobalIndex)
+    djui_chat_message_create("oAttractRadius: " .. obj.oAttractRadius)
+    djui_chat_message_create("oAttractStrength: " .. obj.oAttractStrength)
+    djui_chat_message_create("oLapseRadius: " .. obj.oLapseRadius)
+    djui_chat_message_create("oLapseStrength: " .. obj.oLapseStrength)
+    djui_chat_message_create("oForwardVelAfterHit: " .. obj.oForwardVelAfterHit)
+    djui_chat_message_create("oLifetime: " .. obj.oLifetime)
 end
 
 function bhv_GojosBlue_loop(obj)
