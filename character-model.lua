@@ -23,6 +23,11 @@ K64_SKINS_TABLE = {
         name = "bibik",
         model = smlua_model_util_get_id("devil_bully_skin4_geo")
     },
+
+    [5] = {
+        name = "homelander",
+        model = smlua_model_util_get_id("devil_bully_skin5_geo")
+    },
 }
 
 local k64_defaultSkin = 0
