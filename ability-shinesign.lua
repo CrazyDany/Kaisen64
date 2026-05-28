@@ -1,4 +1,4 @@
-ABILITY_ID_SHINESIGN = 14
+ABILITY_ID_SHINESIGN = 12
 
 local function onUseShineSign()
     local ability = AbilitiesData[ABILITY_ID_SHINESIGN]

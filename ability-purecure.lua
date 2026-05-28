@@ -1,4 +1,4 @@
-ABILITY_ID_PURECURE = 3
+ABILITY_ID_PURECURE = 2
 
 local function onUsePureCure()
     local m = gMarioStates[0]

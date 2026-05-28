@@ -1,4 +1,4 @@
-ABILITY_ID_SPLIZBLITZ = 13
+ABILITY_ID_SPLIZBLITZ = 11
 
 function onUseSplizBlitz()
     gPlayerSyncTable[0].Kaisen64.afterimages_radius = 1

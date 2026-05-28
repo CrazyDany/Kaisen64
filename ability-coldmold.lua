@@ -1,4 +1,4 @@
-ABILITY_ID_COLDMOLD = 10
+ABILITY_ID_COLDMOLD = 9
 
 local function onUseColdMold()
     local m = gMarioStates[0]

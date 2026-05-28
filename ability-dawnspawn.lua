@@ -1,4 +1,4 @@
-ABILITY_ID_DAWNSPAWN = 7
+ABILITY_ID_DAWNSPAWN = 6
 
 local function onUseDownSpawn()
     local m = gMarioStates[0]

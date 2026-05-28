@@ -1,4 +1,4 @@
-ABILITY_ID_MIMECRIME = 9
+ABILITY_ID_MIMECRIME = 8
 
 local function onUseMimeCrime()
     local mimeCrimeAbility = AbilitiesData[ABILITY_ID_MIMECRIME]

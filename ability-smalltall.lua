@@ -1,4 +1,4 @@
-ABILITY_ID_SMALLTALL = 6
+ABILITY_ID_SMALLTALL = 5
 
 local function onUseSmallTall()
     gPlayerSyncTable[0].Kaisen64.smalltall_size = 2 ^ random_sign()

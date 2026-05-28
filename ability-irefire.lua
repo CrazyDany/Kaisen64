@@ -1,4 +1,4 @@
-ABILITY_ID_IREFIRE = 12
+ABILITY_ID_IREFIRE = 10
 
 define_custom_obj_fields(
     { oMarioParentGlobalIndex = "f32" }
