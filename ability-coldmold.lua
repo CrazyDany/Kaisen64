@@ -42,7 +42,9 @@ hook_event(HOOK_UPDATE,
 RegisterAbility(ABILITY_ID_COLDMOLD, {
     name = "ColdMold",
     shortName = "ClMl",
-    description = "Spawn a cold breeze that slows enemies down.",
+    description = {
+        "Spawn a cold breeze that slows enemies down."
+    },
     iconTextureName = "clml",
 
     cost = 128,

@@ -15,8 +15,6 @@ local function onUseDownSpawn()
             -- Setup function
         end
     )
-
-    
 end
 
 hook_event(HOOK_ON_SET_MARIO_ACTION, function(m)
@@ -26,13 +24,14 @@ hook_event(HOOK_ON_SET_MARIO_ACTION, function(m)
 
     AbilitiesData[ABILITY_ID_DAWNSPAWN].DSPredictionObject = math.random(0,
         #AbilitiesData[ABILITY_ID_DAWNSPAWN].DSObjects)
-
 end)
 
 RegisterAbility(ABILITY_ID_DAWNSPAWN, {
     name = "DawnSpawn",
     shortName = "DnSp",
-    description = "Spawn a random object that can help you in fight.",
+    description = {
+        "Spawn a random object that can help you in fight."
+    },
     iconTextureName = "ml",
 
     cost = 128,

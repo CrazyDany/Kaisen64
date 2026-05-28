@@ -18,7 +18,9 @@ end
 RegisterAbility(ABILITY_ID_BLOODBOOST, {
     name = "BloodBoost",
     shortName = "BlBs",
-    description = "Give away half of your health and gain energy reload boost.",
+    description = {
+        "Give away half of your health and gain energy reload boost."
+    },
     iconTextureName = "blbs",
 
     cost = 32,

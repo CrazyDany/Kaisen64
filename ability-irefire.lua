@@ -27,7 +27,9 @@ end
 RegisterAbility(ABILITY_ID_IREFIRE, {
     name = "IreFire",
     shortName = "IrFr",
-    description = "Spawn a rotating fireball that burns enemies.",
+    description = {
+        "Spawn a rotating fireball that burns enemies."
+    },
     iconTextureName = "irfr",
 
     cost = 128,

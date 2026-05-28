@@ -4,7 +4,9 @@ AbilitiesData = {
     [-1] = {
         name = "TemplateAbility",
         shortName = "TempSpell",
-        description = "Ability placeholder for modders",
+        description = {
+            "Ability placeholder for modders"
+        },
         iconTextureName = "ability-icon-locked",
 
         cost = 0,

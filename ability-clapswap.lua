@@ -101,7 +101,9 @@ hook_event(HOOK_ON_ATTACK_OBJECT,
 RegisterAbility(ABILITY_ID_CLAPSWAP, {
     name = "ClapSwap",
     shortName = "ClSw",
-    description = "Clap your hands and switch places with your last hitted player.",
+    description = {
+        "Clap your hands and switch places with your last hitted player."
+    },
     iconTextureName = "swsw",
 
     cost = 32,

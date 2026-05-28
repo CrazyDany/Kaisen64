@@ -35,9 +35,11 @@ end
 
 RegisterAbility(ABILITY_ID_SHINESIGN, {
     name = "ShineSign",
-    shortName = "ShSi",
-    description = "Spawn a shining sign that lights up the world.",
-    iconTextureName = "shsi",
+    shortName = "ShSg",
+    description = {
+        "Spawn a shining sign that lights up the world."
+    },
+    iconTextureName = "rctc",
 
     cost = 128,
     cooldown = 256,

@@ -62,7 +62,9 @@ RegisterAbility(ABILTY_ID_THWOMPSTOMP,
     {
         name = "ThwompStomp",
         shortName = "TwSt",
-        description = "Fall fast and create a shocking wave by landing.",
+        description = {
+            "Fall fast and create a shocking wave by landing."
+        },
         iconTextureName = "twst",
 
         cost = 128,

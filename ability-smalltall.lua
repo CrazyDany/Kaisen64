@@ -79,7 +79,9 @@ hook_event(HOOK_BEFORE_PHYS_STEP,
 RegisterAbility(ABILITY_ID_SMALLTALL, {
     name = "SmallTall",
     shortName = "SmTl",
-    description = "Grow up in size for destructibility or shrink down in size for slickness.",
+    description = {
+        "Grow up in size for destructibility or shrink down in size for slickness."
+    },
     iconTextureName = "smtl",
 
     cost = 128,

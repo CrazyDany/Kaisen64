@@ -190,7 +190,9 @@ end)
 RegisterAbility(ABILITY_ID_DRYTRY, {
     name = "DryTry",
     shortName = "DrTr",
-    description = "Try your luck! It can give you a god power or punish you very hard.",
+    description = {
+        "Try your luck! It can give you a god power or punish you very hard."
+    },
     iconTextureName = "drtr",
 
     cost = 64,

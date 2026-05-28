@@ -39,7 +39,9 @@ end
 RegisterAbility(ABILITY_ID_DASHCLASH, {
     name = "DashClash",
     shortName = "DsCl",
-    description = "Do a forward dash that knocks down players.",
+    description = {
+        "Do a forward dash that knocks down players."
+    },
     iconTextureName = "dscl",
 
     cost = 64,

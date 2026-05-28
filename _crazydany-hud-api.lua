@@ -1,3 +1,31 @@
+function wrapText(text, maxWidth, scale)
+    if not text or text == "" then return {} end
+    local words = {}
+    for word in string.gmatch(text, "%S+") do
+        table.insert(words, word)
+    end
+    if #words == 0 then return {} end
+
+    local lines = {}
+    local currentLine = ""
+    for _, word in ipairs(words) do
+        local testLine = currentLine == "" and word or currentLine .. " " .. word
+        local testWidth = djui_hud_measure_text(testLine) * scale
+        if testWidth <= maxWidth then
+            currentLine = testLine
+        else
+            if currentLine ~= "" then
+                table.insert(lines, currentLine)
+            end
+            currentLine = word
+        end
+    end
+    if currentLine ~= "" then
+        table.insert(lines, currentLine)
+    end
+    return lines
+end
+
 K64_BUTTON_RIGHT_CLICK = 1
 K64_BUTTON_LEFT_CLICK = 2
 K64_BUTTON_HOVER = 3
