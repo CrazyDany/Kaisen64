@@ -25,7 +25,7 @@ end
 function bhv_firesphere_loop(obj)
     local t = obj.oTimer * 1.5
 
-    local R_base = 300
+    local R_base = 400
     local R_amp = 0
     local R_freq = 0.075
     local R = R_base + R_amp * math.sin(R_freq * t)
@@ -75,7 +75,7 @@ function bhv_firesphere_loop(obj)
     obj.oPosY = parentMario.pos.y + dy
     obj.oPosZ = parentMario.pos.z + dz
 
-    if obj.oTimer >= 512 or not IsGameStarted() then
+    if obj.oTimer >= 512 or (not IsGameStarted() and not IsDevModActivated()) then
         obj_mark_for_deletion(obj)
     end
 
@@ -83,7 +83,7 @@ function bhv_firesphere_loop(obj)
     local m = gMarioStates[0]
 
     if obj_check_hitbox_overlap(m.marioObj, obj) and (network_global_index_from_local(0) ~= obj.oMarioParentGlobalIndex) and CheckPlayerCanBeAttacked(m) then
-        hurt_and_set_mario_action(m, ACT_LAVA_BOOST, 0, 0)
+        hurt_and_set_mario_action(m, ACT_SOFT_BACKWARD_GROUND_KB, 0, 0)
         m.invincTimer = m.invincTimer + 16
         BurningEffect:Apply(m, 64)
         obj_mark_for_deletion(obj)

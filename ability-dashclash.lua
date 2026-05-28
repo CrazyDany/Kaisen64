@@ -20,7 +20,7 @@ local function act_dashclash_dash(m)
 
     m.actionTimer = m.actionTimer + 1
 
-    if m.actionTimer >= 9 then
+    if m.actionTimer >= 7 then
         set_mario_action(m, ACT_IDLE, 0)
         m.actionTimer = 0
     end
@@ -45,7 +45,7 @@ RegisterAbility(ABILITY_ID_DASHCLASH, {
     iconTextureName = "dscl",
 
     cost = 64,
-    cooldown = 96,
+    cooldown = 128,
     curCooldown = 0,
 
     onUseFunction = onUseDashClash,
