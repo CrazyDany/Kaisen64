@@ -63,6 +63,8 @@ hook_event(HOOK_UPDATE, function()
             SetCustomEnergyColor(loadedEnergyColorR, loadedEnergyColorG, loadedEnergyColorB)
         end
 
+        GlobalLoadSaved()
+
         warp_to_level(LEVEL_ARENA, 1, 0)
 
         hud_hide()

@@ -37,6 +37,7 @@ local MenuConfig = {
             hover = { 63, 63, 63, 255 },
         },
         icon_scale = 2,
+        text_scale = 0.6,
     },
     customization = {
         preview_size = 128,
@@ -78,6 +79,17 @@ local MenuConfig = {
         preview_size = 128,
         preview_bg = { 20, 20, 20, 200 },
     },
+    settings = {
+        button_width = 120,
+        button_height = 40,
+        button_spacing = 20,
+        text_scale = 0.8,
+        button_colors = {
+            normal = { 31, 31, 31, 200 },
+            hover = { 63, 63, 63, 255 },
+            active = { 80, 80, 80, 255 },
+        },
+    },
     logo = {
         texture = "k64-logo",
         scale = 0.2,
@@ -86,7 +98,7 @@ local MenuConfig = {
 }
 
 local modMenuOpened = false
-local selectedSection = 0 -- 0=Abilities, 1=Energy, 2=Chants, 3=Skins
+local selectedSection = 0 -- 0=Abilities, 1=Energy, 2=Chants, 3=Skins, 4=Settings
 local customEnergyBarColor = { r = 255, g = 255, b = 255 }
 local currentChantsSet = 0
 local chantsScrollOffset = 0
@@ -94,14 +106,31 @@ local maxChantsScroll = 0
 local chantsContentHeight = 0
 local hoveredAbilityIndex = nil
 
+local slotDisplayMode = "icons" -- "icons" или "text"
+local showOtherHealthbars = true
+local showStatsInNames = true
+
 local Sections = {
     [0] = { name = "Abilities", id = 0 },
     [1] = { name = "Energy", id = 1 },
     [2] = { name = "Chants", id = 2 },
     [3] = { name = "Skins", id = 3 },
+    [4] = { name = "Settings", id = 4 },
 }
 
 local currentSlotRects = {}
+
+function GetSlotDisplayMode()
+    return slotDisplayMode
+end
+
+function GetShowOtherHealthbars()
+    return showOtherHealthbars
+end
+
+function GetShowStatsInNames()
+    return showStatsInNames
+end
 
 local function applyChantsSet(setIndex)
     if gPlayerSyncTable[0] and gPlayerSyncTable[0].Kaisen64 then
@@ -114,6 +143,7 @@ local function applyChantsSet(setIndex)
 end
 
 local function loadSettings()
+    -- Цвет энергии
     local r = mod_storage_load_number("customenergycolor.r")
     local g = mod_storage_load_number("customenergycolor.g")
     local b = mod_storage_load_number("customenergycolor.b")
@@ -123,6 +153,7 @@ local function loadSettings()
         customEnergyBarColor = { r = 255, g = 255, b = 255 }
     end
 
+    -- Набор заклинаний
     local savedSet = mod_storage_load_number("chants.selectedSet")
     if savedSet ~= nil and savedSet >= 0 and savedSet <= 18 then
         currentChantsSet = savedSet
@@ -131,6 +162,7 @@ local function loadSettings()
     end
     applyChantsSet(currentChantsSet)
 
+    -- Скин
     local savedSkin = mod_storage_load_number("skin.selected")
     if savedSkin ~= nil and K64_SKINS_TABLE[savedSkin] then
         gPlayerSyncTable[0].k64_skin = savedSkin
@@ -138,6 +170,27 @@ local function loadSettings()
         if gPlayerSyncTable[0].k64_skin == nil then
             gPlayerSyncTable[0].k64_skin = 0
         end
+    end
+
+    local savedSlotMode = mod_storage_load_number("settings.slotDisplayMode")
+    if savedSlotMode == 1 then
+        slotDisplayMode = "text"
+    else
+        slotDisplayMode = "icons"
+    end
+
+    local savedHealthbars = mod_storage_load_number("settings.showOtherHealthbars")
+    if savedHealthbars ~= nil then
+        showOtherHealthbars = (savedHealthbars == 1)
+    else
+        showOtherHealthbars = true
+    end
+
+    local savedStats = mod_storage_load_number("settings.showStatsInNames")
+    if savedStats ~= nil then
+        showStatsInNames = (savedStats == 1)
+    else
+        showStatsInNames = true
     end
 end
 
@@ -158,13 +211,25 @@ local function saveSkin(skinId)
     mod_storage_save_number("skin.selected", skinId)
 end
 
-local function saveSelectedAbilities()
-    for idx = 0, K64_MAX_ABILITIES_SLOTS - 1 do
-        local abilityIdx = gPlayerSyncTable[0].Kaisen64.abilitiesSlots[idx]
-        if abilityIdx then
-            mod_storage_save_number("selectedabilities." .. tostring(idx), abilityIdx)
-        end
-    end
+-- Сохранение настроек (исправленное)
+local function saveSlotDisplayMode(mode)
+    slotDisplayMode = mode
+    local value = (mode == "text") and 1 or 0
+    mod_storage_save_number("settings.slotDisplayMode", value)
+end
+
+local function saveShowOtherHealthbars(value)
+    showOtherHealthbars = value
+    mod_storage_save_number("settings.showOtherHealthbars", value and 1 or 0)
+end
+
+local function saveShowStatsInNames(value)
+    showStatsInNames = value
+    mod_storage_save_number("settings.showStatsInNames", value and 1 or 0)
+end
+
+function GlobalLoadSaved()
+    loadSettings()
 end
 
 local function renderAbilitiesSection(x, y, w, h)
@@ -176,7 +241,6 @@ local function renderAbilitiesSection(x, y, w, h)
     local rightW = w * 0.5
     local leftX = x
     local rightX = x + leftW
-
 
     local cellW = cfgGrid.cell_size
     local cellPad = cfgGrid.cell_padding
@@ -229,10 +293,22 @@ local function renderAbilitiesSection(x, y, w, h)
         if slotX + slotSize <= leftX + leftW then
             table.insert(currentSlotRects, { x = slotX, y = slotsStartY, w = slotSize, h = slotSize, idx = slotIdx })
             UIButton(slotX, slotsStartY, slotSize, slotSize, cfgSlots.colors, nil, nil)
+
             local abilityIdx = gPlayerSyncTable[0].Kaisen64.abilitiesSlots[slotIdx]
             local slotAbility = AbilitiesData[abilityIdx]
+
             if slotAbility then
-                UITexture(slotAbility.iconTextureName or "lock", slotX, slotsStartY, cfgSlots.icon_scale)
+                if slotDisplayMode == "icons" then
+                    UITexture(slotAbility.iconTextureName or cfgGrid.lock_texture, slotX, slotsStartY,
+                        cfgSlots.icon_scale)
+                else
+                    local displayName = slotAbility.shortName or slotAbility.name or "?"
+                    local textScale = cfgSlots.text_scale
+                    local textW = djui_hud_measure_text(displayName) * textScale
+                    local textX = slotX + (slotSize - textW) / 2
+                    local textY = slotsStartY + (slotSize - 16 * textScale) / 2
+                    UIText(displayName, textX, textY, textScale, { 255, 255, 255, 255 })
+                end
             end
         end
     end
@@ -250,7 +326,6 @@ local function renderAbilitiesSection(x, y, w, h)
         local title = ability.name or "Unknown"
         local description = ability.description or { "No description" }
 
-        -- Название
         local titleLines = wrapText(title, maxTextWidth, cfgInfo.title_scale)
         local lineY = infoY + cfgInfo.padding
         for _, line in ipairs(titleLines) do
@@ -390,7 +465,6 @@ local function renderSkinsSection(x, y, w, h)
     local previewY = y
     UIPanel(previewX, previewY, previewW, previewH, cfg.preview_bg)
     UIText("Skin preview", previewX + 10, previewY + 10, 0.8, { 255, 255, 255, 255 })
-
     local skinName = K64_SKINS_TABLE[currentSkin] and K64_SKINS_TABLE[currentSkin].name or "unknown"
     UIText("Selected: " .. skinName, previewX + 10, previewY + 40, 0.7, { 220, 220, 220, 255 })
 
@@ -446,6 +520,92 @@ local function renderSkinsSection(x, y, w, h)
     end
 end
 
+local function renderSettingsSection(x, y, w, h)
+    local cfg = MenuConfig.settings
+    local startY = y + 20
+    local btnW = cfg.button_width
+    local btnH = cfg.button_height
+    local spacing = cfg.button_spacing
+    local textScale = cfg.text_scale
+
+    local slotLabel = "Slots display mode:"
+    local slotLabelW = djui_hud_measure_text(slotLabel) * textScale
+    UIText(slotLabel, x + 20, startY, textScale, { 255, 255, 255, 255 })
+
+    local iconsBtnX = x + 20 + slotLabelW + 20
+    local iconsColor = (slotDisplayMode == "icons") and cfg.button_colors.active or cfg.button_colors.normal
+    UIButton(iconsBtnX, startY, btnW, btnH, { normal = iconsColor, hover = cfg.button_colors.hover }, function()
+        if slotDisplayMode ~= "icons" then
+            saveSlotDisplayMode("icons")
+        end
+    end)
+    UIText("Icons", iconsBtnX + btnW / 2 - djui_hud_measure_text("Icons") * textScale / 2,
+        startY + (btnH - 16 * textScale) / 2, textScale, { 255, 255, 255, 255 })
+
+    local textBtnX = iconsBtnX + btnW + spacing
+    local textColor = (slotDisplayMode == "text") and cfg.button_colors.active or cfg.button_colors.normal
+    UIButton(textBtnX, startY, btnW, btnH, { normal = textColor, hover = cfg.button_colors.hover }, function()
+        if slotDisplayMode ~= "text" then
+            saveSlotDisplayMode("text")
+        end
+    end)
+    UIText("Text", textBtnX + btnW / 2 - djui_hud_measure_text("Text") * textScale / 2,
+        startY + (btnH - 16 * textScale) /
+        2, textScale, { 255, 255, 255, 255 })
+
+    local lineY = startY + btnH + 20
+
+    local healthLabel = "Show other players' health bars:"
+    local healthLabelW = djui_hud_measure_text(healthLabel) * textScale
+    UIText(healthLabel, x + 20, lineY, textScale, { 255, 255, 255, 255 })
+
+    local onHealthX = x + 20 + healthLabelW + 20
+    local onHealthColor = showOtherHealthbars and cfg.button_colors.active or cfg.button_colors.normal
+    UIButton(onHealthX, lineY, btnW, btnH, { normal = onHealthColor, hover = cfg.button_colors.hover }, function()
+        if not showOtherHealthbars then
+            saveShowOtherHealthbars(true)
+        end
+    end)
+    UIText("On", onHealthX + btnW / 2 - djui_hud_measure_text("On") * textScale / 2, lineY + (btnH - 16 * textScale) / 2,
+        textScale, { 255, 255, 255, 255 })
+
+    local offHealthX = onHealthX + btnW + spacing
+    local offHealthColor = not showOtherHealthbars and cfg.button_colors.active or cfg.button_colors.normal
+    UIButton(offHealthX, lineY, btnW, btnH, { normal = offHealthColor, hover = cfg.button_colors.hover }, function()
+        if showOtherHealthbars then
+            saveShowOtherHealthbars(false)
+        end
+    end)
+    UIText("Off", offHealthX + btnW / 2 - djui_hud_measure_text("Off") * textScale / 2, lineY + (btnH - 16 * textScale) /
+        2, textScale, { 255, 255, 255, 255 })
+
+    lineY = lineY + btnH + 20
+
+    local statsLabel = "Show player stats in names:"
+    local statsLabelW = djui_hud_measure_text(statsLabel) * textScale
+    UIText(statsLabel, x + 20, lineY, textScale, { 255, 255, 255, 255 })
+
+    local onStatsX = x + 20 + statsLabelW + 20
+    local onStatsColor = showStatsInNames and cfg.button_colors.active or cfg.button_colors.normal
+    UIButton(onStatsX, lineY, btnW, btnH, { normal = onStatsColor, hover = cfg.button_colors.hover }, function()
+        if not showStatsInNames then
+            saveShowStatsInNames(true)
+        end
+    end)
+    UIText("On", onStatsX + btnW / 2 - djui_hud_measure_text("On") * textScale / 2, lineY + (btnH - 16 * textScale) / 2,
+        textScale, { 255, 255, 255, 255 })
+
+    local offStatsX = onStatsX + btnW + spacing
+    local offStatsColor = not showStatsInNames and cfg.button_colors.active or cfg.button_colors.normal
+    UIButton(offStatsX, lineY, btnW, btnH, { normal = offStatsColor, hover = cfg.button_colors.hover }, function()
+        if showStatsInNames then
+            saveShowStatsInNames(false)
+        end
+    end)
+    UIText("Off", offStatsX + btnW / 2 - djui_hud_measure_text("Off") * textScale / 2, lineY + (btnH - 16 * textScale) /
+        2, textScale, { 255, 255, 255, 255 })
+end
+
 local function renderModMenu()
     local screenW = djui_hud_get_screen_width()
     local screenH = djui_hud_get_screen_height()
@@ -489,7 +649,7 @@ local function renderModMenu()
     end
 
     local tabX = winX + pad
-    for i = 0, 3 do
+    for i = 0, 4 do
         local section = Sections[i]
         if section then
             local btnW = getTabWidth(section.name)
@@ -526,6 +686,8 @@ local function renderModMenu()
         renderChantsSection(contentX, contentY, contentW, contentH)
     elseif selectedSection == 3 then
         renderSkinsSection(contentX, contentY, contentW, contentH)
+    elseif selectedSection == 4 then
+        renderSettingsSection(contentX, contentY, contentW, contentH)
     end
 
     UIDrawDrag()
@@ -545,8 +707,6 @@ local function handleDrop(dropData)
             break
         end
     end
-
-    saveSelectedAbilities()
 end
 
 function OpenModMenu()

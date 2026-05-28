@@ -2,6 +2,8 @@ hook_event(HOOK_ON_NAMETAGS_RENDER,
     function(playerIndex, pos)
         local i = tonumber(playerIndex)
 
+        if GetShowStatsInNames() == false then return end
+
         return {
             name = gNetworkPlayers[i].name .. " / " .. "Kills: " .. (gPlayerSyncTable[i].Kaisen64.kills or 0),
             pos = pos
@@ -13,7 +15,8 @@ hook_event(HOOK_ON_HUD_RENDER_BEHIND,
     function()
         djui_hud_set_resolution(RESOLUTION_N64)
 
-        if not IsGameStarted() then return end
+        if (not IsGameStarted() and not IsDevModActivated()) then return end
+        if GetShowOtherHealthbars() == false then return end
         for i = 1, MAX_PLAYERS - 1 do
             if gNetworkPlayers[i].currActNum == gNetworkPlayers[0].currActNum and gNetworkPlayers[i].currAreaIndex == gNetworkPlayers[0].currAreaIndex and gNetworkPlayers[i].currLevelNum == gNetworkPlayers[0].currLevelNum then
                 local m = gMarioStates[i]
