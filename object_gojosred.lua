@@ -1,3 +1,5 @@
+E_MODEL_GOJOSRED = smlua_model_util_get_id("red_sphere_geo")
+
 define_custom_obj_fields(
     {
         oRepelRadius = "f32",

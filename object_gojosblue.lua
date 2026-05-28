@@ -1,3 +1,5 @@
+E_MODEL_GOJOSBLUE = smlua_model_util_get_id("blue_sphere_geo")
+
 define_custom_obj_fields(
     {
         oMarioParentGlobalIndex = "f32",
@@ -12,7 +14,6 @@ define_custom_obj_fields(
 
 function bhv_GojosBlue_init(obj)
     obj.oFlags = OBJ_FLAG_UPDATE_GFX_POS_AND_ANGLE
-    obj_set_billboard(obj)
 
     network_init_object(obj, true, {
         "oMarioParentGlobalIndex",
@@ -23,14 +24,6 @@ function bhv_GojosBlue_init(obj)
         "oForwardVelAfterHit",
         "oLifetime"
     })
-
-    djui_chat_message_create("oMarioParentGlobalIndex: " .. obj.oMarioParentGlobalIndex)
-    djui_chat_message_create("oAttractRadius: " .. obj.oAttractRadius)
-    djui_chat_message_create("oAttractStrength: " .. obj.oAttractStrength)
-    djui_chat_message_create("oLapseRadius: " .. obj.oLapseRadius)
-    djui_chat_message_create("oLapseStrength: " .. obj.oLapseStrength)
-    djui_chat_message_create("oForwardVelAfterHit: " .. obj.oForwardVelAfterHit)
-    djui_chat_message_create("oLifetime: " .. obj.oLifetime)
 end
 
 function bhv_GojosBlue_loop(obj)
@@ -60,6 +53,9 @@ function bhv_GojosBlue_loop(obj)
         obj_mark_for_deletion(obj)
         gPlayerSyncTable[0].Kaisen64.isAttracting = false
     end
+
+    obj.oFaceAnglePitch = 16900
+    obj.oFaceAngleYaw = gLakituState.yaw
 end
 
 hook_event(HOOK_BEFORE_PHYS_STEP,

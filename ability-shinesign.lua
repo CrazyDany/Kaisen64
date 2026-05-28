@@ -12,7 +12,7 @@ local function onUseShineSign()
     if ability.selectedMode == 0 then
         spawn_sync_object(
             id_bhvGojosBlue,
-            E_MODEL_YELLOW_SPHERE,
+            E_MODEL_GOJOSBLUE,
             m.pos.x,
             m.pos.y,
             m.pos.z,
@@ -21,9 +21,9 @@ local function onUseShineSign()
             function(o)
                 o.oForwardVel = 80.0
 
-                o.header.gfx.scale.x = 1.0 + chants
-                o.header.gfx.scale.y = 1.0 + chants
-                o.header.gfx.scale.z = 1.0 + chants
+                o.header.gfx.scale.x = 1.5 + chants
+                o.header.gfx.scale.y = 1.5 + chants
+                o.header.gfx.scale.z = 1.5 + chants
 
                 o.oMarioParentGlobalIndex = network_global_index_from_local(0)
                 o.oAttractRadius = 2048.0 * (chants + 1)
@@ -37,7 +37,7 @@ local function onUseShineSign()
     else
         spawn_sync_object(
             id_bhvGojosRed,
-            E_MODEL_YELLOW_SPHERE,
+            E_MODEL_GOJOSRED,
             m.pos.x,
             m.pos.y,
             m.pos.z,
