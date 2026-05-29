@@ -42,7 +42,7 @@ HookEvent_LocalMarioPVPAttack(
             { frame = 14, x = 0, y = 0, scale = scale, color = { 255, 255, 255, 255 } },
         }
 
-        PlaySound("BlackFlash", 1.5)
+        PlaySample("BlackFlash", gMarioStates[0].pos, 1.0, true)
 
         UITweenTexture("bf-anim", frames,
             {
@@ -87,7 +87,7 @@ hook_event(HOOK_ON_PACKET_RECEIVE,
                 { frame = 14, x = 0, y = 0, scale = scale, color = { 255, 255, 255, 255 } },
             }
 
-            PlaySound("BlackFlash", 1.5)
+            -- PlaySound("BlackFlash", 1.5)
 
             UITweenTexture("bf-anim", frames,
                 {

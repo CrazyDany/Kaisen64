@@ -213,8 +213,7 @@ hook_event(HOOK_MARIO_UPDATE,
                 sound = "Chant3"
             end
             if sound then
-                PlaySound(sound, 1)
-                network_send(true, { k64_playStream = sound, k64_playStream_playVolume = 1 })
+                PlaySample(sound, m.pos, 1.0, true)
             end
 
             for i = 0, MAX_PLAYERS - 1 do

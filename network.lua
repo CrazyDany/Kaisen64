@@ -11,11 +11,6 @@ hook_event(HOOK_ON_PACKET_RECEIVE, function(dataTable)
         gMarioStates[0].pos.z = dataTable.k64_changePos_z
     end
 
-    if dataTable.k64_playStream ~= nil then
-        local playVolume = dataTable.k64_playStream_playVolume or 1
-        PlaySound(dataTable.k64_playStream, playVolume)
-    end
-
     if dataTable.k64_playFlash ~= nil then
         local screenWidth = djui_hud_get_screen_width()
         local screenHeight = djui_hud_get_screen_height()
