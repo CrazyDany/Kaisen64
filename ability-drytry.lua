@@ -184,6 +184,41 @@ hook_event(HOOK_ON_SET_MARIO_ACTION, function(m)
     end
 end)
 
+hook_event(HOOK_ON_HUD_RENDER, function()
+    if (gPlayerSyncTable[0].Kaisen64 == nil) then return end
+
+    if AbilitiesData[ABILITY_ID_DRYTRY].jackpotTimer > 0 then
+        local timerText = ""
+        if GetDisplayTimeMode() == 0 then
+            timerText = "Jackpot timer: " .. AbilitiesData[ABILITY_ID_DRYTRY].jackpotTimer
+        elseif GetDisplayTimeMode() == 1 then
+            local timeInSecouns = math.floor(AbilitiesData[ABILITY_ID_DRYTRY].jackpotTimer / 30)
+
+            local minutes = math.floor(timeInSecouns / 60)
+            local seconds = timeInSecouns % 60
+
+            timerText = "Jackpot timer: " .. string.format("%02d", minutes) .. ":" .. string.format("%02d", seconds)
+        end
+
+
+        djui_hud_set_font(FONT_MENU)
+        local textScale = 0.5
+        local x = (djui_hud_get_screen_width() - djui_hud_measure_text(timerText) * textScale) / 2
+        local y = 32 * textScale
+
+        local framesLeft = AbilitiesData[ABILITY_ID_DRYTRY].jackpotTimer
+
+        djui_hud_set_color(255, 255, 255, 255)
+        if framesLeft <= 30 * 20 then
+            if (math.floor(framesLeft / 30)) % 2 == 0 then
+                djui_hud_set_color(255, 0, 0, 255)
+            end
+        end
+
+        djui_hud_print_text(timerText, x, y, textScale)
+    end
+end)
+
 RegisterAbility(ABILITY_ID_DRYTRY, {
     name = "DryTry",
     shortName = "DrTr",
