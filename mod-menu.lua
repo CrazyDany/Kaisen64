@@ -109,6 +109,7 @@ local hoveredAbilityIndex = nil
 local slotDisplayMode = "icons" -- "icons" или "text"
 local showOtherHealthbars = true
 local showStatsInNames = true
+local displayTimeMode = 1 -- 0 = frames, 1 = seconds
 
 local Sections = {
     [0] = { name = "Abilities", id = 0 },
@@ -130,6 +131,10 @@ end
 
 function GetShowStatsInNames()
     return showStatsInNames
+end
+
+function GetDisplayTimeMode()
+    return displayTimeMode
 end
 
 local function applyChantsSet(setIndex)
@@ -192,6 +197,13 @@ local function loadSettings()
     else
         showStatsInNames = true
     end
+
+    local savedTimeMode = mod_storage_load_number("settings.displayTimeMode")
+    if savedTimeMode == 1 then
+        displayTimeMode = 1
+    else
+        displayTimeMode = 0
+    end
 end
 
 local function saveColorSetting()
@@ -226,6 +238,11 @@ end
 local function saveShowStatsInNames(value)
     showStatsInNames = value
     mod_storage_save_number("settings.showStatsInNames", value and 1 or 0)
+end
+
+local function saveDisplayTimeMode(mode)
+    displayTimeMode = mode
+    mod_storage_save_number("settings.displayTimeMode", mode)
 end
 
 local function saveSelectedAbilities()
@@ -336,6 +353,7 @@ local function renderAbilitiesSection(x, y, w, h)
         local title = ability.name or "Unknown"
         local description = ability.description or { "No description" }
 
+        -- Название (с переносом)
         local titleLines = wrapText(title, maxTextWidth, cfgInfo.title_scale)
         local lineY = infoY + cfgInfo.padding
         for _, line in ipairs(titleLines) do
@@ -354,6 +372,29 @@ local function renderAbilitiesSection(x, y, w, h)
                 lineY = lineY + cfgInfo.line_spacing
             end
         end
+
+        lineY = lineY + cfgInfo.line_spacing
+
+        local cost = ability.cost or 0
+        local cooldown = ability.cooldown or 0
+
+        local costText = "Cost: " .. cost
+        local cooldownText
+        if cooldown == 0 then
+            cooldownText = "Cooldown: —"
+        else
+            if displayTimeMode == 0 then
+                cooldownText = "Cooldown: " .. cooldown .. (cooldown == 1 and " frame" or " frames")
+            else
+                local seconds = cooldown / 30.0
+                cooldownText = "Cooldown: " .. string.format("%.1f", seconds) .. " sec"
+            end
+        end
+
+        UIText(costText, infoX + cfgInfo.padding, lineY, cfgInfo.description_scale, { 200, 200, 255, 255 })
+        lineY = lineY + cfgInfo.line_spacing
+        UIText(cooldownText, infoX + cfgInfo.padding, lineY, cfgInfo.description_scale, { 200, 200, 255, 255 })
+        lineY = lineY + cfgInfo.line_spacing
     else
         UIText("Hover over an ability", infoX + cfgInfo.padding, infoY + cfgInfo.padding + 20, 0.9,
             { 180, 180, 180, 255 })
@@ -614,6 +655,33 @@ local function renderSettingsSection(x, y, w, h)
     end)
     UIText("Off", offStatsX + btnW / 2 - djui_hud_measure_text("Off") * textScale / 2, lineY + (btnH - 16 * textScale) /
         2, textScale, { 255, 255, 255, 255 })
+
+
+    lineY = lineY + btnH + 20
+
+    local timeLabel = "Display time in:"
+    local timeLabelW = djui_hud_measure_text(timeLabel) * textScale
+    UIText(timeLabel, x + 20, lineY, textScale, { 255, 255, 255, 255 })
+
+    local framesBtnX = x + 20 + timeLabelW + 20
+    local framesColor = (displayTimeMode == 0) and cfg.button_colors.active or cfg.button_colors.normal
+    UIButton(framesBtnX, lineY, btnW, btnH, { normal = framesColor, hover = cfg.button_colors.hover }, function()
+        if displayTimeMode ~= 0 then
+            saveDisplayTimeMode(0)
+        end
+    end)
+    UIText("Frames", framesBtnX + btnW / 2 - djui_hud_measure_text("Frames") * textScale / 2,
+        lineY + (btnH - 16 * textScale) / 2, textScale, { 255, 255, 255, 255 })
+
+    local secondsBtnX = framesBtnX + btnW + spacing
+    local secondsColor = (displayTimeMode == 1) and cfg.button_colors.active or cfg.button_colors.normal
+    UIButton(secondsBtnX, lineY, btnW, btnH, { normal = secondsColor, hover = cfg.button_colors.hover }, function()
+        if displayTimeMode ~= 1 then
+            saveDisplayTimeMode(1)
+        end
+    end)
+    UIText("Seconds", secondsBtnX + btnW / 2 - djui_hud_measure_text("Seconds") * textScale / 2,
+        lineY + (btnH - 16 * textScale) / 2, textScale, { 255, 255, 255, 255 })
 end
 
 local function renderModMenu()
