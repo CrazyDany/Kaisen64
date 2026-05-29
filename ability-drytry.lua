@@ -76,13 +76,8 @@ local function onUseDryTry()
             MultipleCooldownSpeed(0, 0.5)
         end
 
-        -- Hitting in another Jackpot
-        if AbilitiesData[ABILITY_ID_DRYTRY].jackpotTimer > 0 then
-            PlaySound("SwindlerLaugh", 1.5)
-        end
-
         -- Every hitting
-        PlaySound("Jackpot", 0.5)
+        PlaySample("Jackpot", gMarioStates[0].pos, 0.5, true)
         PlayPlayerTheme(0, "JackpotMusic", 1)
         AbilitiesData[ABILITY_ID_DRYTRY].jackpotTimer = (AbilitiesData[ABILITY_ID_DRYTRY].jackpotTimer or 0) +
             (2 * 60 + 5) * 30
@@ -91,9 +86,9 @@ local function onUseDryTry()
         AbilitiesData[ABILITY_ID_DRYTRY].losesInRow = 0
         AbilitiesData[ABILITY_ID_DRYTRY].winsInRow = (AbilitiesData[ABILITY_ID_DRYTRY].winsInRow or 0) + 1
         -- AddEnergy(0, (n / 6 * (gPlayerSyncTable[0].Kaisen64.maxEnergy / 1024)))
-        AddRCTStateTimer(0, (n / (8 - (used_chants * 2))) * (gPlayerSyncTable[0].Kaisen64.maxEnergy / 1024))
+        AddRCTStateTimer(0, (n / (6 - (used_chants * 2))) * (gPlayerSyncTable[0].Kaisen64.maxEnergy / 1024))
 
-        if random_float() <= 0.125 then
+        if random_float() <= (1 / (8 - (used_chants * 2))) then
             gMarioStates[0].health = gMarioStates[0].health + (256 + (16 * used_chants))
         end
     else
@@ -101,12 +96,12 @@ local function onUseDryTry()
         AbilitiesData[ABILITY_ID_DRYTRY].winsInRow = 0
         AbilitiesData[ABILITY_ID_DRYTRY].losesInRow = (AbilitiesData[ABILITY_ID_DRYTRY].losesInRow or 0) + 1
         -- AddEnergy(0, (-n / 8) * (gPlayerSyncTable[0].Kaisen64.maxEnergy / 1024))
-        AddRCTStateTimer(0, (-n / (6 + used_chants)) * (gPlayerSyncTable[0].Kaisen64.maxEnergy / 1024))
-        if random_float() <= (1 / 12) then
+        AddRCTStateTimer(0, (-n / (9 + used_chants)) * (gPlayerSyncTable[0].Kaisen64.maxEnergy / 1024))
+        if random_float() <= (1 / 12 + used_chants) then
             gMarioStates[0].health = gMarioStates[0].health - (256 - (8 * used_chants))
         end
 
-        if random_float() <= (1 / 10) then
+        if random_float() <= (1 / 10 + used_chants) then
             set_mario_action(gMarioStates[0], ACT_SHOCKED, 0)
         end
     end
@@ -115,11 +110,11 @@ local function onUseDryTry()
 
     if n % 111 ~= 0 then
         if pseudoChance > 0 and pseudoChance < 5 then
-            AbilitiesData[ABILITY_ID_DRYTRY].stage = 0
+            AbilitiesData[ABILITY_ID_DRYTRY].stage = 0 + used_chants
         elseif pseudoChance >= 5 and pseudoChance < 15 then
-            AbilitiesData[ABILITY_ID_DRYTRY].stage = 1
+            AbilitiesData[ABILITY_ID_DRYTRY].stage = 1 + math.ceil(used_chants / 2)
         elseif pseudoChance >= 15 and pseudoChance < 30 then
-            AbilitiesData[ABILITY_ID_DRYTRY].stage = 2
+            AbilitiesData[ABILITY_ID_DRYTRY].stage = 2 + math.floor(used_chants / 3)
         elseif pseudoChance >= 30 and pseudoChance < 50 then
             AbilitiesData[ABILITY_ID_DRYTRY].stage = 3
         elseif pseudoChance >= 50 then
@@ -127,6 +122,8 @@ local function onUseDryTry()
         end
     else
         AbilitiesData[ABILITY_ID_DRYTRY].stage = 3
+        -- Infinite Jackpot
+        -- AbilitiesData[ABILITY_ID_DRYTRY].stage = 3 + math.floor(used_chants / 3)
     end
     -- djui_chat_message_create(tostring(pseudoChance))
     return true

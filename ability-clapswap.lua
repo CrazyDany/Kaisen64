@@ -12,7 +12,8 @@ local function onUseSwitchSwap()
         local screenWidth = djui_hud_get_screen_width()
         local screenHeight = djui_hud_get_screen_height()
 
-        PlaySound("Clap", 1)
+        PlaySample("Clap", m.pos, 1.0, true)
+        network_send_to(target.playerIndex, true, { k64_playFlash = true })
 
         UITweenRect(
             {
@@ -24,13 +25,6 @@ local function onUseSwitchSwap()
                 looping = false,
             }
         )
-
-        network_send(true,
-            {
-                k64_playStream = "Clap",
-                k64_playStream_playVolume = 1,
-                k64_playFlash = true,
-            })
 
         network_send_to(target.playerIndex, true,
             {
@@ -48,13 +42,7 @@ local function onUseSwitchSwap()
     elseif targetType == "object" then
         if target == nil then return false end
 
-        PlaySound("Clap", 1)
-
-        network_send(true,
-            {
-                k64_playStream = "Clap",
-                k64_playStream_playVolume = 1
-            })
+        PlaySample("Clap", m.pos, 1.0, true)
 
         local selfPosX = m.pos.x
         local selfPosY = m.pos.y
