@@ -13,7 +13,7 @@ RegisterAbility(ABILITY_ID_PURECURE, {
     name = "PureCure",
     shortName = "PuCu",
     description = {
-        "Heal yourself and also get cured from any negative effect."
+        "Исцелись и нейтрализуй все текущие негативные эффекты."
     },
     iconTextureName = "rgtc",
 

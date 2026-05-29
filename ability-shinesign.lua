@@ -112,7 +112,7 @@ RegisterAbility(ABILITY_ID_SHINESIGN, {
     name = "ShineSign",
     shortName = "ShSg",
     description = {
-        "Spawn a shining sign that lights up the world."
+        "Создай красную сферу, которая отталкивает все вокруг, или синюю, которая все притягивает"
     },
     iconTextureName = "shsg",
 

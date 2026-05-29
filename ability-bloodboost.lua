@@ -19,7 +19,7 @@ RegisterAbility(ABILITY_ID_BLOODBOOST, {
     name = "BloodBoost",
     shortName = "BlBs",
     description = {
-        "Give away half of your health and gain energy reload boost."
+        "Ускорь восстановление энергии и перезаряди все способности в обмен на половину своего здоровья."
     },
     iconTextureName = "blbs",
 

@@ -90,7 +90,7 @@ RegisterAbility(ABILITY_ID_CLAPSWAP, {
     name = "ClapSwap",
     shortName = "ClSw",
     description = {
-        "Clap your hands and switch places with your last hitted player."
+        "Хлопни в ладони и поменяйся местами с последним ударенным тобой врагом."
     },
     iconTextureName = "swsw",
 

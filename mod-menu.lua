@@ -112,11 +112,11 @@ local showStatsInNames = true
 local displayTimeMode = 1 -- 0 = frames, 1 = seconds
 
 local Sections = {
-    [0] = { name = "Abilities", id = 0 },
-    [1] = { name = "Energy", id = 1 },
-    [2] = { name = "Chants", id = 2 },
-    [3] = { name = "Skins", id = 3 },
-    [4] = { name = "Settings", id = 4 },
+    [0] = { name = "Способности", id = 0 },
+    [1] = { name = "Энергия", id = 1 },
+    [2] = { name = "Заклинания", id = 2 },
+    [3] = { name = "Скины", id = 3 },
+    [4] = { name = "Настройки", id = 4 },
 }
 
 local currentSlotRects = {}
@@ -378,16 +378,16 @@ local function renderAbilitiesSection(x, y, w, h)
         local cost = ability.cost or 0
         local cooldown = ability.cooldown or 0
 
-        local costText = "Cost: " .. cost
+        local costText = "Цена: " .. cost
         local cooldownText
         if cooldown == 0 then
-            cooldownText = "Cooldown: —"
+            cooldownText = "Перезарядка: —"
         else
             if displayTimeMode == 0 then
-                cooldownText = "Cooldown: " .. cooldown .. (cooldown == 1 and " frame" or " frames")
+                cooldownText = "Перезарядка: " .. cooldown .. (cooldown == 1 and " кадр" or " кадр")
             else
                 local seconds = cooldown / 30.0
-                cooldownText = "Cooldown: " .. string.format("%.1f", seconds) .. " sec"
+                cooldownText = "Перезарядка: " .. string.format("%.1f", seconds) .. " sec"
             end
         end
 
@@ -396,7 +396,7 @@ local function renderAbilitiesSection(x, y, w, h)
         UIText(cooldownText, infoX + cfgInfo.padding, lineY, cfgInfo.description_scale, { 200, 200, 255, 255 })
         lineY = lineY + cfgInfo.line_spacing
     else
-        UIText("Hover over an ability", infoX + cfgInfo.padding, infoY + cfgInfo.padding + 20, 0.9,
+        UIText("Наведись на способность", infoX + cfgInfo.padding, infoY + cfgInfo.padding + 20, 0.9,
             { 180, 180, 180, 255 })
     end
 end
@@ -432,7 +432,7 @@ local function renderChantsSection(x, y, w, h)
     local previewY = y
     UIPanel(previewX, previewY, previewW, previewH, cfg.preview_bg)
 
-    local previewTitle = "Preview"
+    local previewTitle = "Предпросмотр"
     local titleScale = 0.7
     UIText(previewTitle, previewX + 10, previewY + 5, titleScale, { 255, 255, 255, 255 })
 
@@ -444,7 +444,7 @@ local function renderChantsSection(x, y, w, h)
             UIText(chant, previewX + 10, startY + (i - 1) * lineHeight, cfg.preview_text_scale, { 220, 220, 220, 255 })
         end
     else
-        UIText("No chants selected", previewX + 10, previewY + 40, cfg.preview_text_scale, { 255, 100, 100, 255 })
+        UIText("Не выбрано заклинаний", previewX + 10, previewY + 40, cfg.preview_text_scale, { 255, 100, 100, 255 })
     end
 
     local gridX = previewX + previewW + 20
@@ -487,7 +487,7 @@ local function renderChantsSection(x, y, w, h)
                     applyChantsSet(setIdx)
                 end)
 
-                local btnText = "Set " .. (setIdx + 1)
+                local btnText = "Набор " .. (setIdx + 1)
                 local textW = djui_hud_measure_text(btnText) * cfg.text_scale
                 local textX = btnX + (btnW - textW) / 2
                 local textY = btnY + (btnH - 16 * cfg.text_scale) / 2
@@ -515,9 +515,9 @@ local function renderSkinsSection(x, y, w, h)
     local previewX = x
     local previewY = y
     UIPanel(previewX, previewY, previewW, previewH, cfg.preview_bg)
-    UIText("Skin preview", previewX + 10, previewY + 10, 0.8, { 255, 255, 255, 255 })
+    UIText("Предпросмотр", previewX + 10, previewY + 10, 0.8, { 255, 255, 255, 255 })
     local skinName = K64_SKINS_TABLE[currentSkin] and K64_SKINS_TABLE[currentSkin].name or "unknown"
-    UIText("Selected: " .. skinName, previewX + 10, previewY + 40, 0.7, { 220, 220, 220, 255 })
+    UIText("Выбрано: " .. skinName, previewX + 10, previewY + 40, 0.7, { 220, 220, 220, 255 })
 
     local gridX = previewX + previewW + 20
     local gridW = w - (previewW + 20)
@@ -579,7 +579,7 @@ local function renderSettingsSection(x, y, w, h)
     local spacing = cfg.button_spacing
     local textScale = cfg.text_scale
 
-    local slotLabel = "Slots display mode:"
+    local slotLabel = "Режим показа слотов:"
     local slotLabelW = djui_hud_measure_text(slotLabel) * textScale
     UIText(slotLabel, x + 20, startY, textScale, { 255, 255, 255, 255 })
 
@@ -590,7 +590,7 @@ local function renderSettingsSection(x, y, w, h)
             saveSlotDisplayMode("icons")
         end
     end)
-    UIText("Icons", iconsBtnX + btnW / 2 - djui_hud_measure_text("Icons") * textScale / 2,
+    UIText("Иконки", iconsBtnX + btnW / 2 - djui_hud_measure_text("Иконки") * textScale / 2,
         startY + (btnH - 16 * textScale) / 2, textScale, { 255, 255, 255, 255 })
 
     local textBtnX = iconsBtnX + btnW + spacing
@@ -600,13 +600,13 @@ local function renderSettingsSection(x, y, w, h)
             saveSlotDisplayMode("text")
         end
     end)
-    UIText("Text", textBtnX + btnW / 2 - djui_hud_measure_text("Text") * textScale / 2,
+    UIText("Текст", textBtnX + btnW / 2 - djui_hud_measure_text("Текст") * textScale / 2,
         startY + (btnH - 16 * textScale) /
         2, textScale, { 255, 255, 255, 255 })
 
     local lineY = startY + btnH + 20
 
-    local healthLabel = "Show other players' health bars:"
+    local healthLabel = "Показывать чужие полоски здоровья:"
     local healthLabelW = djui_hud_measure_text(healthLabel) * textScale
     UIText(healthLabel, x + 20, lineY, textScale, { 255, 255, 255, 255 })
 
@@ -617,7 +617,7 @@ local function renderSettingsSection(x, y, w, h)
             saveShowOtherHealthbars(true)
         end
     end)
-    UIText("On", onHealthX + btnW / 2 - djui_hud_measure_text("On") * textScale / 2, lineY + (btnH - 16 * textScale) / 2,
+    UIText("Вкл.", onHealthX + btnW / 2 - djui_hud_measure_text("Вкл.") * textScale / 2, lineY + (btnH - 16 * textScale) / 2,
         textScale, { 255, 255, 255, 255 })
 
     local offHealthX = onHealthX + btnW + spacing
@@ -627,12 +627,12 @@ local function renderSettingsSection(x, y, w, h)
             saveShowOtherHealthbars(false)
         end
     end)
-    UIText("Off", offHealthX + btnW / 2 - djui_hud_measure_text("Off") * textScale / 2, lineY + (btnH - 16 * textScale) /
+    UIText("Выкл.", offHealthX + btnW / 2 - djui_hud_measure_text("Выкл.") * textScale / 2, lineY + (btnH - 16 * textScale) /
         2, textScale, { 255, 255, 255, 255 })
 
     lineY = lineY + btnH + 20
 
-    local statsLabel = "Show player stats in names:"
+    local statsLabel = "Показывать чужую статистику рядом с именем:"
     local statsLabelW = djui_hud_measure_text(statsLabel) * textScale
     UIText(statsLabel, x + 20, lineY, textScale, { 255, 255, 255, 255 })
 
@@ -643,7 +643,7 @@ local function renderSettingsSection(x, y, w, h)
             saveShowStatsInNames(true)
         end
     end)
-    UIText("On", onStatsX + btnW / 2 - djui_hud_measure_text("On") * textScale / 2, lineY + (btnH - 16 * textScale) / 2,
+    UIText("Вкл", onStatsX + btnW / 2 - djui_hud_measure_text("Вкл") * textScale / 2, lineY + (btnH - 16 * textScale) / 2,
         textScale, { 255, 255, 255, 255 })
 
     local offStatsX = onStatsX + btnW + spacing
@@ -653,13 +653,13 @@ local function renderSettingsSection(x, y, w, h)
             saveShowStatsInNames(false)
         end
     end)
-    UIText("Off", offStatsX + btnW / 2 - djui_hud_measure_text("Off") * textScale / 2, lineY + (btnH - 16 * textScale) /
+    UIText("Выкл.", offStatsX + btnW / 2 - djui_hud_measure_text("Выкл.") * textScale / 2, lineY + (btnH - 16 * textScale) /
         2, textScale, { 255, 255, 255, 255 })
 
 
     lineY = lineY + btnH + 20
 
-    local timeLabel = "Display time in:"
+    local timeLabel = "Показывать время в:"
     local timeLabelW = djui_hud_measure_text(timeLabel) * textScale
     UIText(timeLabel, x + 20, lineY, textScale, { 255, 255, 255, 255 })
 
@@ -670,7 +670,7 @@ local function renderSettingsSection(x, y, w, h)
             saveDisplayTimeMode(0)
         end
     end)
-    UIText("Frames", framesBtnX + btnW / 2 - djui_hud_measure_text("Frames") * textScale / 2,
+    UIText("Кадрах", framesBtnX + btnW / 2 - djui_hud_measure_text("Кадрах") * textScale / 2,
         lineY + (btnH - 16 * textScale) / 2, textScale, { 255, 255, 255, 255 })
 
     local secondsBtnX = framesBtnX + btnW + spacing
@@ -680,7 +680,7 @@ local function renderSettingsSection(x, y, w, h)
             saveDisplayTimeMode(1)
         end
     end)
-    UIText("Seconds", secondsBtnX + btnW / 2 - djui_hud_measure_text("Seconds") * textScale / 2,
+    UIText("Секундах", secondsBtnX + btnW / 2 - djui_hud_measure_text("Секундах") * textScale / 2,
         lineY + (btnH - 16 * textScale) / 2, textScale, { 255, 255, 255, 255 })
 end
 
@@ -781,7 +781,7 @@ local function handleDrop(dropData)
         if dropX >= slot.x and dropX <= slot.x + slot.w and dropY >= slot.y and dropY <= slot.y + slot.h then
             gPlayerSyncTable[0].Kaisen64.abilitiesSlots[slot.idx] = abilityIndex
             local abilityName = AbilitiesData[abilityIndex] and AbilitiesData[abilityIndex].name or "?"
-            djui_chat_message_create("Set ability: " .. abilityName .. " to slot " .. slot.idx)
+            djui_chat_message_create("Установлена способность: " .. abilityName .. " на слот " .. slot.idx)
             saveSelectedAbilities()
             break
         end

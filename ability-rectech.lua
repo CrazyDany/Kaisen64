@@ -145,7 +145,7 @@ RegisterAbility(ABILITY_ID_RECTECH, {
     name = "RecTech",
     shortName = "RcTc",
     description = {
-        "Record your actions and reactivate it to replay them."
+        "Запиши все свои действия и активируй способность снова, чтобы их воспроизвести."
     },
     iconTextureName = "rctc",
 

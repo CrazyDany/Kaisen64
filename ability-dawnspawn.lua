@@ -30,7 +30,7 @@ RegisterAbility(ABILITY_ID_DAWNSPAWN, {
     name = "DawnSpawn",
     shortName = "DnSp",
     description = {
-        "Spawn a random object that can help you in fight."
+        "Создай случайный объект, который может помочь в битве."
     },
     iconTextureName = "ml",
 

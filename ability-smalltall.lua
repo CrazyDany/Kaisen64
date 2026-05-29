@@ -81,7 +81,7 @@ RegisterAbility(ABILITY_ID_SMALLTALL, {
     name = "SmallTall",
     shortName = "SmTl",
     description = {
-        "Grow up in size for destructibility or shrink down in size for slickness."
+        "Увеличься для большей прочности или уменьшись для большей скорости."
     },
     iconTextureName = "smtl",
 

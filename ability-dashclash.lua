@@ -40,7 +40,7 @@ RegisterAbility(ABILITY_ID_DASHCLASH, {
     name = "DashClash",
     shortName = "DsCl",
     description = {
-        "Do a forward dash that knocks down players."
+        "Сделай рывок вперед, который сшибает врагов на пути."
     },
     iconTextureName = "dscl",
 

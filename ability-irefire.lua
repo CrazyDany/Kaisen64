@@ -28,7 +28,7 @@ RegisterAbility(ABILITY_ID_IREFIRE, {
     name = "IreFire",
     shortName = "IrFr",
     description = {
-        "Spawn a rotating fireball that burns enemies."
+        "Создай вращающийся огненный шар, который поджигает врагов."
     },
     iconTextureName = "irfr",
 

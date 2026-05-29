@@ -43,7 +43,7 @@ RegisterAbility(ABILITY_ID_COLDMOLD, {
     name = "ColdMold",
     shortName = "ClMl",
     description = {
-        "Spawn a cold breeze that slows enemies down."
+        "Создай холодный осадок, который замораживает врагов."
     },
     iconTextureName = "clml",
 

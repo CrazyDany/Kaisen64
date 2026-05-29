@@ -1,31 +1,31 @@
 K64_SKINS_TABLE = {
     [0] = {
-        name = "bully",
+        name = "Стандарт",
         model = smlua_model_util_get_id("devil_bully_geo")
     },
 
     [1] = {
-        name = "eternal",
+        name = "Вечный Булли",
         model = smlua_model_util_get_id("devil_bully_skin1_geo")
     },
 
     [2] = {
-        name = "kaichi",
+        name = "Каичи",
         model = smlua_model_util_get_id("devil_bully_skin2_geo")
     },
 
     [3] = {
-        name = "bullgoat",
+        name = "Буллгоат",
         model = smlua_model_util_get_id("devil_bully_skin3_geo")
     },
 
     [4] = {
-        name = "bibik",
+        name = "Бибик",
         model = smlua_model_util_get_id("devil_bully_skin4_geo")
     },
 
     [5] = {
-        name = "homelander",
+        name = "Твердый Булли",
         model = smlua_model_util_get_id("devil_bully_skin5_geo")
     },
 }

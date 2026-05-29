@@ -223,7 +223,7 @@ RegisterAbility(ABILITY_ID_DRYTRY, {
     name = "DryTry",
     shortName = "DrTr",
     description = {
-        "Try your luck! It can give you a god power or punish you very hard."
+        "Испытай удачу. Ты можешь либо получить силу бога, либо встретить его наверху."
     },
     iconTextureName = "drtr",
 

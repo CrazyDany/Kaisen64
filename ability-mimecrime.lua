@@ -67,7 +67,7 @@ RegisterAbility(ABILITY_ID_MIMECRIME, {
     name = "MimeCrime",
     shortName = "MmCm",
     description = {
-        "Steal a random ability from your last hit player."
+        "Используй случайную способность последнего ударенного тобой врага."
     },
     iconTextureName = "mmcm",
 

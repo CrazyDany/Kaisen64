@@ -72,7 +72,7 @@ RegisterAbility(ABILITY_ID_SPLIZBLITZ, {
     name = "SplizBlitz",
     shortName = "SpBl",
     description = {
-        "Constantly change your visible position and confuse enemies."
+        "Постоянно меняй свою видимую позицию, сбивая врагов с толку."
     },
     iconTextureName = "spbl",
 
