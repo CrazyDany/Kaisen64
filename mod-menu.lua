@@ -228,6 +228,16 @@ local function saveShowStatsInNames(value)
     mod_storage_save_number("settings.showStatsInNames", value and 1 or 0)
 end
 
+local function saveSelectedAbilities()
+    for idx = 0, K64_MAX_ABILITIES_SLOTS - 1 do
+        local abilityIdx = gPlayerSyncTable[0].Kaisen64.abilitiesSlots[idx]
+        if abilityIdx then
+            mod_storage_save_number("selectedabilities." .. tostring(idx), abilityIdx)
+        end
+    end
+end
+
+
 function GlobalLoadSaved()
     loadSettings()
 end
@@ -704,6 +714,7 @@ local function handleDrop(dropData)
             gPlayerSyncTable[0].Kaisen64.abilitiesSlots[slot.idx] = abilityIndex
             local abilityName = AbilitiesData[abilityIndex] and AbilitiesData[abilityIndex].name or "?"
             djui_chat_message_create("Set ability: " .. abilityName .. " to slot " .. slot.idx)
+            saveSelectedAbilities()
             break
         end
     end
