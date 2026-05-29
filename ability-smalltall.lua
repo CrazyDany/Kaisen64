@@ -1,8 +1,9 @@
 ABILITY_ID_SMALLTALL = 5
 
 local function onUseSmallTall()
+    local used_chants = gPlayerSyncTable[0].Kaisen64.cur_chant or 0
     gPlayerSyncTable[0].Kaisen64.smalltall_size = 2 ^ random_sign()
-    gPlayerSyncTable[0].Kaisen64.smalltall_cur_duration = 256
+    gPlayerSyncTable[0].Kaisen64.smalltall_cur_duration = 256 + (64 * used_chants)
 
     local m = gMarioStates[0]
 

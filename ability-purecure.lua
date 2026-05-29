@@ -5,7 +5,7 @@ local function onUsePureCure()
 
     local used_chants = gPlayerSyncTable[0].Kaisen64.cur_chant or 0
 
-    m.health = m.health + 512 + (64 * used_chants)
+    m.health = m.health + 512 + (128 * used_chants)
     ClearAllEffects(m)
 end
 
