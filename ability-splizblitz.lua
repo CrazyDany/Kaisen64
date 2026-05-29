@@ -1,6 +1,12 @@
 ABILITY_ID_SPLIZBLITZ = 11
 
 function onUseSplizBlitz()
+    local used_chants = gPlayerSyncTable[0].Kaisen64.cur_chant or 0
+
+    local ability = AbilitiesData[ABILITY_ID_SPLIZBLITZ]
+
+    ability.default_radius = ability.afterimages_radius
+    ability.afterimages_radius = ability.afterimages_radius * (1 + (used_chants / 2))
     gPlayerSyncTable[0].Kaisen64.afterimages_radius = 1
 end
 
@@ -24,16 +30,19 @@ hook_event(HOOK_UPDATE,
 
             if (gPlayerSyncTable[0].Kaisen64.currentEnergy < ability.afterimages_cost_per_tick) then
                 gPlayerSyncTable[0].Kaisen64.afterimages_radius = 0
+                ability.afterimages_radius = ability.default_radius
             end
 
             if gMarioStates[0].controller.buttonPressed == L_TRIG and
                 gPlayerSyncTable[0].Kaisen64.abilitiesSlots[gPlayerSyncTable[0].Kaisen64.currentAbilitySlot] == ABILITY_ID_SPLIZBLITZ
             then
                 gPlayerSyncTable[0].Kaisen64.afterimages_radius = 0
+                ability.afterimages_radius = ability.default_radius
             end
 
             if ChecIfHit(gMarioStates[0]) == true then
                 gPlayerSyncTable[0].Kaisen64.afterimages_radius = 0
+                ability.afterimages_radius = ability.default_radius
             end
         end
     end
@@ -85,6 +94,7 @@ RegisterAbility(ABILITY_ID_SPLIZBLITZ, {
     end,
 
     -- custom fields
-    afterimages_radius = 2048,
+    default_radius = nil,
+    afterimages_radius = 1024,
     afterimages_cost_per_tick = 1
 })
