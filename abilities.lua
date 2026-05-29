@@ -69,4 +69,7 @@ function ResetAbilities()
             v.onResetVariables()
         end
     end
+
+    gPlayerSyncTable[0].Kaisen64.cur_chant = 0
+    gPlayerSyncTable[0].Kaisen64.chant_cooldown = 0
 end
