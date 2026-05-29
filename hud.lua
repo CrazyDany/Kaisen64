@@ -94,7 +94,7 @@ end
 
 local function getCooldownText(cooldownFrames)
     if cooldownFrames <= 0 then return nil end
-    if HUDSettings.slots.cdTextType == "secounds" then
+    if GetDisplayTimeMode() == 1 then
         return string.format("%.1fs", cooldownFrames / 30)
     end
     return tostring(math.floor(cooldownFrames))
